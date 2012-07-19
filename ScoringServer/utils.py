@@ -1,6 +1,8 @@
+from collections import defaultdict
 from copy import deepcopy
+from functools import wraps
 import json
-from flask import Response
+from flask import Response, request
 
 def dict_to_mongodb_list(data):
     if is_compound_dict(data):
@@ -47,3 +49,71 @@ def create_error_response(error_type, reason, status_code=403):
     }
     resp = Response(json.dumps(error), status=status_code, mimetype='application/json')
     return resp
+
+def create_no_params_error_response():
+    return create_error_response("IllegalParameter", "No parameters were specified.")
+
+def create_params_unnecessary_error_response():
+    return create_error_response("IllegalParameter", "Parameters are not allowed for this interface.")
+
+def requires_parameters(required=[], optional=[]):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if request.data == '':
+                return create_no_params_error_response()
+            params = Parameters(required=required, optional=optional)
+            data = json.loads(request.data)
+            if not params.check(data):
+                return params.create_error_response()
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
+
+def requires_no_parameters(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        if request.data != '':
+            return create_params_unnecessary_error_response()
+        return f(*args, **kwargs)
+    return wrapped
+
+class Parameters(object):
+    def __init__(self, required=[], optional=[]):
+        self.required = required
+        self.optional = optional
+        self.illegal = []
+        self.unspecified = []
+    def check(self, param_dict):
+        if not isinstance(param_dict, (dict, list)):
+            return False
+        required_met = defaultdict(bool)
+        for param in param_dict:
+            if param in self.required:
+                required_met[param] = True
+            elif param not in self.optional:
+                self.illegal.append(param)
+        for param in self.required:
+            if not required_met[param]:
+                self.unspecified.append(param)
+        return len(self.illegal) == 0 and len(self.unspecified) == 0
+    def create_error_response(self):
+        if len(self.illegal) == 0 and len(self.unspecified) == 0:
+            return None
+        reason = ""
+        if len(self.illegal) > 0:
+            reason += "Parameter{plural1} '{parameters}' {plural2} not valid for this interface."
+            if len(self.illegal) > 1:
+                reason = reason.format(plural1="s", plural2="are", parameters="', '".join(self.illegal))
+            elif len(self.illegal) == 1:
+                reason = reason.format(plural1="", plural2="is", parameters=self.illegal[0])
+        if len(self.unspecified) > 0:
+            if not reason == "":
+                reason += " Additionally, required parameter{plural1} '{parameters}' {plural2} not specified."
+            else:
+                reason += "Required parameter{plural1} '{parameters}' {plural2} not specified."
+            if len(self.unspecified) > 1:
+                reason = reason.format(plural1="s", plural2="are", parameters="', '".join(self.unspecified))
+            else:
+                reason = reason.format(plural1="", plural2="is", parameters=self.unspecified[0])
+        return create_error_response("IllegalParameter", reason)

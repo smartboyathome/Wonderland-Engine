@@ -19,6 +19,10 @@ class FlaskTestCase(unittest.TestCase):
                     "name": "University of Washington, Seattle",
                     "score": 0
                 },
+                "2": {
+                    "name": "Western Washington University",
+                    "score": 0
+                },
                 "6": {
                     "name": "University of Washington, Bothell",
                     "score": 0
