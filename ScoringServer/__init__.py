@@ -32,6 +32,7 @@ from __future__ import division, absolute_import
 from flask import Flask
 from configobj import ConfigObj
 import os
+from ScoringServer.itsdangerous_session import ItsdangerousSessionInterface
 
 __all__ = ['app', 'create_app', 'run_app']
 
@@ -47,6 +48,10 @@ def create_app(_config_file=os.path.join(os.getcwd(), 'ScoringServer', 'settings
     config = ConfigObj(_config_file)
     for key in config['CORE']:
         app.config[key] = config['CORE'][key]
+
+    # Change the session interface to be more secure and portalble than the default
+    # which is provided by Werkzeug. See http://flask.pocoo.org/snippets/51/
+    app.session_interface = ItsdangerousSessionInterface()
 
     # Initialize ScoringServer
     # Import the views, to apply the decorators which use the global app object.
