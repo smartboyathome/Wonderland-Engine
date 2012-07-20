@@ -1,3 +1,5 @@
+Flask-Login
+redis
 itsdangerous
 configobj==4.7.2
 nose==1.1.2

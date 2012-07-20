@@ -31,13 +31,16 @@
 from __future__ import division, absolute_import
 from flask import Flask
 from configobj import ConfigObj
+from flask_login import LoginManager
 import os
 from ScoringServer.itsdangerous_session import ItsdangerousSessionInterface
+from ScoringServer.redis_signed_session import RedisSignedSessionInterface
 
 __all__ = ['app', 'create_app', 'run_app']
 
 # Set to None so code will fail screaming if create_app or run_app haven't been called
 app = None
+login_manager = None
 
 def create_app(_config_file=os.path.join(os.getcwd(), 'ScoringServer', 'settings.cfg')):
     # Create Flask app
@@ -51,7 +54,15 @@ def create_app(_config_file=os.path.join(os.getcwd(), 'ScoringServer', 'settings
 
     # Change the session interface to be more secure and portalble than the default
     # which is provided by Werkzeug. See http://flask.pocoo.org/snippets/51/
-    app.session_interface = ItsdangerousSessionInterface()
+    # These break the engine currently. I don't know why.
+    #app.session_interface = RedisSignedSessionInterface()
+    #app.session_interface = ItsdangerousSessionInterface()
+
+    # Flask-Login manages user sessions for us, but we need to set it up first, so
+    # we'll do so here.
+    global login_manager
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
     # Initialize ScoringServer
     # Import the views, to apply the decorators which use the global app object.
