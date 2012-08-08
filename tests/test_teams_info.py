@@ -1,4 +1,5 @@
 from . import FlaskTestCase
+from copy import deepcopy
 import json
 
 class TestTeamsInterface(FlaskTestCase):
@@ -21,8 +22,9 @@ class TestTeamsInterface(FlaskTestCase):
 
     def test_get_specific_team_data(self):
         result = self.app.get('/teams/6')
+        result_data = self.get_team_data('6')
         assert result.status_code == 200
-        assert json.loads(result.data) == self.data['teams']['6']
+        assert json.loads(result.data) == result_data
 
     def test_get_specific_team_data_with_params(self):
         query_data = {
@@ -116,7 +118,7 @@ class TestTeamsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameter 'id' is not valid for this interface."
         }
-        result_data = self.data['teams']['2']
+        result_data = self.get_team_data('2')
         patch = self.app.patch('/teams/2', data=json.dumps(query_data))
         assert patch.status_code == 403
         assert json.loads(patch.data) == patch_data
@@ -126,7 +128,7 @@ class TestTeamsInterface(FlaskTestCase):
 
     def test_modify_team_data_no_param(self):
         query_data = {}
-        result_data = self.data['teams']['2']
+        result_data = self.get_team_data('2')
         patch = self.app.patch('/teams/2', data=json.dumps(query_data))
         assert patch.status_code == 204
         result = self.app.get('/teams/2')

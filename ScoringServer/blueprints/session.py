@@ -1,5 +1,6 @@
 from flask import Blueprint, g, redirect, url_for, Response
 from flask.ext.login import login_required, login_user, logout_user
+from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringServer import login_manager
 
 blueprint = Blueprint(__name__, 'session')
@@ -7,7 +8,7 @@ url_prefix = '/session'
 
 @login_manager.user_loader
 def load_user(username):
-    return g.db.users.find({"username": username})
+    return g.db.get_specific_user(username)
 
 @blueprint.route("/", methods=['GET'])
 @login_required
