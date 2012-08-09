@@ -1,7 +1,7 @@
 Cheshire-Engine
 ===============
 
-The Cheshire Cybersecurity Scoring Engine aims to be a highly flexible scoring
+The Cheshire Cyber Defense Scoring Engine aims to be a highly flexible scoring
 engine for use in Cybersecurity competitions. Inspired by the Pacific Rim
 Collegiate Cyber Defense Competition, Cheshire aims to allow greater modularity
 for administrators, while also allowing automation of some currently

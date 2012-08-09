@@ -3,15 +3,16 @@ In MongoDB, "Cheshire" Database:
         {
             "id": str,
             "name": str,
-            "score": int,
-            "config": [
-                {
-                    "id": str,
-                    "username": str,
-                    "password": str,
-                    "port": int
-                }
-            ]
+            "score": int
+        }
+    ]
+    team_configs: [ # Index on team_id, then machine_id
+        {
+            "team_id": str,
+            "machine_id": str,
+            "username": str,
+            "password": str,
+            "port": int
         }
     ]
     completed_checks: [ # Index on id, then team_id, then timestamp

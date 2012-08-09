@@ -39,7 +39,6 @@ Needed to cast params as floats in function def (or simply divide by 2.0).
     TypeError: 'fib' method accepts (int), but was given (float)
 
 '''
-import sys
 
 def accepts(*types, **kw):
     '''Function decorator. Checks decorated function's arguments are

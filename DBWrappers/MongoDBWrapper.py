@@ -1,9 +1,28 @@
+'''
+    Copyright (c) 2012 Alexander Abbott
+
+    This file is part of the Cheshire Cyber Defense Scoring Engine (henceforth
+    referred to as Cheshire).
+
+    Cheshire is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Affero General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your
+    option) any later version.
+
+    Cheshire is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for
+    more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
 from copy import deepcopy
 from datetime import datetime
 import pymongo, time
 from DBWrappers.DBWrapper import DBWrapper
 from DBWrappers.Exceptions import MachineDoesNotExist, CheckClassDoesNotExist, DoesNotExist, TeamDoesNotExist, CheckDoesNotExist, Exists, ScoringServerRunning, ArchivedSessionExists
-from DBWrappers.type_enforcement import accepts, returns
 
 class MongoDBWrapper(DBWrapper):
 
@@ -11,8 +30,11 @@ class MongoDBWrapper(DBWrapper):
         connection = pymongo.Connection(host, port)
         self.db = connection[db_name]
 
-    def _modify_document(self, collection, query, **data):
-        orig_data = list(self.db[collection].find(query))
+    def _modify_document(self, collection, query, exclude_fields=[], **data):
+        excluded_fields = {}
+        for field in exclude_fields:
+            excluded_fields[field] = 0
+        orig_data = list(self.db[collection].find(query, excluded_fields))
         if len(orig_data) == 0:
             raise DoesNotExist()
         new_data = deepcopy(orig_data[0])
@@ -41,10 +63,10 @@ class MongoDBWrapper(DBWrapper):
         return time.mktime(datetime_obj.timetuple())
 
     def get_all_teams(self):
-        return list(self._query_db('teams', {}))
+        return list(self._query_db('teams', {}, exclude_fields=['config']))
 
     def get_specific_team(self, team_id):
-        return list(self._query_db('teams', {'id': team_id}))
+        return list(self._query_db('teams', {'id': team_id}, exclude_fields=['config']))
 
     def create_team(self, team_name, team_id):
         if not len(self.get_specific_team(team_id)) == 0:
@@ -52,12 +74,13 @@ class MongoDBWrapper(DBWrapper):
         data = {
             "name": team_name,
             "id": team_id,
-            "score": 0
+            "score": 0,
+            "config": []
         }
         self.db.teams.insert(data)
 
     def modify_team(self, team_id, **data):
-        self._modify_document('teams', {'id': team_id}, **data)
+        self._modify_document('teams', {'id': team_id}, exclude_fields=['config'], **data)
 
     def delete_team(self, team_id):
         self.db.teams.remove({'id': team_id})
@@ -85,6 +108,42 @@ class MongoDBWrapper(DBWrapper):
     def delete_machine(self, machine_id):
         self.db.machines.remove({'id': machine_id})
 
+    def get_team_config_for_all_machines(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist(team_id)
+        team_config = list(self._query_db('team_configs', {'team_id': team_id}))
+        return team_config
+
+    def get_team_config_for_machine(self, team_id, machine_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist(team_id)
+        if len(self.get_specific_machine(machine_id)) == 0:
+            raise MachineDoesNotExist(machine_id)
+        return list(self._query_db('team_configs',{'team_id': team_id, 'machine_id': machine_id}))
+
+    def create_team_config_for_machine(self, team_id, machine_id, username, password, port):
+        old_team_info = self.db.users.find({'id': team_id})
+        if len(old_team_info) == 0:
+            raise TeamDoesNotExist(team_id)
+        if len(self.get_specific_machine(machine_id)) == 0:
+            raise MachineDoesNotExist(machine_id)
+        if not len(self.get_team_config_for_machine(team_id, machine_id)) == 0:
+            raise Exists("A config for team {}'s '{}' machine already exists.".format(team_id, machine_id))
+        data = {
+            'team_id': team_id,
+            'machine_id': machine_id,
+            'username': username,
+            'password': password,
+            'port': port
+        }
+        self.db.team_configs.insert(data)
+
+    def modify_team_config_for_machine(self, team_id, machine_id, **data):
+        return self._modify_document('team_configs', {'team_id': team_id, 'machine_id': machine_id}, **data)
+
+    def delete_team_config_for_machine(self, team_id, machine_id):
+        self.db.team_configs.remove('team_configs', {'team_id': team_id, 'machine_id': machine_id})
+
     def get_all_users(self):
         return list(self._query_db('users', {}, exclude_fields=['password']))
 
@@ -94,7 +153,6 @@ class MongoDBWrapper(DBWrapper):
         else:
             return list(self._query_db('users', {'id': username, 'password': password_hash}))
 
-    @accepts(basestring, basestring, basestring, basestring, team=basestring)
     def create_user(self, username, password_hash, email, role, **extra_info):
         if role == 'team' and not isinstance(extra_info['team'], basestring):
             raise TypeError("team must be either a string or a unicode string")
