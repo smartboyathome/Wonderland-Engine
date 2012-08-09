@@ -20,8 +20,8 @@
 
 import abc
 
-@abc.ABCMeta
 class DBWrapper(object):
+    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def close(self):
