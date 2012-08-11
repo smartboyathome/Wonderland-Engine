@@ -59,18 +59,25 @@ class Master(object):
                 self.commands[command](*command_list)
 
     def changed(self, subcommand, *args):
-        if subcommand == 'current_session':
-            pass
-        elif subcommand == 'all_checks':
-            pass
-        elif subcommand == 'team_checks':
-            pass
+        if subcommand == 'all':
+            self.reload_check_classes()
+            self.reload_active_checks()
+            self.reload_checkers()
+        elif subcommand == 'team':
+            try:
+                self.reload_check_classes()
+                self.reload_specific_checker(args[0])
+            except IndexError:
+                pass
+
 
     def start(self):
-        pass
+        for team_id in self.checkers:
+            self.checkers[team_id].start()
 
     def stop(self):
-        pass
+        for team_id in self.checkers:
+            self.checkers[team_id].shutdown()
 
     def reload_check_classes(self):
         self.check_classes.clear()
@@ -126,7 +133,7 @@ class CheckerManager(object):
         self.db_host, self.db_port, self.db_name = db_host, db_port, db_name
         self.check_delay = check_delay
         self.process = CheckerProcess(team_id, checks, db_host, db_port, db_name, check_delay)
-    def changed(self, checks):
+    def restart(self, checks):
         self.shutdown()
         self.process = CheckerProcess(self.team_id, checks, self.db_host, self.db_port, self.db_name, self.check_delay)
         self.process.start()
