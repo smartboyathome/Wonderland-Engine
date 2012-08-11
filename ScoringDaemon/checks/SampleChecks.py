@@ -33,10 +33,6 @@ class SampleServiceCheck(ServiceCheck):
     def timeout(self):
         return 60
 
-    @property
-    def score(self):
-        return 5
-
     def run_check(self):
         time.sleep(45)
-        return True
+        return 5

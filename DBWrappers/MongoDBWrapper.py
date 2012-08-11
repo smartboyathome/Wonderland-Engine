@@ -73,17 +73,37 @@ class MongoDBWrapper(DBWrapper):
             raise Exists("A team with id {} already exists.".format(team_id))
         data = {
             "name": team_name,
-            "id": team_id,
-            "score": 0,
-            "config": []
+            "id": team_id
+        }
+        score_data = {
+            'team_id': team_id,
+            'score': 0,
+            'timestamp': datetime.now()
         }
         self.db.teams.insert(data)
+        self.db.team_scores.insert(score_data)
 
     def modify_team(self, team_id, **data):
         self._modify_document('teams', {'id': team_id}, exclude_fields=['config'], **data)
 
     def delete_team(self, team_id):
         self.db.teams.remove({'id': team_id})
+
+    def get_scores_for_all_teams(self):
+        return list(self._query_db('team_scores', {}))
+
+    def get_score_for_team(self, team_id):
+        return list(self._query_db('team_scores', {'id':team_id}))
+
+    def calculate_scores_for_team(self, team_id):
+        old_score = self.db.team_scores.find({'team_id': team_id})
+        new_score = deepcopy(old_score)
+        completed_checks = self.get_all_completed_checks_for_team_since(team_id, new_score['timestamp'])
+        for check in completed_checks:
+            new_score['score'] += check
+            if check['timestamp'] > new_score['timestamp']:
+                new_score['timestamp'] = check['timestamp']
+        self.db.team_scores.update(old_score, new_score)
 
     def get_all_machines(self):
         return list(self._query_db('machines', {}))
@@ -107,6 +127,9 @@ class MongoDBWrapper(DBWrapper):
 
     def delete_machine(self, machine_id):
         self.db.machines.remove({'id': machine_id})
+
+    def get_all_team_configs_for_all_machines(self):
+        return list(self._query_db('team_configs', {}))
 
     def get_team_config_for_all_machines(self, team_id):
         if len(self.get_specific_team(team_id)) == 0:
@@ -221,6 +244,12 @@ class MongoDBWrapper(DBWrapper):
     def get_all_checks(self):
         return list(self._query_db('active_checks', {}))
 
+    def get_specific_check(self, check_id, check_type):
+        return list(self._query_db('active_checks', {'id': check_id, 'type': check_type}))
+
+    def delete_specific_check(self, check_id, check_type):
+        self.db.active_checks.remove({'id': check_id, 'type': check_type})
+
     def get_all_service_checks(self):
         return list(self._query_db('active_checks', {'type': 'service'}))
 
@@ -268,6 +297,9 @@ class MongoDBWrapper(DBWrapper):
 
     def get_all_attacker_checks(self):
         return list(self._query_db('active_checks', {'type': 'attacker'}))
+
+    def get_all_attacker_checks_for_team(self, team_id):
+        return list(self._query_db('active_checks', {'team_id': team_id, 'type': 'attacker'}))
 
     def get_specific_attacker_check(self, check_id, team_id):
         return list(self._query_db('active_checks', {'id': check_id, 'team_id': team_id, 'type': 'attacker'}))
@@ -424,6 +456,9 @@ class MongoDBWrapper(DBWrapper):
     def get_all_completed_manual_checks_for_team(self, team_id):
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'manual'}))
 
+    def get_all_completed_checks_for_team_since(self, team_id, timestamp):
+        return list(self._query_db('completed_checks', {'team_id': team_id, '$gt': {'timestamp': timestamp}}))
+
     def get_specific_completed_service_check_for_team(self, check_id, team_id):
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'service', 'id': check_id}))
 
@@ -486,6 +521,8 @@ class MongoDBWrapper(DBWrapper):
             'id': archive_id,
             'session': self.get_current_scoring_session(),
             'teams': self.get_all_teams(),
+            'team_configs': self.get_all_team_configs_for_all_machines(),
+            'team_scores': self.get_scores_for_all_teams(),
             'completed_checks': self.get_all_completed_checks(),
             'active_checks': self.get_all_checks(),
             'check_scripts': self.get_all_check_scripts(),

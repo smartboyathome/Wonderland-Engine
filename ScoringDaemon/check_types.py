@@ -19,6 +19,7 @@
 '''
 
 import abc
+from DBWrappers.MongoDBWrapper import MongoDBWrapper
 
 class Check(object):
     __metaclass__ = abc.ABCMeta
@@ -37,10 +38,17 @@ class Check(object):
         '''
         return
 
-    @abc.abstractmethod
+    @abc.abstractproperty
     def score(self):
         '''
-        The score for the check. If this is a ServiceCheck, then it will return the score to be added each time.
+        The score should be set to 0 before the check is run.
+        '''
+        return
+
+    @abc.abstractproperty
+    def check_type(self):
+        '''
+        The type of check as a string. These are mapped back to the DB.
         '''
         return
 
@@ -52,9 +60,33 @@ class Check(object):
         return
 
 class ServiceCheck(Check):
-    pass
+    def __init__(self, team_id, db_host, db_port, db_name):
+        self.team_id = team_id
+        self.db = MongoDBWrapper(db_host, db_port, db_name)
+        self._score = 0
+
+    @property
+    def score(self):
+        return self._score
+
+    @property
+    def check_type(self):
+        return 'service'
 
 class InjectCheck(Check):
+    def __init__(self, team_id, db_host, db_port, db_name):
+        self.team_id = team_id
+        self.db = MongoDBWrapper(db_host, db_port, db_name)
+        self._score = 0
+
+    @property
+    def score(self):
+        return self._score
+
+    @property
+    def check_type(self):
+        return 'inject'
+
     @abc.abstractproperty
     def time_to_run(self):
         '''
@@ -69,36 +101,16 @@ class InjectCheck(Check):
         '''
         return
 
-class ManualCheck(Check):
-    def __init__(self, machine, timeout, inject_number, comments, score):
-        self._machine = machine
-        self._timeout = timeout
-        self._comments = comments
-        self._inject_number = inject_number
-        self._score = score
-
-    @property
-    def machine(self):
-        return self._machine
-
-    @property
-    def timeout(self):
-        return self._timeout
-
-    def run_check(self):
-        return True
-
-    @property
-    def inject_number(self):
-        return self._inject_number
-
-    @property
-    def comments(self):
-        return self._comments
+class AttackerCheck(Check):
+    def __init__(self, team_id, db_host, db_port, db_name):
+        self.team_id = team_id
+        self.db = MongoDBWrapper(db_host, db_port, db_name)
+        self._score = 0
 
     @property
     def score(self):
         return self._score
 
-class AttackerCheck(Check):
-    pass
+    @property
+    def check_type(self):
+        return 'attacker'

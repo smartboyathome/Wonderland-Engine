@@ -48,6 +48,22 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
+    def get_scores_for_all_teams(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_score_for_team(self, team_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def calculate_scores_for_team(self, team_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_all_team_configs_for_all_machines(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def get_team_config_for_all_machines(self, team_id):
         raise NotImplementedError()
 
@@ -136,14 +152,6 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def clear_current_scoring_session(self):
-        raise NotImplementedError()
-
-    @abc.abstractmethod
-    def delete_attacker_check(self, check_id, team_id):
-        raise NotImplementedError()
-
-    @abc.abstractmethod
     def get_all_check_classes(self):
         raise NotImplementedError()
 
@@ -185,6 +193,14 @@ class DBWrapper(object):
 
     @abc.abstractmethod
     def get_all_checks(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_specific_check(self, check_id, check_type):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def delete_specific_check(self, check_id, check_type):
         raise NotImplementedError()
 
     @abc.abstractmethod
@@ -280,6 +296,10 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
+    def get_all_attacker_checks_for_team(self, team_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def get_all_completed_checks(self):
         raise NotImplementedError()
 
@@ -317,6 +337,10 @@ class DBWrapper(object):
 
     @abc.abstractmethod
     def get_all_completed_attacker_checks_for_team(self, team_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_all_completed_checks_for_team_since(self, team_id, timestamp):
         raise NotImplementedError()
 
     @abc.abstractmethod

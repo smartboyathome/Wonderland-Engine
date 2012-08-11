@@ -21,9 +21,9 @@
 from multiprocessing import Queue
 from configobj import ConfigObj
 import os, redis, inspect
-from validate import Validator
+from parcon import alpha_word, Regex, ZeroOrMore, flatten
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
-from ScoringDaemon.check_types import Check
+from ScoringDaemon.check_types import Check, ServiceCheck, InjectCheck, AttackerCheck
 from ScoringDaemon.checker_process import CheckerProcess
 from ScoringServer.utils import load_plugins
 
@@ -35,51 +35,91 @@ class Master(object):
         self.redis = redis.Redis(self.config['REDIS']['HOST'], self.config['REDIS']['PORT'], password=self.config['REDIS']['PASSWORD'])
         self.pubsub = self.redis.pubsub()
         self.channel = self.config['REDIS']['DB_CHANNEL']
-        self.check_scripts = []
-        self.check_classes = []
+        self.check_scripts = {}
+        self.check_classes = {}
         self.active_checks = []
         self.reload_check_classes()
+
+        self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
+
+        self._command_parser = (alpha_word + Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+')))[flatten]
+        self.commands = {
+            'changed': self.changed
+        }
 
     def run(self):
         self.pubsub.subscribe(self.channel)
         for message in self.pubsub.listen():
             print "server recieving message:", message['data']
-            command = message['data'].split(' ')
-            if command[0] == 'changed' and len(command) == 2:
-                self.changed(command[1])
+            command_list = self._command_parser.parse_string(message['data'])
+            command = command_list.pop(0).lower()
+            if command in self.commands:
+                self.commands[command](*command_list)
 
-    def changed(self, arg):
-        if arg == 'checks':
-            self.reload_check_classes()
-            for team_id in self.checkers:
-                pass
-        if arg in self.checkers:
+    def changed(self, subcommand, *args):
+        if subcommand == 'current_session':
+            pass
+        elif subcommand == 'all_checks':
+            pass
+        elif subcommand == 'team_checks':
             pass
 
     def reload_check_classes(self):
-        del self.check_classes[:]
-        del self.check_scripts[:]
+        self.check_classes.clear()
+        self.check_scripts.clear()
         check_modules = load_plugins(os.path.join(os.path.dirname(__file__), 'checks'))
         for check_name in check_modules:
             check = check_modules[check_name]
-            classes = inspect.getmembers(check, inspect.isclass)
-            for _class in classes:
-                if issubclass(_class, Check):
-                    if check_name not in self.check_scripts:
-                        self.check_scripts.append(check_name)
-                    self.check_classes.append(_class)
-        db = MongoDBWrapper(self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
-
+            classes = inspect.getmembers(check, lambda _class: inspect.isclass(_class) and issubclass(_class, Check))
+            for check_class_name, check_class in classes:
+                if check_name not in self.check_scripts:
+                    self.check_scripts[check_name] = check
+                    if len(self.db.get_specific_check_script(check_name)) == 0:
+                        self.db.create_check_script(check_name, check.__file__)
+                self.check_classes[check_class_name] = check_class
+                if len(self.db.get_specific_check_class(check_class_name)) == 0:
+                    self.db.create_check_class(check_class, check_class.check_type, check_name)
 
     def reload_active_checks(self):
-        pass
+        del self.active_checks[:]
+        active_checks = self.db.get_all_checks()
+        for check in active_checks:
+            if check['class_name'] not in self.check_classes:
+                self.db.delete_specific_check(check['id'], check['type'])
+            else:
+                self.active_checks.append({
+                    'id': check['id'],
+                    'class': self.check_classes[check['class_name']]
+                })
+
+    def reload_checkers(self):
+        self.checkers.clear()
+        teams = self.db.get_all_teams()
+        for team in teams:
+            self.reload_specific_checker(team['id'])
+
+    def reload_specific_checker(self, team_id):
+        if team_id in self.checkers:
+            self.checkers[team_id].shutdown()
+        team_checks = []
+        for check in self.db.get_all_attacker_checks_for_team(team_id):
+            if check['class_name'] in self.check_classes:
+                team_checks.append({
+                    'id': check['id'],
+                    'class': self.check_classes[check['class_name']]
+                })
+        self.checkers[team_id] = CheckerManager(team_id, self.active_checks + team_checks, self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
 
 class CheckerManager(object):
     def __init__(self, team_id, checks, db_host, db_port, db_name):
-        self.command_queue = Queue()
+        self.team_id = team_id
+        self.db_host, self.db_port, self.db_name = db_host, db_port, db_name
         self.process = CheckerProcess(team_id, checks, db_host, db_port, db_name)
+    def changed(self, checks):
+        self.shutdown()
+        self.process = CheckerProcess(self.team_id, checks, self.db_host, self.db_port, self.db_name)
         self.process.start()
-    def changed(self):
-        self.command_queue.put('quit')
-        self.process = CheckerProcess()
+    def shutdown(self):
+        self.process.shutdown_event.set()
+    def start(self):
         self.process.start()

@@ -2,8 +2,7 @@ In MongoDB, "Cheshire" Database:
     teams: [ # Index on id
         {
             "id": str,
-            "name": str,
-            "score": int
+            "name": str
         }
     ]
     team_configs: [ # Index on team_id, then machine_id
@@ -13,6 +12,13 @@ In MongoDB, "Cheshire" Database:
             "username": str,
             "password": str,
             "port": int
+        }
+    ]
+    team_scores: [
+        {
+            "team_id": str,
+            "score": str,
+            "timestamp": datetime # timestamp of last check used
         }
     ]
     completed_checks: [ # Index on id, then team_id, then timestamp

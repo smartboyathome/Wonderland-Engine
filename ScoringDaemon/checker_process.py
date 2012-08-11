@@ -17,20 +17,56 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
-from multiprocessing import Process
+from copy import deepcopy
+from datetime import datetime
+from multiprocessing import Process, Event
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
+from ScoringDaemon.check_types import InjectCheck, ServiceCheck
 
 class CheckerProcess(Process):
     def __init__(self, team_id, checks, db_host, db_port, db_name):
         self.team_id = team_id
-        self.checks = checks
-        self.db_host, self.db_port, self.db_name = db_host, db_port, db_name
-    def run(self, queue):
+        self.db_host = db_host
+        self.db_port = db_port
+        self.db_name = db_name
+        super(CheckerProcess, self).__init__()
+        self.shutdown_event = Event()
+        self.checks = []
+        for check_dict in checks:
+            check_obj = check_dict['class'](team_id, db_host, db_port, db_name)
+            if issubclass(check_dict['class'], InjectCheck):
+                self.checks.append({
+                    'id': check_dict['id'],
+                    'object': check_obj,
+                    'time_to_run': check_obj.time_to_run()
+                })
+            else:
+                self.checks.append({
+                    'id': check_id,
+                    'object': check_obj,
+                    'time_to_run': datetime.now()
+                })
+
+    def run(self):
         db = MongoDBWrapper(self.db_host, self.db_port, self.db_name)
         team = db.get_specific_team(self.team_id)
-
-        for command in queue:
-            if command == 'quit':
-                db.close()
-                return
+        while not self.shutdown_event.is_set():
+            for check_dict in self.checks:
+                check_obj = deepcopy(check_dict['object'])
+                now = datetime.now()
+                if check_dict['time_to_run'] < now:
+                    check_process = Process(target=check_obj.run_check)
+                    check_process.start()
+                    check_process.join(check_obj.timeout)
+                    if check_process.is_alive():
+                        checker_process.terminate()
+                    score = check_obj.score
+                    if issubclass(type(check_obj), InjectCheck):
+                        db.complete_inject_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        self.checks[:] = [obj for obj in self.checks if not obj == check_dict]
+                    elif issubclass(type(check_obj), ServiceCheck):
+                        pass
+                    else: # it is an attacker check
+                        pass
+                if self.shutdown_event.is_set():
+                    break

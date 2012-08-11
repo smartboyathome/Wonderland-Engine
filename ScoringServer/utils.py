@@ -28,14 +28,17 @@ def load_plugins(path):
     dir_list = os.listdir(path)
     mods = {}
     for fname in dir_list:
-        if os.path.isdir(os.path.join(path, fname)) and os.path.exists(os.path.join(path, fname, '__init__.py')):
-            f, filename, descr = imp.find_module(fname, [path])
-            mods[fname] = imp.load_module(fname, f, filename, descr)
-        elif os.path.isfile(os.path.join(path, fname)):
-            name, ext = os.path.splitext(fname)
-            if ext == '.py' and not name == '__init__':
-                f, filename, descr = imp.find_module(name, [path])
-                mods[name] = imp.load_module(name, f, filename, descr)
+        try:
+            if os.path.isdir(os.path.join(path, fname)) and os.path.exists(os.path.join(path, fname, '__init__.py')):
+                f, filename, descr = imp.find_module(fname, [path])
+                mods[fname] = imp.load_module(fname, f, filename, descr)
+            elif os.path.isfile(os.path.join(path, fname)):
+                name, ext = os.path.splitext(fname)
+                if ext == '.py' and not name == '__init__':
+                    f, filename, descr = imp.find_module(name, [path])
+                    mods[name] = imp.load_module(name, f, filename, descr)
+        except Exception:
+            continue
     return mods
 
 def dict_to_mongodb_list(data):
