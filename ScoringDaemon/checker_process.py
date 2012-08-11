@@ -17,18 +17,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
+from __future__ import division
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from multiprocessing import Process, Event
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringDaemon.check_types import InjectCheck, ServiceCheck
 
 class CheckerProcess(Process):
-    def __init__(self, team_id, checks, db_host, db_port, db_name):
+    def __init__(self, team_id, checks, db_host, db_port, db_name, check_delay):
         self.team_id = team_id
         self.db_host = db_host
         self.db_port = db_port
         self.db_name = db_name
+        self.check_delay = check_delay
         super(CheckerProcess, self).__init__()
         self.shutdown_event = Event()
         self.checks = []
@@ -65,8 +67,10 @@ class CheckerProcess(Process):
                         db.complete_inject_check(check_dict['id'], self.team_id, datetime.now(), score)
                         self.checks[:] = [obj for obj in self.checks if not obj == check_dict]
                     elif issubclass(type(check_obj), ServiceCheck):
-                        pass
+                        db.complete_service_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        check_dict['timestamp'] = datetime.now() + timedelta(seconds=self.check_delay)
                     else: # it is an attacker check
-                        pass
+                        db.complete_attacker_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        check_dict['timestamp'] = datetime.now() + timedelta(seconds=self.check_delay)
                 if self.shutdown_event.is_set():
                     break

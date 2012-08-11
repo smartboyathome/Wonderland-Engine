@@ -44,7 +44,9 @@ class Master(object):
 
         self._command_parser = (alpha_word + Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+')))[flatten]
         self.commands = {
-            'changed': self.changed
+            'changed': self.changed,
+            'start': self.start,
+            'stop': self.stop
         }
 
     def run(self):
@@ -63,6 +65,12 @@ class Master(object):
             pass
         elif subcommand == 'team_checks':
             pass
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
 
     def reload_check_classes(self):
         self.check_classes.clear()
@@ -108,16 +116,19 @@ class Master(object):
                     'id': check['id'],
                     'class': self.check_classes[check['class_name']]
                 })
-        self.checkers[team_id] = CheckerManager(team_id, self.active_checks + team_checks, self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
+        self.checkers[team_id] = CheckerManager(team_id, self.active_checks + team_checks,
+                                                self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'],
+                                                self.config['DATABASE']['DB_NAME'], self.config['DAEMON']['CHECK_DELAY'])
 
 class CheckerManager(object):
-    def __init__(self, team_id, checks, db_host, db_port, db_name):
+    def __init__(self, team_id, checks, db_host, db_port, db_name, check_delay):
         self.team_id = team_id
         self.db_host, self.db_port, self.db_name = db_host, db_port, db_name
-        self.process = CheckerProcess(team_id, checks, db_host, db_port, db_name)
+        self.check_delay = check_delay
+        self.process = CheckerProcess(team_id, checks, db_host, db_port, db_name, check_delay)
     def changed(self, checks):
         self.shutdown()
-        self.process = CheckerProcess(self.team_id, checks, self.db_host, self.db_port, self.db_name)
+        self.process = CheckerProcess(self.team_id, checks, self.db_host, self.db_port, self.db_name, self.check_delay)
         self.process.start()
     def shutdown(self):
         self.process.shutdown_event.set()
