@@ -21,9 +21,9 @@
 from multiprocessing import Queue
 from configobj import ConfigObj
 import os, redis, inspect
-from parcon import alpha_word, Regex, ZeroOrMore, flatten
+from parcon import alpha_word, Regex, ZeroOrMore, flatten, Optional
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
-from ScoringDaemon.check_types import Check, ServiceCheck, InjectCheck, AttackerCheck
+from ScoringDaemon.check_types import Check
 from ScoringDaemon.checker_process import CheckerProcess
 from ScoringServer.utils import load_plugins
 
@@ -42,21 +42,26 @@ class Master(object):
 
         self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
 
-        self._command_parser = (alpha_word + Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+')))[flatten]
+        self._command_parser = (alpha_word + Optional(Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+'))))[flatten]
         self.commands = {
             'changed': self.changed,
             'start': self.start,
-            'stop': self.stop
+            'stop': self.stop,
+            'shutdown': self.shutdown()
         }
 
     def run(self):
         self.pubsub.subscribe(self.channel)
-        for message in self.pubsub.listen():
-            print "server recieving message:", message['data']
-            command_list = self._command_parser.parse_string(message['data'])
-            command = command_list.pop(0).lower()
-            if command in self.commands:
-                self.commands[command](*command_list)
+        try:
+            for message in self.pubsub.listen():
+                print "server recieving message:", message['data']
+                command_list = self._command_parser.parse_string(message['data'])
+                command = command_list.pop(0).lower()
+                if command in self.commands:
+                    self.commands[command](*command_list)
+        except BaseException, e:
+            self.shutdown()
+            raise e
 
     def changed(self, subcommand, *args):
         if subcommand == 'all':
@@ -78,6 +83,9 @@ class Master(object):
     def stop(self):
         for team_id in self.checkers:
             self.checkers[team_id].shutdown()
+
+    def shutdown(self):
+        raise SystemExit
 
     def reload_check_classes(self):
         self.check_classes.clear()
