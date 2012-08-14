@@ -19,12 +19,15 @@
 '''
 
 from copy import deepcopy
+from configobj import ConfigObj
 import pymongo, unittest, os
 from ScoringServer import create_app
-from ScoringServer.utils import dict_to_mongodb_list
 
-create_app(os.path.join(os.getcwd(), 'tests', 'testing.cfg'))
+config_path = os.path.join(os.getcwd(), 'tests', 'testing.cfg')
+create_app(config_path)
 from ScoringServer import app
+
+from tests.db_data import db_data
 
 class FlaskTestCase(unittest.TestCase):
     def setUp(self):
@@ -34,25 +37,7 @@ class FlaskTestCase(unittest.TestCase):
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
             self.tearDown()
-        self.data = {
-            "teams": [
-                {
-                    "id": "1",
-                    "name": "University of Washington, Seattle",
-                    "score": 0
-                },
-                {
-                    "id": "2",
-                    "name": "Western Washington University",
-                    "score": 0
-                },
-                {
-                    "id": "6",
-                    "name": "University of Washington, Bothell",
-                    "score": 0
-                }
-            ]
-        }
+        self.data = db_data
         for key in self.data:
             mongodb_data = deepcopy(self.data[key])
             self.db[key].insert(mongodb_data)
@@ -64,3 +49,15 @@ class FlaskTestCase(unittest.TestCase):
         result_data = deepcopy([i for i in self.data['teams'] if i['id'] == team_id][0])
         del result_data['id']
         return result_data
+
+class DBTestCase(unittest.TestCase):
+    def setUp(self):
+        config = ConfigObj(config_path)['CORE']
+        db_name = config['DATABASE']['DB_NAME']
+        db_host = config['DATABASE']['HOST']
+        db_port = config['DATABASE']['PORT']
+        self.db = pymongo.Connection(db_host, db_port)[db_name]
+        self.data = db_data
+        for key in self.data:
+            mongodb_data = deepcopy(self.data[key])
+            self.db[key].insert(mongodb_data)

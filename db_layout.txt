@@ -17,7 +17,7 @@ In MongoDB, "Cheshire" Database:
     team_scores: [
         {
             "team_id": str,
-            "score": str,
+            "score": int,
             "timestamp": datetime # timestamp of last check used
         }
     ]

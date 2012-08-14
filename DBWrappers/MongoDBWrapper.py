@@ -112,8 +112,6 @@ class MongoDBWrapper(DBWrapper):
         return list(self._query_db('machines', {'id', machine_id}))
 
     def create_machine(self, machine_id, general_ip):
-        if not '{team}' in general_ip:
-            raise KeyError("You must have {team} in the general_ip.")
         if not len(self.get_specific_machine(machine_id)) == 0:
             raise Exists("A machine with id {} already exists.".format(machine_id))
         data = {
@@ -177,7 +175,9 @@ class MongoDBWrapper(DBWrapper):
             return list(self._query_db('users', {'id': username, 'password': password_hash}))
 
     def create_user(self, username, password_hash, email, role, **extra_info):
-        if role == 'team' and not isinstance(extra_info['team'], basestring):
+        if role not in ('administrator', 'organizer', 'attacker', 'team'):
+            raise TypeError('Role must be one of "administrator", "organizer", "attacker", or "team".')
+        if role == 'team' and not 'team' in extra_info and not isinstance(extra_info['team'], basestring):
             raise TypeError("team must be either a string or a unicode string")
         if not len(self.get_specific_user(username)) == 0:
             raise Exists("A user with username {} already exists.".format(username))
