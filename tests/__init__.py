@@ -36,7 +36,7 @@ class FlaskTestCase(unittest.TestCase):
         db_host = app.config['DATABASE']['HOST']
         db_port = app.config['DATABASE']['PORT']
         db_name = app.config['DATABASE']['DB_NAME']
-        self.db = pymongo.Connection(db_host, int(db_port))[db_name]
+        self.db = pymongo.Connection(db_host, int(db_port), safe=True)[db_name]
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
             self.tearDown()
@@ -59,7 +59,7 @@ class DBTestCase(unittest.TestCase):
         db_name = config['DATABASE']['DB_NAME']
         db_host = config['DATABASE']['HOST']
         db_port = config['DATABASE']['PORT']
-        self.db = pymongo.Connection(db_host, int(db_port))[db_name]
+        self.db = pymongo.Connection(db_host, int(db_port), safe=True)[db_name]
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
             self.tearDown()

@@ -27,14 +27,17 @@ from DBWrappers.Exceptions import MachineDoesNotExist, CheckClassDoesNotExist, D
 class MongoDBWrapper(DBWrapper):
 
     def __init__(self, host, port, db_name):
-        connection = pymongo.Connection(host, port)
+        connection = pymongo.Connection(host, port, safe=True)
         self.db = connection[db_name]
 
     def _modify_document(self, collection, query, exclude_fields=[], **data):
         excluded_fields = {}
         for field in exclude_fields:
             excluded_fields[field] = 0
-        orig_data = list(self.db[collection].find(query, excluded_fields))
+        if exclude_fields == []:
+            orig_data = list(self.db[collection].find(query))
+        else:
+            orig_data = list(self.db[collection].find(query, excluded_fields))
         if len(orig_data) == 0:
             raise DoesNotExist()
         new_data = deepcopy(orig_data[0])
@@ -54,7 +57,6 @@ class MongoDBWrapper(DBWrapper):
             excluded_fields[field] = 0
         for key in query:
             excluded_fields[key] = 0
-        time.sleep(0.5) # I think there's timing issues with pymongo... >:\
         return self.db[collection].find(query, excluded_fields)
 
     def close(self):
@@ -85,7 +87,7 @@ class MongoDBWrapper(DBWrapper):
         self.db.team_scores.insert(score_data)
 
     def modify_team(self, team_id, **data):
-        self._modify_document('teams', {'id': team_id}, exclude_fields=['config'], **data)
+        self._modify_document('teams', {'id': team_id}, **data)
 
     def delete_team(self, team_id):
         self.db.teams.remove({'id': team_id})
