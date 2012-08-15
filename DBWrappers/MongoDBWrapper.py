@@ -63,10 +63,10 @@ class MongoDBWrapper(DBWrapper):
         return time.mktime(datetime_obj.timetuple())
 
     def get_all_teams(self):
-        return list(self._query_db('teams', {}, exclude_fields=['config']))
+        return list(self._query_db('teams', {}))
 
     def get_specific_team(self, team_id):
-        return list(self._query_db('teams', {'id': team_id}, exclude_fields=['config']))
+        return list(self._query_db('teams', {'id': team_id}))
 
     def create_team(self, team_name, team_id):
         if not len(self.get_specific_team(team_id)) == 0:

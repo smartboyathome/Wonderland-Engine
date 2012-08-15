@@ -5,18 +5,15 @@ db_data = {
     'teams': [
         {
             'id': '1',
-            'name': 'University of Washington, Seattle',
-            'score': 0
+            'name': 'University of Washington, Seattle'
         },
         {
             'id': '2',
-            'name': 'Western Washington University',
-            'score': 0
+            'name': 'Western Washington University'
         },
         {
             'id': '6',
-            'name': 'University of Washington, Bothell',
-            'score': 0
+            'name': 'University of Washington, Bothell'
         }
     ],
     'machines': [

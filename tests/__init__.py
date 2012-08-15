@@ -21,6 +21,7 @@
 from copy import deepcopy
 from configobj import ConfigObj
 import pymongo, unittest, os
+from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringServer import create_app
 
 config_path = os.path.join(os.getcwd(), 'tests', 'testing.cfg')
@@ -32,12 +33,14 @@ from tests.db_data import db_data
 class FlaskTestCase(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
+        db_host = app.config['DATABASE']['HOST']
+        db_port = app.config['DATABASE']['PORT']
         db_name = app.config['DATABASE']['DB_NAME']
-        self.db = pymongo.Connection()[db_name]
+        self.db = pymongo.Connection(db_host, int(db_port))[db_name]
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
             self.tearDown()
-        self.data = db_data
+        self.data = deepcopy(db_data)
         for key in self.data:
             mongodb_data = deepcopy(self.data[key])
             self.db[key].insert(mongodb_data)
@@ -56,8 +59,12 @@ class DBTestCase(unittest.TestCase):
         db_name = config['DATABASE']['DB_NAME']
         db_host = config['DATABASE']['HOST']
         db_port = config['DATABASE']['PORT']
-        self.db = pymongo.Connection(db_host, db_port)[db_name]
-        self.data = db_data
+        self.db = pymongo.Connection(db_host, int(db_port))[db_name]
+        self.data = deepcopy(db_data)
         for key in self.data:
             mongodb_data = deepcopy(self.data[key])
             self.db[key].insert(mongodb_data)
+        self.db_wrapper = MongoDBWrapper(db_host, int(db_port), db_name)
+
+    def tearDown(self):
+        self.db.connection.drop_database(self.db.name)
