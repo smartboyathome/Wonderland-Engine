@@ -16,3 +16,10 @@ class TestMongoDBTeams(DBTestCase):
             'name': 'Whatcom Community College'
         }]
         assert wrapper_result == expected_result
+
+    def get_specific_team(self):
+        wrapper_result = self.db_wrapper.get_specific_team('6')
+        expected_result = [{
+            'name': 'University of Washington, Bothell'
+        }]
+        assert wrapper_result == expected_result
