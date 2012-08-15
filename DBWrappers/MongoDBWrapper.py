@@ -54,6 +54,7 @@ class MongoDBWrapper(DBWrapper):
             excluded_fields[field] = 0
         for key in query:
             excluded_fields[key] = 0
+        time.sleep(0.4) # I think there's timing issues with pymongo... >:\
         return self.db[collection].find(query, excluded_fields)
 
     def close(self):
