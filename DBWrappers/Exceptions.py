@@ -18,7 +18,7 @@
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-class BaseDBException(BaseException):
+class BaseDBException(Exception):
     pass
 
 class DoesNotExist(BaseDBException):
@@ -85,7 +85,8 @@ class CheckExists(BaseDBException):
         return "A check of type '{}' with id '{}' already exists.".format(self.check_type, self.check_id)
 
 class ArchivedSessionExists(BaseDBException):
-    def __init__(self, archive_id):
+    def __init__(self, archive_id, *args, **kwargs):
+        super(ArchivedSessionExists, self).__init__(*args, **kwargs)
         self.archive_id = archive_id
     def __str__(self):
         return "An archived session with id '{}' already exists.".format(self.archive_id)

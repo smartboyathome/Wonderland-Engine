@@ -208,7 +208,7 @@ class MongoDBWrapper(DBWrapper):
     def create_check_class(self, class_name, check_type, module_name):
         if check_type not in ('service', 'inject', 'manual', 'attacker'):
             raise KeyError, "check_type must be one of service, inject, manual, attacker, not {}".format(check_type)
-        if not len(self.get_specific_service_check(class_name)) == 0:
+        if not len(self.get_specific_check_class(class_name)) == 0:
             raise Exists("A check class with id {} already exists.".format(class_name))
         data = {
             'id': class_name,

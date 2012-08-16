@@ -20,9 +20,8 @@
 
 from flask import Response, url_for, redirect, g, request
 from . import blueprint
-from ScoringServer.utils import mongodb_list_to_dict, create_error_response, requires_parameters, requires_no_parameters, Parameters
+from ScoringServer.utils import create_error_response, requires_parameters, requires_no_parameters
 from bson import json_util
-from copy import deepcopy
 import json
 
 @blueprint.route("/", methods=['GET'])
@@ -42,7 +41,7 @@ def create_team():
     if len(g.db.get_specific_team(data['id'])) != 0:
         return create_error_response("TeamExists",  "A team with the id '{}' already exists".format(data['id']))
     g.db.create_team(data['name'], data['id'])
-    #todo create new process for team and save port number in db
+    g.redis.publish(g.daemon_channel, 'changed team {}'.format(data['id']))
     resp = redirect(url_for(".get_team", team_id=data['id']), code=201)
     return resp
 
@@ -64,6 +63,7 @@ def modify_team(team_id):
     if len(orig_data) == 0:
         return Response(status=404)
     g.db.modify_team(team_id, **data)
+    g.redis.publish(g.daemon_channel, 'changed team {}'.format(data['id']))
     resp = Response(status=204)
     return resp
 

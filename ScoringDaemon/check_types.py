@@ -45,12 +45,12 @@ class Check(object):
         '''
         return
 
-    @abc.abstractproperty
-    def check_type(self):
-        '''
-        The type of check as a string. These are mapped back to the DB.
-        '''
-        return
+    #@abc.abstractproperty
+    #def check_type(self):
+        #'''
+        #The type of check as a string. These are mapped back to the DB.
+        #'''
+        #return
 
     @abc.abstractmethod
     def run_check(self):
@@ -60,6 +60,7 @@ class Check(object):
         return
 
 class ServiceCheck(Check):
+    check_type = 'service'
     def __init__(self, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
@@ -69,11 +70,12 @@ class ServiceCheck(Check):
     def score(self):
         return self._score
 
-    @property
-    def check_type(self):
-        return 'service'
+    #@property
+    #def check_type(self):
+        #return 'service'
 
 class InjectCheck(Check):
+    check_type = 'inject'
     def __init__(self, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
@@ -83,9 +85,9 @@ class InjectCheck(Check):
     def score(self):
         return self._score
 
-    @property
-    def check_type(self):
-        return 'inject'
+    #@property
+    #def check_type(self):
+        #return 'inject'
 
     @abc.abstractproperty
     def time_to_run(self):
@@ -102,6 +104,7 @@ class InjectCheck(Check):
         return
 
 class AttackerCheck(Check):
+    check_type = 'attacker'
     def __init__(self, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
@@ -111,6 +114,6 @@ class AttackerCheck(Check):
     def score(self):
         return self._score
 
-    @property
-    def check_type(self):
-        return 'attacker'
+    #@property
+    #def check_type(self):
+        #return 'attacker'

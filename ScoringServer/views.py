@@ -35,6 +35,7 @@ def setup_database():
 def setup_memdb():
     config = app.config['REDIS']
     g.redis = redis.Redis(config['HOST'], int(config['PORT']), password=config['PASSWORD'])
+    g.daemon_channel = config['DAEMON_CHANNEL']
 
 @app.before_request
 def https_only():

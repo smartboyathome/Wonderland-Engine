@@ -21,7 +21,7 @@
 from multiprocessing import Queue
 from configobj import ConfigObj
 import os, redis, inspect
-from parcon import alpha_word, Regex, ZeroOrMore, flatten, Optional
+from parcon import alphanum_word, Regex, ZeroOrMore, flatten, Optional
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringDaemon.check_types import Check
 from ScoringDaemon.checker_process import CheckerProcess
@@ -41,26 +41,31 @@ class Master(object):
         self.active_checks = []
         self.reload_check_classes()
 
-        self._command_parser = (alpha_word + Optional(Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+'))))[flatten]
+        self._command_parser = (alphanum_word + Optional(Regex('[\w\d_]+') + ZeroOrMore(Regex('[\w\d_.,:]+'))))[flatten]
         self.commands = {
             'changed': self.changed,
             'start': self.start,
             'stop': self.stop,
-            'shutdown': self.shutdown()
+            'shutdown': self.shutdown
         }
 
     def run(self):
         self.pubsub.subscribe(self.channel)
         try:
             for message in self.pubsub.listen():
-                print "server recieving message:", message['data']
+                print "server recieving message '{}' of type '{}'".format(message['data'], type(message['data']).__name__)
+                if not issubclass(type(message['data']), basestring):
+                    message['data'] = str(message['data'])
                 command_list = self._command_parser.parse_string(message['data'])
                 command = command_list.pop(0).lower()
                 if command in self.commands:
+                    print "Running command '{}' with arguments '{}'".format(command, ', '.join(command_list))
                     self.commands[command](*command_list)
         except BaseException, e:
-            self.shutdown()
-            raise e
+            # This is to make sure that we clean up all shutdown processes before we error out.
+            for checker in self.checkers:
+                checker.shutdown()
+            raise
 
     def changed(self, subcommand, *args):
         if subcommand == 'all':
@@ -100,7 +105,7 @@ class Master(object):
                         self.db.create_check_script(check_name, check.__file__)
                 self.check_classes[check_class_name] = check_class
                 if len(self.db.get_specific_check_class(check_class_name)) == 0:
-                    self.db.create_check_class(check_class, check_class.check_type, check_name)
+                    self.db.create_check_class(check_class.__name__, check_class.check_type, check_name)
 
     def reload_active_checks(self):
         del self.active_checks[:]
