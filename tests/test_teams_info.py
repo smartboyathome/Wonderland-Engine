@@ -22,16 +22,6 @@ from . import FlaskTestCase
 from copy import deepcopy
 import json
 
-# todo: after creating tests for DBWrapper, see if these work
-# As of 8/14/12, the following 7 tests fail:
-# test_create_team_data_missing_param
-# test_delete_team_data
-# test_get_all_teams_data
-# test_get_specific_team_data
-# test_modify_team_data
-# test_modify_team_data_invalid_param
-# test_modify_team_data_no_param
-
 class TestTeamsInterface(FlaskTestCase):
     def test_get_all_teams_data(self):
         result = self.app.get('/teams/')

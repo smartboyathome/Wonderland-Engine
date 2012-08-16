@@ -23,11 +23,11 @@ db_data = {
         },
         {
             'id': 'Redis',
-            'general_ip': '127.0.0.1'
+            'general_ip': '127.0.0.2'
         },
         {
             'id': 'Apache',
-            'general_ip': '127.0.0.1'
+            'general_ip': '127.0.0.3'
         }
     ],
     'team_configs': [

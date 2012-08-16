@@ -31,16 +31,15 @@ class Master(object):
     def __init__(self, _config_file=os.path.join(os.getcwd(), 'settings.cfg')):
         configspec = ConfigObj(os.path.join(os.getcwd(), 'configspec.cfg'), list_values=False)
         self.config = ConfigObj(_config_file, configspec=configspec)['CORE']
+        self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], int(self.config['DATABASE']['PORT']), self.config['DATABASE']['DB_NAME'])
         self.checkers = {}
-        self.redis = redis.Redis(self.config['REDIS']['HOST'], self.config['REDIS']['PORT'], password=self.config['REDIS']['PASSWORD'])
+        self.redis = redis.Redis(self.config['REDIS']['HOST'], int(self.config['REDIS']['PORT']), password=self.config['REDIS']['PASSWORD'])
         self.pubsub = self.redis.pubsub()
-        self.channel = self.config['REDIS']['DB_CHANNEL']
+        self.channel = self.config['REDIS']['DAEMON_CHANNEL']
         self.check_scripts = {}
         self.check_classes = {}
         self.active_checks = []
         self.reload_check_classes()
-
-        self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'], self.config['DATABASE']['DB_NAME'])
 
         self._command_parser = (alpha_word + Optional(Regex('[\w_]+') + ZeroOrMore(Regex('[\w\d_.,:]+'))))[flatten]
         self.commands = {
