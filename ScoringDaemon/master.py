@@ -63,8 +63,8 @@ class Master(object):
                     self.commands[command](*command_list)
         except BaseException, e:
             # This is to make sure that we clean up all shutdown processes before we error out.
-            for checker in self.checkers:
-                checker.shutdown()
+            for key in self.checkers:
+                self.checkers[key].shutdown()
             raise
 
     def changed(self, subcommand, *args):

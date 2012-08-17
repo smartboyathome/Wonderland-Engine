@@ -72,7 +72,7 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def create_team_config_for_machine(self, team_id, machine_id, username, password, port):
+    def create_team_config_for_machine(self, team_id, machine_id, **data):
         raise NotImplementedError()
 
     @abc.abstractmethod

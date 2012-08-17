@@ -34,23 +34,44 @@ db_data = {
         {
             'team_id': '1',
             'machine_id': 'MongoDB',
-            'username': '',
-            'password': '',
+            'username': 'team1',
+            'password': 'team1mongo',
             'port': '27017'
         },
         {
             'team_id': '1',
             'machine_id': 'Redis',
-            'username': '',
-            'password': '',
-            'port': '6379'
+            'username': 'team1',
+            'password': 'team1redis',
+            'port': 6379
         },
         {
             'team_id': '1',
+            'machine_id': 'Apache',
+            'username': 'team1',
+            'password': 'team1apache',
+            'port': 80
+        },
+        {
+            'team_id': '2',
             'machine_id': 'MongoDB',
-            'username': '',
-            'password': '',
-            'port': '80'
+            'username': 'team2',
+            'password': 'team2mongo',
+            'port': 27017
+        },
+        {
+            'team_id': '2',
+            'machine_id': 'Redis',
+            'username': 'team2',
+            'password': 'team2redis',
+            'port': 6379
+        },
+        {
+            'team_id': '2',
+            'machine_id': 'Apache',
+            'username': 'team2',
+            'password': 'team2apache',
+            'port': 80
         }
     ],
     'team_scores': [

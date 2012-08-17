@@ -145,9 +145,8 @@ class MongoDBWrapper(DBWrapper):
             raise MachineDoesNotExist(machine_id)
         return list(self._query_db('team_configs',{'team_id': team_id, 'machine_id': machine_id}))
 
-    def create_team_config_for_machine(self, team_id, machine_id, username, password, port):
-        old_team_info = self.db.users.find({'id': team_id})
-        if len(old_team_info) == 0:
+    def create_team_config_for_machine(self, team_id, machine_id, **machine_data):
+        if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
         if len(self.get_specific_machine(machine_id)) == 0:
             raise MachineDoesNotExist(machine_id)
@@ -155,11 +154,9 @@ class MongoDBWrapper(DBWrapper):
             raise Exists("A config for team {}'s '{}' machine already exists.".format(team_id, machine_id))
         data = {
             'team_id': team_id,
-            'machine_id': machine_id,
-            'username': username,
-            'password': password,
-            'port': port
+            'machine_id': machine_id
         }
+        data.update(machine_data)
         self.db.team_configs.insert(data)
 
     def modify_team_config_for_machine(self, team_id, machine_id, **data):

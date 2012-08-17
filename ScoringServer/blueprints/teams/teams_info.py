@@ -63,7 +63,7 @@ def modify_team(team_id):
     if len(orig_data) == 0:
         return Response(status=404)
     g.db.modify_team(team_id, **data)
-    g.redis.publish(g.daemon_channel, 'changed team {}'.format(data['id']))
+    g.redis.publish(g.daemon_channel, 'changed team {}'.format(team_id))
     resp = Response(status=204)
     return resp
 
