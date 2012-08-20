@@ -65,13 +65,6 @@ db_data = {
             'username': 'team2',
             'password': 'team2redis',
             'port': 6379
-        },
-        {
-            'team_id': '2',
-            'machine_id': 'Apache',
-            'username': 'team2',
-            'password': 'team2apache',
-            'port': 80
         }
     ],
     'team_scores': [

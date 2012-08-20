@@ -90,15 +90,21 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('teams', {'id': team_id}, **data)
 
     def delete_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise DoesNotExist
         self.db.teams.remove({'id': team_id})
 
     def get_scores_for_all_teams(self):
         return list(self._query_db('team_scores', {}))
 
     def get_score_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise DoesNotExist
         return list(self._query_db('team_scores', {'id':team_id}))
 
     def calculate_scores_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise DoesNotExist
         old_score = self.db.team_scores.find({'team_id': team_id})
         new_score = deepcopy(old_score)
         completed_checks = self.get_all_completed_checks_for_team_since(team_id, new_score['timestamp'])
@@ -127,6 +133,8 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('machines', {'id': machine_id}, **data)
 
     def delete_machine(self, machine_id):
+        if len(self.get_specific_machine(machine_id)) == 0:
+            raise DoesNotExist
         self.db.machines.remove({'id': machine_id})
 
     def get_all_team_configs_for_all_machines(self):
@@ -160,9 +168,15 @@ class MongoDBWrapper(DBWrapper):
         self.db.team_configs.insert(data)
 
     def modify_team_config_for_machine(self, team_id, machine_id, **data):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist(team_id)
+        if len(self.get_specific_machine(machine_id)) == 0:
+            raise MachineDoesNotExist(machine_id)
         return self._modify_document('team_configs', {'team_id': team_id, 'machine_id': machine_id}, **data)
 
     def delete_team_config_for_machine(self, team_id, machine_id):
+        if len(self.get_team_config_for_machine(team_id, machine_id)) == 0:
+            raise DoesNotExist
         self.db.team_configs.remove('team_configs', {'team_id': team_id, 'machine_id': machine_id})
 
     def get_all_users(self):
@@ -194,6 +208,8 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('users', {'id': username}, **data)
 
     def delete_user(self, username):
+        if len(self.get_specific_user(username)) == 0:
+            raise DoesNotExist
         self.db.users.remove({'id': username})
 
     def get_all_check_classes(self):
@@ -218,6 +234,8 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('check_classes', {'id': class_name}, **data)
 
     def delete_check_class(self, class_name):
+        if len(self.get_specific_check_class(class_name)) == 0:
+            raise DoesNotExist
         self.db.check_classes.remove({'id': class_name})
 
     def get_all_check_scripts(self):
@@ -239,6 +257,8 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('check_scripts', {'id': module_name}, **data)
 
     def delete_check_script(self, module_name):
+        if len(self.get_specific_check_script(module_name)) == 0:
+            raise DoesNotExist
         self.db.check_scripts.remove({'id': module_name})
 
     def get_all_checks(self):
@@ -248,6 +268,8 @@ class MongoDBWrapper(DBWrapper):
         return list(self._query_db('active_checks', {'id': check_id, 'type': check_type}))
 
     def delete_specific_check(self, check_id, check_type):
+        if len(self.get_specific_check(check_id, check_type)) == 0:
+            raise DoesNotExist
         self.db.active_checks.remove({'id': check_id, 'type': check_type})
 
     def get_all_service_checks(self):
@@ -293,6 +315,8 @@ class MongoDBWrapper(DBWrapper):
         self.db.completed_checks.insert(data)
 
     def delete_service_check(self, check_id):
+        if len(self.get_specific_service_check(check_id)) == 0:
+            raise DoesNotExist
         self.db.active_checks.remove({'id': check_id})
 
     def get_all_attacker_checks(self):
@@ -309,7 +333,7 @@ class MongoDBWrapper(DBWrapper):
             raise MachineDoesNotExist(machine)
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
-        if not len(self.get_specific_attacker_check(check_id)) == 0:
+        if not len(self.get_specific_attacker_check(check_id, team_id)) == 0:
             raise Exists("A check with id {} already exists.".format(check_id))
         _class = self.get_specific_check_class(check_class)
         if len(_class) == 0 or not _class[0]['check_type'] == 'attacker':
@@ -331,7 +355,7 @@ class MongoDBWrapper(DBWrapper):
     def complete_attacker_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
-        attacker_check = self.get_specific_attacker_check(check_id)
+        attacker_check = self.get_specific_attacker_check(check_id, team_id)
         if len(attacker_check) == 0:
             raise CheckDoesNotExist(check_id, 'attacker')
         data = {
@@ -346,6 +370,8 @@ class MongoDBWrapper(DBWrapper):
         self.db.completed_checks.insert(data)
 
     def delete_attacker_check(self, check_id, team_id):
+        if len(self.get_specific_attacker_check(check_id, team_id)) == 0:
+            raise DoesNotExist
         self.db.active_checks.remove({'id': check_id, 'team_id': team_id})
 
     def get_all_inject_checks(self):
@@ -379,15 +405,15 @@ class MongoDBWrapper(DBWrapper):
     def complete_inject_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
-        attacker_check = self.get_specific_attacker_check(check_id)
-        if len(attacker_check) == 0:
+        inject_check = self.get_specific_inject_check(check_id)
+        if len(inject_check) == 0:
             raise CheckDoesNotExist(check_id, 'inject')
         data = {
             "id": check_id,
-            "description": attacker_check[0]['description'],
-            "type": attacker_check[0]['type'],
-            "inject_number": attacker_check[0]['inject_number'],
-            "time_to_check": attacker_check[0]['time_to_check'],
+            "description": inject_check[0]['description'],
+            "type": inject_check[0]['type'],
+            "inject_number": inject_check[0]['inject_number'],
+            "time_to_check": inject_check[0]['time_to_check'],
             "timestamp": timestamp,
             "team_id": team_id,
             "score": score
@@ -395,6 +421,8 @@ class MongoDBWrapper(DBWrapper):
         self.db.completed_checks.insert(data)
 
     def delete_inject_check(self, check_id):
+        if len(self.get_specific_inject_check(check_id)) == 0:
+            raise DoesNotExist
         self.db.active_checks.remove({'id': check_id})
 
     def get_all_manual_checks(self):
@@ -406,9 +434,6 @@ class MongoDBWrapper(DBWrapper):
     def create_manual_check(self, check_id, description, comments, inject_number, team_id, points_awarded):
         if not len(self.get_specific_manual_check(check_id, team_id)) == 0:
             raise Exists("A check with id {} already exists.".format(check_id))
-        _class = self.get_specific_check_class(check_class)
-        if len(_class) == 0 or not _class[0]['check_type'] == 'attacker':
-            raise CheckClassDoesNotExist(check_class, 'attacker')
         data = {
             "id": check_id,
             "description": description,
@@ -424,6 +449,8 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('completed_checks', {'id': check_id, 'team_id': team_id, 'type': 'inject'}, **data)
 
     def delete_manual_check(self, check_id, team_id):
+        if len(self.get_specific_manual_check(check_id, team_id)) == 0:
+            raise DoesNotExist
         self.db.active_checks.remove({'id': check_id, 'team_id': team_id})
 
     def get_all_completed_checks(self):
@@ -445,36 +472,58 @@ class MongoDBWrapper(DBWrapper):
         return list(self._query_db('completed_checks', {'team_id': team_id}))
 
     def get_all_completed_service_checks_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'service'}))
 
     def get_all_completed_attacker_checks_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'attacker'}))
 
     def get_all_completed_inject_checks_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'inject'}))
 
     def get_all_completed_manual_checks_for_team(self, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'manual'}))
 
     def get_all_completed_checks_for_team_since(self, team_id, timestamp):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, '$gt': {'timestamp': timestamp}}))
 
     def get_specific_completed_service_check_for_team(self, check_id, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'service', 'id': check_id}))
 
     def get_specific_completed_attacker_check_for_team(self, check_id, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'attacker', 'id': check_id}))
 
     def get_specific_completed_inject_check_for_team(self, check_id, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'inject', 'id': check_id}))
 
     def get_specific_completed_manual_check_for_team(self, check_id, team_id):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'manual', 'id': check_id}))
 
     def get_specific_completed_service_check_for_team_at_time(self, check_id, team_id, timestamp):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'service', 'id': check_id, 'timestamp': timestamp}))
 
     def get_specific_completed_attacker_check_for_team_at_time(self, check_id, team_id, timestamp):
+        if len(self.get_specific_team(team_id)) == 0:
+            raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'attacker', 'id': check_id, 'timestamp': timestamp}))
 
     def get_current_scoring_session(self):

@@ -40,7 +40,7 @@ class TestMongoDBMachines(DBTestCase):
         }]
         assert wrapper_result == expected_result
 
-    def test_modify_machine_nonexistant_machine(self):
+    def test_modify_machine_nonexistant(self):
         with self.assertRaises(DoesNotExist):
             self.db_wrapper.modify_machine('999', name='Failure')
 
@@ -49,3 +49,7 @@ class TestMongoDBMachines(DBTestCase):
         wrapper_result = list(self.db.machines.find({'id': 'Redis'}, {'_id': 0, 'id': 0}))
         expected_result = []
         assert wrapper_result == expected_result
+
+    def test_delete_machine_nonexistant(self):
+        with self.assertRaises(DoesNotExist):
+            self.db_wrapper.delete_machine('Failure')

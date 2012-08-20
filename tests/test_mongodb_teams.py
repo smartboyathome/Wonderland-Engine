@@ -49,3 +49,7 @@ class TestMongoDBTeams(DBTestCase):
         wrapper_result = list(self.db.teams.find({'id': '1'}, {'_id': 0, 'id': 0}))
         expected_result = []
         assert wrapper_result == expected_result
+
+    def test_delete_team_nonexistant(self):
+        with self.assertRaises(DoesNotExist):
+            self.db_wrapper.delete_team('999')
