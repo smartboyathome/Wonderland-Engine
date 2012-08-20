@@ -19,10 +19,9 @@
 '''
 
 from . import FlaskTestCase
-from copy import deepcopy
 import json
 
-class TestTeamsInterface(FlaskTestCase):
+class TestRestTeamsInterface(FlaskTestCase):
     def test_get_all_teams_data(self):
         result = self.app.get('/teams/')
         assert result.status_code == 200

@@ -1,5 +1,6 @@
 parcon
 Flask-Login
+Flask-Principal
 redis
 itsdangerous
 configobj==4.7.2
@@ -10,3 +11,4 @@ Werkzeug==0.8.3
 argparse==1.2.1
 pymongo==2.2.1
 wsgiref==0.1.2
+py-brcypt
