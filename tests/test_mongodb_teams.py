@@ -1,3 +1,4 @@
+from copy import deepcopy
 from DBWrappers.Exceptions import DoesNotExist, Exists
 from tests import DBTestCase
 
@@ -10,9 +11,9 @@ class TestMongoDBTeams(DBTestCase):
 
     def test_get_specific_team(self):
         wrapper_result = self.db_wrapper.get_specific_team('6')
-        expected_result = [{
-            'name': 'University of Washington, Bothell'
-        }]
+        expected_result = [deepcopy(team) for team in self.data['teams'] if team['id'] == '6']
+        for team in expected_result:
+            del team['id']
         assert wrapper_result == expected_result
 
     def test_get_specific_team_nonexistant_team(self):

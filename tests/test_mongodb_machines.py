@@ -1,3 +1,4 @@
+from copy import deepcopy
 from DBWrappers.Exceptions import Exists, DoesNotExist
 from tests import DBTestCase
 
@@ -10,9 +11,9 @@ class TestMongoDBMachines(DBTestCase):
 
     def test_get_specific_machine(self):
         wrapper_result = self.db_wrapper.get_specific_machine('MongoDB')
-        expected_result = [{
-            'general_ip': '127.0.0.1'
-        }]
+        expected_result = [deepcopy(machine) for machine in self.data['machines'] if machine['id'] == 'MongoDB']
+        for machine in expected_result:
+            del machine['id']
         assert wrapper_result == expected_result
 
     def test_get_specific_machine_nonexistant_machine(self):
