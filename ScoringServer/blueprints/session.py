@@ -23,7 +23,7 @@ from flask.ext.login import login_required, login_user, logout_user
 from flask.globals import request
 from flask_login import UserMixin, current_user
 from ScoringServer import login_manager, app
-from ScoringServer.utils import requires_parameters, requires_no_parameters, create_error_response
+from ScoringServer.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles
 
 blueprint = Blueprint(__name__, 'session')
 url_prefix = '/session'
@@ -40,6 +40,40 @@ def get_current_session_info():
     user['username'] = current_user.get_id()
     js = json.dumps(user)
     return Response(js, status=200, mimetype='application/json')
+
+'''
+    These next four functions are used to test your permission group. If they
+    return a 401 status code, then you are not allowed to access them. If they
+    return a 204 status code, then you are authorized to access them.
+'''
+
+@blueprint.route('/admin', methods=['GET'])
+@login_required
+@requires_roles('administrator')
+@requires_no_parameters
+def admin_test():
+    return Response(status=204)
+
+@blueprint.route('/organizer', methods=['GET'])
+@login_required
+@requires_roles('organizer')
+@requires_no_parameters
+def organizer_test():
+    return Response(status=204)
+
+@blueprint.route('/team', methods=['GET'])
+@login_required
+@requires_roles('team')
+@requires_no_parameters
+def team_test():
+    return Response(status=204)
+
+@blueprint.route('/attacker', methods=['GET'])
+@login_required
+@requires_roles('attacker')
+@requires_no_parameters
+def admin_test():
+    return Response(status=204)
 
 @blueprint.route("/", methods=['POST'])
 @requires_parameters(required=['username', 'password'])

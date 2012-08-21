@@ -60,9 +60,13 @@ def db_exception_handler(error):
 
 @app.errorhandler(BaseException)
 def general_exception_handler(error):
-    error_dict = {
+    '''error_dict = {
         'type': 'ServerError',
         'reason': 'The server encountered a problem. Please try again later.'
+    }'''
+    error_dict = {
+        'type': type(error).__name__,
+        'reason': error.message
     }
     return json.dumps(error_dict), 500
 

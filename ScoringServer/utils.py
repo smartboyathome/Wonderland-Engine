@@ -19,10 +19,11 @@
 '''
 
 from collections import defaultdict
-from copy import deepcopy
 from functools import wraps
 import json, imp, os
 from flask import Response, request
+from flask.globals import g
+from flask_login import current_user
 
 def load_plugins(path):
     dir_list = os.listdir(path)
@@ -41,43 +42,15 @@ def load_plugins(path):
             continue
     return mods
 
-def dict_to_mongodb_list(data):
-    if is_compound_dict(data):
-        data_list = []
-        for key in data:
-            new_data = deepcopy(data[key])
-            new_data['id'] = key
-            data_list.append(new_data)
-        return data_list
-
-
-def is_compound_dict(data):
-    if type(data) is not dict:
-        return False
-    for key in data:
-        if type(data[key]) is not dict:
-            return False
-    return True
-
-def mongodb_list_to_dict(data):
-    if is_mongodb_list(data):
-        data_dict = {}
-        for item in data:
-            new_data = deepcopy(item)
-            key = new_data['id']
-            del new_data['id']
-            if '_id' in new_data:
-                del new_data['_id']
-            data_dict[key] = new_data
-        return data_dict
-
-def is_mongodb_list(data):
-    if type(data) is not list:
-        return False
-    for item in data:
-        if type(item) is not dict and 'id' not in item:
-            return False
-    return True
+def requires_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if g.db.get_specific_user(current_user.get_id())[0]['role'] not in roles:
+                return create_error_response('InsufficientPrivileges', 'You have insufficient privileges to access this interface.', 401)
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 def create_error_response(error_type, reason, status_code=403):
     error = {
