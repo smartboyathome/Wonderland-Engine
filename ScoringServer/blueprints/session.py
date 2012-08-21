@@ -47,32 +47,32 @@ def get_current_session_info():
     return a 204 status code, then you are authorized to access them.
 '''
 
-@blueprint.route('/admin', methods=['GET'])
+@blueprint.route('/test_admin_access', methods=['GET'])
 @login_required
 @requires_roles('administrator')
 @requires_no_parameters
 def admin_test():
     return Response(status=204)
 
-@blueprint.route('/organizer', methods=['GET'])
+@blueprint.route('/test_organizer_access', methods=['GET'])
 @login_required
 @requires_roles('organizer')
 @requires_no_parameters
 def organizer_test():
     return Response(status=204)
 
-@blueprint.route('/team', methods=['GET'])
+@blueprint.route('/test_team_access', methods=['GET'])
 @login_required
 @requires_roles('team')
 @requires_no_parameters
 def team_test():
     return Response(status=204)
 
-@blueprint.route('/attacker', methods=['GET'])
+@blueprint.route('/test_attacker_access', methods=['GET'])
 @login_required
 @requires_roles('attacker')
 @requires_no_parameters
-def admin_test():
+def attacker_test():
     return Response(status=204)
 
 @blueprint.route("/", methods=['POST'])

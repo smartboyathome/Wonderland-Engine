@@ -47,7 +47,7 @@ def requires_roles(*roles):
         @wraps(f)
         def wrapped(*args, **kwargs):
             if g.db.get_specific_user(current_user.get_id())[0]['role'] not in roles:
-                return create_error_response('InsufficientPrivileges', 'You have insufficient privileges to access this interface.', 401)
+                return create_error_response('InsufficientPrivileges', 'You have insufficient privileges to access this interface.', 403)
             return f(*args, **kwargs)
         return wrapped
     return wrapper

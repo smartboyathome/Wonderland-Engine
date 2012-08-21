@@ -1,4 +1,5 @@
 from copy import deepcopy
+from hashlib import md5
 from datetime import timedelta, datetime
 
 db_data = {
@@ -144,22 +145,28 @@ db_data = {
     'users': [
         {
             'id': 'team1',
-            'password': 'fcedb941d9d973d5a1467219ad1cc22e', # md5 hash of 'uw seattle'
+            'password': md5('uw seattle').hexdigest(),
             'email': 'team1@example.com',
             'role': 'team',
             'team': '1'
         },
         {
             'id': 'admin',
-            'password': '21232f297a57a5a743894a0e4a801fc3', # md5 hash of 'admin'
+            'password': md5('admin').hexdigest(),
             'email': 'admin@example.com',
             'role':'administrator'
         },
         {
             'id': 'white_team',
-            'password': '5af4153972fca941b7769aa9ba9b41ee', # md5 hash of 'white_team'
+            'password': md5('white_team').hexdigest(),
             'email': 'white_team@example.com',
             'role': 'organizer'
+        },
+        {
+            'id': 'evil_red_team',
+            'password': md5('evil_red_team').hexdigest(),
+            'email': 'evil_red_team@example.com',
+            'role': 'attacker'
         }
     ],
     'session': [

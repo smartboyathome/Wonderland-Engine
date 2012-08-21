@@ -30,10 +30,57 @@ class TestRestSessions(FlaskTestCase):
         assert result.headers['Location'] == 'http://localhost/session/'
 
     def test_admin_role_not_logged_in(self):
-        result = self.app.get('/session/admin_test')
+        result = self.app.get('/session/test_admin_access')
         assert result.status_code == 401
 
     def test_admin_role_logged_in(self):
         self.login_user('admin', 'admin')
-        result = self.app.get('/session/admin_test')
+        result = self.app.get('/session/test_admin_access')
         assert result.status_code == 204
+
+    def test_admin_role_insufficient_privileges(self):
+        self.login_user('evil_red_team', 'evil_red_team')
+        result = self.app.get('/session/test_admin_access')
+        assert result.status_code == 403
+
+    def test_organizer_role_not_logged_in(self):
+        result = self.app.get('/session/test_organizer_access')
+        assert result.status_code == 401
+
+    def test_organizer_role_logged_in(self):
+        self.login_user('white_team', 'white_team')
+        result = self.app.get('/session/test_organizer_access')
+        assert result.status_code == 204
+
+    def test_organizer_role_insufficient_privileges(self):
+        self.login_user('evil_red_team', 'evil_red_team')
+        result = self.app.get('/session/test_organizer_access')
+        assert result.status_code == 403
+
+    def test_attacker_role_not_logged_in(self):
+        result = self.app.get('/session/test_attacker_access')
+        assert result.status_code == 401
+
+    def test_attacker_role_logged_in(self):
+        self.login_user('evil_red_team', 'evil_red_team')
+        result = self.app.get('/session/test_attacker_access')
+        assert result.status_code == 204
+
+    def test_attacker_role_insufficient_privileges(self):
+        self.login_user('team1', 'uw seattle')
+        result = self.app.get('/session/test_attacker_access')
+        assert result.status_code == 403
+
+    def test_team_role_not_logged_in(self):
+        result = self.app.get('/session/test_team_access')
+        assert result.status_code == 401
+
+    def test_team_role_logged_in(self):
+        self.login_user('team1', 'uw seattle')
+        result = self.app.get('/session/test_team_access')
+        assert result.status_code == 204
+
+    def test_team_role_insufficient_privileges(self):
+        self.login_user('evil_red_team', 'evil_red_team')
+        result = self.app.get('/session/test_team_access')
+        assert result.status_code == 403

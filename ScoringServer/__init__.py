@@ -55,6 +55,7 @@ def create_app(_config_file=os.path.join(os.getcwd(), 'settings.cfg')):
     # we'll do so here.
     global login_manager
     login_manager = LoginManager()
+    login_manager.init_app(app)
 
     # Initialize ScoringServer
     # Import the views, to apply the decorators which use the global app object.
