@@ -30,9 +30,7 @@ import json
 @requires_roles('administrator', 'organizer')
 @requires_no_parameters
 def get_all_teams():
-    #data = list(g.db.teams.find())
     data = g.db.get_all_teams()
-    #new_data = mongodb_list_to_dict(data)
     js = json.dumps(data, default=json_util.default)
     resp = Response(js, status=200, mimetype='application/json')
     return resp

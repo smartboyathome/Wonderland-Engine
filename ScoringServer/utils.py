@@ -66,13 +66,13 @@ def create_no_params_error_response():
 def create_params_unnecessary_error_response():
     return create_error_response("IllegalParameter", "Parameters are not allowed for this interface.")
 
-def requires_parameters(required=[], optional=[]):
+def requires_parameters(required=[], optional=[], misc_allowed=False):
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
             if request.data == '':
                 return create_no_params_error_response()
-            params = Parameters(required=required, optional=optional)
+            params = Parameters(required=required, optional=optional, misc_allowed=misc_allowed)
             data = json.loads(request.data)
             if not params.check(data):
                 return params.create_error_response()
@@ -89,11 +89,12 @@ def requires_no_parameters(f):
     return wrapped
 
 class Parameters(object):
-    def __init__(self, required=[], optional=[]):
+    def __init__(self, required=[], optional=[], misc_allowed=False):
         self.required = required
         self.optional = optional
         self.illegal = []
         self.unspecified = []
+        self.misc_allowed = misc_allowed
     def check(self, param_dict):
         if not isinstance(param_dict, (dict, list)):
             return False
@@ -101,7 +102,7 @@ class Parameters(object):
         for param in param_dict:
             if param in self.required:
                 required_met[param] = True
-            elif param not in self.optional:
+            elif param not in self.optional and not self.misc_allowed:
                 self.illegal.append(param)
         for param in self.required:
             if not required_met[param]:
