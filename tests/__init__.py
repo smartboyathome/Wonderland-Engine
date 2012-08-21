@@ -19,6 +19,7 @@
 '''
 
 from copy import deepcopy
+import json
 from configobj import ConfigObj
 import pymongo, unittest, os
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
@@ -52,6 +53,16 @@ class FlaskTestCase(unittest.TestCase):
         result_data = deepcopy([i for i in self.data['teams'] if i['id'] == team_id][0])
         del result_data['id']
         return result_data
+
+    def login_user(self, username, password):
+        query_data = {
+            'username': username,
+            'password': password
+        }
+        return self.app.post('/session/', data=json.dumps(query_data))
+
+    def logout_user(self):
+        self.app.delete('/session/')
 
 class DBTestCase(unittest.TestCase):
     def setUp(self):

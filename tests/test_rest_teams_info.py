@@ -23,11 +23,13 @@ import json
 
 class TestRestTeamsInterface(FlaskTestCase):
     def test_get_all_teams_data(self):
+        self.login_user('admin', 'admin')
         result = self.app.get('/teams/')
         assert result.status_code == 200
         assert json.loads(result.data) == self.data['teams']
 
     def test_get_all_teams_data_with_params(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
         }
@@ -40,12 +42,14 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_get_specific_team_data(self):
+        self.login_user('admin', 'admin')
         result = self.app.get('/teams/6')
         result_data = self.get_team_data('6')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
     def test_get_specific_team_data_with_params(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
         }
@@ -58,6 +62,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_create_team_data(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "name": "University of Washington, Tacoma",
             "id": "7"
@@ -73,6 +78,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_create_team_data_invalid_param(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "name": "University of Washington, Tacoma",
             "id": "7",
@@ -89,6 +95,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert result.status_code == 404
 
     def test_create_team_data_missing_param(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "name": "University of Washington, Tacoma"
         }
@@ -105,6 +112,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_create_team_data_no_data(self):
+        self.login_user('admin', 'admin')
         post_data = {
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
@@ -114,6 +122,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(post.data) == post_data
 
     def test_modify_team_data(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "name": "WWU"
         }
@@ -127,6 +136,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_modify_team_data_invalid_param(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "name": "WWU",
             "id": "7"
@@ -144,6 +154,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_modify_team_data_no_param(self):
+        self.login_user('admin', 'admin')
         query_data = {}
         result_data = self.get_team_data('2')
         patch = self.app.patch('/teams/2', data=json.dumps(query_data))
@@ -153,6 +164,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(result.data) == result_data
 
     def test_modify_team_data_no_data(self):
+        self.login_user('admin', 'admin')
         patch_data = {
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
@@ -162,12 +174,14 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert json.loads(patch.data) == patch_data
 
     def test_delete_team_data(self):
+        self.login_user('admin', 'admin')
         delete = self.app.delete('/teams/1')
         assert delete.status_code == 204
         result = self.app.get('/teams/1')
         assert result.status_code == 404
 
     def test_delete_team_data_with_params(self):
+        self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
         }

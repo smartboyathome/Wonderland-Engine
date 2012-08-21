@@ -20,11 +20,14 @@
 
 from flask import Response, url_for, redirect, g, request
 from . import blueprint
-from ScoringServer.utils import create_error_response, requires_parameters, requires_no_parameters
+from flask.ext.login import login_required
+from ScoringServer.utils import create_error_response, requires_parameters, requires_no_parameters, requires_roles
 from bson import json_util
 import json
 
 @blueprint.route("/", methods=['GET'])
+@login_required
+@requires_roles('administrator', 'organizer')
 @requires_no_parameters
 def get_all_teams():
     #data = list(g.db.teams.find())
@@ -35,6 +38,8 @@ def get_all_teams():
     return resp
 
 @blueprint.route("/", methods=['POST'])
+@login_required
+@requires_roles('administrator')
 @requires_parameters(required=['name', 'id'])
 def create_team():
     data = json.loads(request.data)
@@ -46,6 +51,8 @@ def create_team():
     return resp
 
 @blueprint.route("/<team_id>", methods=['GET'])
+@login_required
+@requires_roles('administrator', 'organizer')
 @requires_no_parameters
 def get_team(team_id):
     data = g.db.get_specific_team(team_id)
@@ -56,6 +63,8 @@ def get_team(team_id):
     return resp
 
 @blueprint.route("/<team_id>", methods=['PATCH'])
+@login_required
+@requires_roles('administrator')
 @requires_parameters(optional=['name'])
 def modify_team(team_id):
     data = json.loads(request.data)
@@ -68,6 +77,8 @@ def modify_team(team_id):
     return resp
 
 @blueprint.route("/<team_id>", methods=['DELETE'])
+@login_required
+@requires_roles('administrator')
 @requires_no_parameters
 def delete_team(team_id):
     data = list(g.db.get_specific_team(team_id))

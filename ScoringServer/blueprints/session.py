@@ -28,9 +28,20 @@ from ScoringServer.utils import requires_parameters, requires_no_parameters, cre
 blueprint = Blueprint(__name__, 'session')
 url_prefix = '/session'
 
+def hash_password(password):
+    if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
+        return bcrypt.hashpw(password, bcrypt.gensalt(14))
+    elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
+        return hashlib.md5(password).hexdigest()
+    return password
+
 @login_manager.user_loader
 def load_user(username):
     return User(username)
+
+@login_manager.unauthorized_handler
+def unauthenticated_request():
+    return create_error_response('NotLoggedIn', 'You must log in to access this resource.', status_code=401)
 
 @blueprint.route("/", methods=['GET'])
 @login_required
@@ -41,10 +52,38 @@ def get_current_session_info():
     js = json.dumps(user)
     return Response(js, status=200, mimetype='application/json')
 
+@blueprint.route("/", methods=['PATCH'])
+@login_required
+@requires_parameters(optional=['password', 'email', 'role', 'team'])
+def modify_current_user():
+    user = current_user.get_id()
+    data = json.loads(request.data)
+    data['password'] = hash_password(data['password'])
+    g.db.modify_user(user, **data)
+    return Response(status=204)
+
+@blueprint.route("/", methods=['POST'])
+@requires_parameters(required=['username', 'password'])
+def create_new_session():
+    data = json.loads(request.data)
+    data['password'] = hash_password(data['password'])
+    if g.db.get_specific_user(data['username'], data['password']) == []:
+        return create_error_response('IncorrectLogin', 'Either the user does not exist or password is incorrect.')
+    try:
+        login_user(User(data['username']), remember=True)
+    except BaseException, e:
+        return create_error_response(type(e).__name__, e.message)
+    return redirect(url_for('session.get_current_session_info'), code=201)
+
+@blueprint.route("/", methods=['DELETE'])
+def remove_current_session():
+    logout_user()
+    return Response(status=204)
+
 '''
     These next four functions are used to test your permission group. If they
-    return a 401 status code, then you are not allowed to access them. If they
-    return a 204 status code, then you are authorized to access them.
+    return a 401 or 403 status code, then you are not allowed to access them.
+    If they return a 204 status code, then you are authorized to access them.
 '''
 
 @blueprint.route('/test_admin_access', methods=['GET'])
@@ -73,27 +112,6 @@ def team_test():
 @requires_roles('attacker')
 @requires_no_parameters
 def attacker_test():
-    return Response(status=204)
-
-@blueprint.route("/", methods=['POST'])
-@requires_parameters(required=['username', 'password'])
-def create_new_session():
-    data = json.loads(request.data)
-    if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
-        data['password'] = bcrypt.hashpw(data['password'], bcrypt.gensalt(14))
-    elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
-        data['password'] = hashlib.md5(data['password']).hexdigest()
-    if g.db.get_specific_user(data['username'], data['password']) == []:
-        return create_error_response('IncorrectLogin', 'Either the user does not exist or password is incorrect.')
-    try:
-        login_user(User(data['username']))
-    except BaseException, e:
-        return create_error_response(type(e).__name__, e.message)
-    return redirect(url_for('session.get_current_session_info'), code=201)
-
-@blueprint.route("/", methods=['DELETE'])
-def remove_current_session():
-    logout_user()
     return Response(status=204)
 
 
