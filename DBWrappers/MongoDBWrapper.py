@@ -59,6 +59,18 @@ class MongoDBWrapper(DBWrapper):
             excluded_fields[key] = 0
         return self.db[collection].find(query, excluded_fields)
 
+    def init_db(self):
+        self.db.teams.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.team_configs.ensure_index([('team_id', pymongo.ASCENDING), ('machine_id', pymongo.ASCENDING)])
+        self.db.team_scores.ensure_index([('team_id', pymongo.ASCENDING), ('timestamp', pymongo.ASCENDING)])
+        self.db.completed_checks.ensure_index([('id', pymongo.ASCENDING), ('team_id', pymongo.ASCENDING), ('timestamp', pymongo.ASCENDING)])
+        self.db.active_checks.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.check_scripts.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.check_classes.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.machines.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.users.ensure_index([('id', pymongo.ASCENDING)])
+        self.db.archived_sessions.ensure_index([('id', pymongo.ASCENDING), ('session.start_time', pymongo.DESCENDING), ('session.end_time', pymongo.DESCENDING)])
+
     def close(self):
         self.db.connection.close()
 
@@ -181,6 +193,9 @@ class MongoDBWrapper(DBWrapper):
 
     def get_all_users(self):
         return list(self._query_db('users', {}, exclude_fields=['password']))
+
+    def get_all_users_with_role(self, role):
+        return list(self._query_db('users', {'role': role}, exclude_fields=['password']))
 
     def get_specific_user(self, username, password_hash=None):
         if password_hash is None:

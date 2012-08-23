@@ -83,4 +83,5 @@ def delete_team(team_id):
     if len(data) == 0:
         return Response(status=404)
     g.db.delete_team(team_id)
+    g.redis.publish(g.daemon_channel, 'changed team {}'.format(team_id))
     return Response(status=204)

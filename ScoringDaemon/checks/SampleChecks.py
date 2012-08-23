@@ -19,10 +19,11 @@
 '''
 
 import time
-from ScoringDaemon.check_types import ServiceCheck
+from ScoringDaemon.check_types import ServiceCheck, InjectCheck
 
 class SampleServiceCheck(ServiceCheck):
-    def __init__(self, machine):
+    def __init__(self, machine, team_id, db_host, db_port, db_name):
+        super(ServiceCheck, self).__init__(team_id, db_host, db_port, db_name)
         self._machine = machine
 
     @property
@@ -31,8 +32,25 @@ class SampleServiceCheck(ServiceCheck):
 
     @property
     def timeout(self):
-        return 60
+        return 15
 
     def run_check(self):
-        time.sleep(45)
+        time.sleep(10)
+        return 5
+
+class SampleInjectCheck(InjectCheck):
+    def __init__(self, machine, team_id, db_host, db_port, db_name):
+        super(InjectCheck, self).__init__(team_id, db_host, db_port, db_name)
+        self._machine = machine
+
+    @property
+    def machine(self):
+        return self._machine
+
+    @property
+    def timeout(self):
+        return 15
+
+    def run_check(self):
+        time.sleep(10)
         return 5

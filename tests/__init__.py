@@ -20,34 +20,44 @@
 
 from copy import deepcopy
 import json
+from multiprocessing.process import Process
 from configobj import ConfigObj
 import pymongo, unittest, os
+import redis
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
+from ScoringDaemon.master import Master
 from ScoringServer import create_app
 
-config_path = os.path.join(os.getcwd(), 'tests', 'testing.cfg')
+config_path = os.path.join(os.getcwd(), 'testing.cfg')
 create_app(config_path)
 from ScoringServer import app
 
 from tests.db_data import db_data
 
-class FlaskTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        db_host = app.config['DATABASE']['HOST']
-        db_port = app.config['DATABASE']['PORT']
-        db_name = app.config['DATABASE']['DB_NAME']
+class DBTestCaseMixin(object):
+    def init_db_data(self, db_host, db_port, db_name):
         self.db = pymongo.Connection(db_host, int(db_port), safe=True)[db_name]
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
-            self.tearDown()
+            self.drop_db_data()
         self.data = deepcopy(db_data)
         for key in self.data:
             mongodb_data = deepcopy(self.data[key])
             self.db[key].insert(mongodb_data)
 
-    def tearDown(self):
+    def drop_db_data(self):
         self.db.connection.drop_database(self.db.name)
+
+class FlaskTestCase(unittest.TestCase, DBTestCaseMixin):
+    def setUp(self):
+        self.app = app.test_client()
+        db_host = app.config['DATABASE']['HOST']
+        db_port = app.config['DATABASE']['PORT']
+        db_name = app.config['DATABASE']['DB_NAME']
+        self.init_db_data(db_host, db_port, db_name)
+
+    def tearDown(self):
+        self.drop_db_data()
 
     def get_team_data(self, team_id):
         result_data = deepcopy([i for i in self.data['teams'] if i['id'] == team_id][0])
@@ -64,21 +74,35 @@ class FlaskTestCase(unittest.TestCase):
     def logout_user(self):
         self.app.delete('/session/')
 
-class DBTestCase(unittest.TestCase):
+class DBTestCase(unittest.TestCase, DBTestCaseMixin):
     def setUp(self):
         config = ConfigObj(config_path)['CORE']
-        db_name = config['DATABASE']['DB_NAME']
         db_host = config['DATABASE']['HOST']
         db_port = config['DATABASE']['PORT']
-        self.db = pymongo.Connection(db_host, int(db_port), safe=True)[db_name]
-        if db_name in self.db.connection.database_names():
-            #teardown wasn't run last time, so lets run it now.
-            self.tearDown()
-        self.data = deepcopy(db_data)
-        for key in self.data:
-            mongodb_data = deepcopy(self.data[key])
-            self.db[key].insert(mongodb_data)
+        db_name = config['DATABASE']['DB_NAME']
+        self.init_db_data(db_host, db_port, db_name)
         self.db_wrapper = MongoDBWrapper(db_host, int(db_port), db_name)
 
     def tearDown(self):
-        self.db.connection.drop_database(self.db.name)
+        self.drop_db_data()
+
+class DaemonTestCase(unittest.TestCase, DBTestCaseMixin):
+    def setUp(self):
+        config = ConfigObj(config_path)['CORE']
+        db_host = config['DATABASE']['HOST']
+        db_port = config['DATABASE']['PORT']
+        db_name = config['DATABASE']['DB_NAME']
+        self.init_db_data(db_host, db_port, db_name)
+        self.redis = redis.Redis(config['REDIS']['HOST'], int(config['REDIS']['PORT']), password=config['REDIS']['PASSWORD'])
+        self.daemon_channel = config['REDIS']['DAEMON_CHANNEL']
+        self.master = Master(config_path)
+        self.master_process = Process(target=self.master.run)
+        self.master_process.start()
+
+    def tearDown(self):
+        self.redis.publish(self.daemon_channel, 'shutdown')
+        if self.master_process.is_alive():
+            self.master_process.join(5)
+            if self.master_process.is_alive():
+                self.master_process.terminate()
+        self.drop_db_data()

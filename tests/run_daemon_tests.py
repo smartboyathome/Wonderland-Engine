@@ -17,8 +17,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
-from ScoringDaemon.master import Master
+
+from ScoringServer import create_app, run_app
+from tests import *
+import nose, os
 
 if __name__ == '__main__':
-    master = Master()
-    master.run()
+    os.chdir(os.path.join(os.getcwd(), 'DaemonTests'))
+    nose.main()

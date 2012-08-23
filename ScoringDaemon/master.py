@@ -19,6 +19,7 @@
 '''
 
 from multiprocessing import Queue
+from multiprocessing.process import Process
 from configobj import ConfigObj
 import os, redis, inspect
 from parcon import alphanum_word, Regex, ZeroOrMore, flatten, Optional
@@ -31,23 +32,27 @@ class Master(object):
     def __init__(self, _config_file=os.path.join(os.getcwd(), 'settings.cfg')):
         configspec = ConfigObj(os.path.join(os.getcwd(), 'configspec.cfg'), list_values=False)
         self.config = ConfigObj(_config_file, configspec=configspec)['CORE']
-        self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], int(self.config['DATABASE']['PORT']), self.config['DATABASE']['DB_NAME'])
+        self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], int(self.config['DATABASE']['PORT']),
+            self.config['DATABASE']['DB_NAME'])
         self.checkers = {}
-        self.redis = redis.Redis(self.config['REDIS']['HOST'], int(self.config['REDIS']['PORT']), password=self.config['REDIS']['PASSWORD'])
+        self.redis = redis.Redis(self.config['REDIS']['HOST'], int(self.config['REDIS']['PORT']),
+            password=self.config['REDIS']['PASSWORD'])
         self.pubsub = self.redis.pubsub()
         self.channel = self.config['REDIS']['DAEMON_CHANNEL']
-        self.check_scripts = {}
-        self.check_classes = {}
-        self.active_checks = []
-        self.reload_check_classes()
-
         self._command_parser = (alphanum_word + Optional(Regex('[\w\d_]+') + ZeroOrMore(Regex('[\w\d_.,:]+'))))[flatten]
         self.commands = {
             'changed': self.changed,
             'start': self.start,
             'stop': self.stop,
-            'shutdown': self.shutdown
+            'shutdown': self.shutdown,
+            'print': self._print
         }
+
+        self.check_scripts = {}
+        self.check_classes = {}
+        self.active_checks = []
+        self.reload_check_classes()
+        self.reload_checkers()
 
     def run(self):
         self.pubsub.subscribe(self.channel)
@@ -90,6 +95,11 @@ class Master(object):
 
     def shutdown(self):
         raise SystemExit
+
+    def _print(self, *args):
+        for arg in args:
+            if arg in self.__dict__:
+                print self.__dict__[arg]
 
     def reload_check_classes(self):
         self.check_classes.clear()
