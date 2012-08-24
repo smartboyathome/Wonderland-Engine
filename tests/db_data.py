@@ -142,6 +142,52 @@ db_data = {
             'class_name': 'SecurityHole1Check'
         }
     ],
+    'completed_checks': [
+        {
+            'id': 'MongoDBUp',
+            'description': 'Checks whether MongoDB is up.',
+            'type': 'service',
+            'timestamp': datetime.now() - timedelta(hours=5),
+            'team_id': '1',
+            'score': 0
+        },
+        {
+            'id': 'MongoDBUp',
+            'description': 'Checks whether MongoDB is up.',
+            'type': 'service',
+            'timestamp': datetime.now() - timedelta(hours=3),
+            'team_id': '1',
+            'score': 0
+        },
+        {
+            'id': 'MongoDBUp',
+            'description': 'Checks whether MongoDB is up.',
+            'type': 'service',
+            'timestamp': datetime.now() - timedelta(hours=5),
+            'team_id': '2',
+            'score': 5
+        },
+        {
+            'id': 'RemovedFiles',
+            'description': 'Checks whether each team removed certain files.',
+            'type': 'inject',
+            'inject_number': 5,
+            'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
+            'timestamp': datetime.now() - timedelta(hours=5),
+            'team_id': '1',
+            'score': 0
+        },
+        {
+            'id': 'RemovedFiles',
+            'description': 'Checks whether each team removed certain files.',
+            'type': 'inject',
+            'inject_number': 5,
+            'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
+            'timestamp': datetime.now() - timedelta(hours=5),
+            'team_id': '1',
+            'score': 0
+        }
+    ],
     'users': [
         {
             'id': 'team1',

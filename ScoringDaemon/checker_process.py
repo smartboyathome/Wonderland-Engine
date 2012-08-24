@@ -27,33 +27,33 @@ from ScoringDaemon.check_types import InjectCheck, ServiceCheck
 class CheckerProcess(Process):
     def __init__(self, team_id, checks, db_host, db_port, db_name, check_delay):
         self.team_id = team_id
-        self.db_host = db_host
-        self.db_port = db_port
-        self.db_name = db_name
+        self.db = MongoDBWrapper(db_host, int(db_port), db_name)
         self.check_delay = check_delay
         super(CheckerProcess, self).__init__()
         self.shutdown_event = Event()
         self.checks = []
         for check_dict in checks:
-            check_obj = check_dict['class'](team_id, db_host, db_port, db_name)
+            check_data = self.db.get_specific_check(check_dict['id'], check_dict['class'].check_type)[0]
             if issubclass(check_dict['class'], InjectCheck):
+                check_obj = check_dict['class'](team_id, db_host, db_port, db_name)
                 self.checks.append({
                     'id': check_dict['id'],
                     'object': check_obj,
                     'time_to_run': check_obj.time_to_run()
                 })
             else:
+                check_obj = check_dict['class'](check_data['machine'], team_id, db_host, db_port, db_name)
                 self.checks.append({
-                    'id': check_id,
+                    'id': check_dict['id'],
                     'object': check_obj,
                     'time_to_run': datetime.now()
                 })
 
     def run(self):
-        db = MongoDBWrapper(self.db_host, self.db_port, self.db_name)
-        team = db.get_specific_team(self.team_id)
+        team = self.db.get_specific_team(self.team_id)
         while not self.shutdown_event.is_set():
             for check_dict in self.checks:
+                print "Checking check object"
                 check_obj = deepcopy(check_dict['object'])
                 now = datetime.now()
                 if check_dict['time_to_run'] < now:

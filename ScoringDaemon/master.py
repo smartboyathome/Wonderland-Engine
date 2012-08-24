@@ -52,6 +52,7 @@ class Master(object):
         self.check_classes = {}
         self.active_checks = []
         self.reload_check_classes()
+        self.reload_active_checks()
         self.reload_checkers()
 
     def run(self):
@@ -99,7 +100,8 @@ class Master(object):
     def _print(self, *args):
         for arg in args:
             if arg in self.__dict__:
-                print self.__dict__[arg]
+                eval('print {}'.format(arg), {'self': self })
+                #print self.__dict__[arg]
 
     def reload_check_classes(self):
         self.check_classes.clear()

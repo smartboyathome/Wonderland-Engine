@@ -61,10 +61,15 @@ class Check(object):
 
 class ServiceCheck(Check):
     check_type = 'service'
-    def __init__(self, team_id, db_host, db_port, db_name):
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
         self._score = 0
+        self._machine_id = machine_id
+
+    @property
+    def machine(self):
+        return self._machine_id
 
     @property
     def score(self):
@@ -76,14 +81,19 @@ class ServiceCheck(Check):
 
 class InjectCheck(Check):
     check_type = 'inject'
-    def __init__(self, team_id, db_host, db_port, db_name):
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
         self._score = 0
+        self._machine_id = machine_id
 
     @property
     def score(self):
         return self._score
+
+    @property
+    def machine(self):
+        return self._machine_id
 
     #@property
     #def check_type(self):
@@ -105,14 +115,19 @@ class InjectCheck(Check):
 
 class AttackerCheck(Check):
     check_type = 'attacker'
-    def __init__(self, team_id, db_host, db_port, db_name):
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
         self._score = 0
+        self._machine_id = machine_id
 
     @property
     def score(self):
         return self._score
+
+    @property
+    def machine(self):
+        return self._machine_id
 
     #@property
     #def check_type(self):

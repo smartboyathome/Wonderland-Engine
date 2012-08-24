@@ -23,12 +23,7 @@ from ScoringDaemon.check_types import ServiceCheck, InjectCheck
 
 class SampleServiceCheck(ServiceCheck):
     def __init__(self, machine, team_id, db_host, db_port, db_name):
-        super(ServiceCheck, self).__init__(team_id, db_host, db_port, db_name)
-        self._machine = machine
-
-    @property
-    def machine(self):
-        return self._machine
+        super(SampleServiceCheck, self).__init__(machine, team_id, db_host, db_port, db_name)
 
     @property
     def timeout(self):
@@ -39,13 +34,8 @@ class SampleServiceCheck(ServiceCheck):
         return 5
 
 class SampleInjectCheck(InjectCheck):
-    def __init__(self, machine, team_id, db_host, db_port, db_name):
-        super(InjectCheck, self).__init__(team_id, db_host, db_port, db_name)
-        self._machine = machine
-
-    @property
-    def machine(self):
-        return self._machine
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+        super(SampleInjectCheck, self).__init__(machine_id, team_id, db_host, db_port, db_name)
 
     @property
     def timeout(self):
