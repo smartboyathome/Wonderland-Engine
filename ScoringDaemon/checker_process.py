@@ -22,27 +22,26 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from multiprocessing import Process, Event
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
-from ScoringDaemon.check_types import InjectCheck, ServiceCheck
+from ScoringDaemon.check_types import InjectCheck, ServiceCheck, AttackerCheck
 
 class CheckerProcess(Process):
     def __init__(self, team_id, checks, db_host, db_port, db_name, check_delay):
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, int(db_port), db_name)
-        self.check_delay = check_delay
+        self.check_delay = int(check_delay)
         super(CheckerProcess, self).__init__()
         self.shutdown_event = Event()
         self.checks = []
         for check_dict in checks:
             check_data = self.db.get_specific_check(check_dict['id'], check_dict['class'].check_type)[0]
+            check_obj = check_dict['class'](check_data['machine'], team_id, db_host, db_port, db_name)
             if issubclass(check_dict['class'], InjectCheck):
-                check_obj = check_dict['class'](team_id, db_host, db_port, db_name)
                 self.checks.append({
                     'id': check_dict['id'],
                     'object': check_obj,
-                    'time_to_run': check_obj.time_to_run()
+                    'time_to_run': check_obj.time_to_run
                 })
-            else:
-                check_obj = check_dict['class'](check_data['machine'], team_id, db_host, db_port, db_name)
+            elif issubclass(check_dict['class'], (ServiceCheck, AttackerCheck)):
                 self.checks.append({
                     'id': check_dict['id'],
                     'object': check_obj,
@@ -61,16 +60,16 @@ class CheckerProcess(Process):
                     check_process.start()
                     check_process.join(check_obj.timeout)
                     if check_process.is_alive():
-                        checker_process.terminate()
+                        check_process.terminate()
                     score = check_obj.score
                     if issubclass(type(check_obj), InjectCheck):
-                        db.complete_inject_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        self.db.complete_inject_check(check_dict['id'], self.team_id, datetime.now(), score)
                         self.checks[:] = [obj for obj in self.checks if not obj == check_dict]
                     elif issubclass(type(check_obj), ServiceCheck):
-                        db.complete_service_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        self.db.complete_service_check(check_dict['id'], self.team_id, datetime.now(), score)
                         check_dict['timestamp'] = datetime.now() + timedelta(seconds=self.check_delay)
                     else: # it is an attacker check
-                        db.complete_attacker_check(check_dict['id'], self.team_id, datetime.now(), score)
+                        self.db.complete_attacker_check(check_dict['id'], self.team_id, datetime.now(), score)
                         check_dict['timestamp'] = datetime.now() + timedelta(seconds=self.check_delay)
                 if self.shutdown_event.is_set():
                     break

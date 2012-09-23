@@ -17,9 +17,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
-from multiprocessing import Queue
-from multiprocessing.process import Process
 from configobj import ConfigObj
 import os, redis, inspect
 from parcon import alphanum_word, Regex, ZeroOrMore, flatten, Optional
@@ -44,8 +41,7 @@ class Master(object):
             'changed': self.changed,
             'start': self.start,
             'stop': self.stop,
-            'shutdown': self.shutdown,
-            'print': self._print
+            'shutdown': self.shutdown
         }
 
         self.check_scripts = {}
@@ -57,20 +53,22 @@ class Master(object):
 
     def run(self):
         self.pubsub.subscribe(self.channel)
+        for message in self.pubsub.listen():
+            self.run_command(message['data'])
+
+    def run_command(self, message):
         try:
-            for message in self.pubsub.listen():
-                print "server recieving message '{}' of type '{}'".format(message['data'], type(message['data']).__name__)
-                if not issubclass(type(message['data']), basestring):
-                    message['data'] = str(message['data'])
-                command_list = self._command_parser.parse_string(message['data'])
-                command = command_list.pop(0).lower()
-                if command in self.commands:
-                    print "Running command '{}' with arguments '{}'".format(command, ', '.join(command_list))
-                    self.commands[command](*command_list)
+            print "server recieving message '{}' of type '{}'".format(message, type(message).__name__)
+            if not issubclass(type(message), basestring):
+                message = str(message)
+            command_list = self._command_parser.parse_string(message)
+            command = command_list.pop(0).lower()
+            if command in self.commands:
+                print "Running command '{}' with arguments '{}'".format(command, ', '.join(command_list))
+                self.commands[command](*command_list)
         except BaseException, e:
             # This is to make sure that we clean up all shutdown processes before we error out.
-            for key in self.checkers:
-                self.checkers[key].shutdown()
+            self.stop()
             raise
 
     def changed(self, subcommand, *args):
@@ -96,12 +94,6 @@ class Master(object):
 
     def shutdown(self):
         raise SystemExit
-
-    def _print(self, *args):
-        for arg in args:
-            if arg in self.__dict__:
-                eval('print {}'.format(arg), {'self': self })
-                #print self.__dict__[arg]
 
     def reload_check_classes(self):
         self.check_classes.clear()
@@ -148,7 +140,7 @@ class Master(object):
                     'class': self.check_classes[check['class_name']]
                 })
         self.checkers[team_id] = CheckerManager(team_id, self.active_checks + team_checks,
-                                                self.config['DATABASE']['HOST'], self.config['DATABASE']['PORT'],
+                                                self.config['DATABASE']['HOST'], int(self.config['DATABASE']['PORT']),
                                                 self.config['DATABASE']['DB_NAME'], self.config['DAEMON']['CHECK_DELAY'])
 
 class CheckerManager(object):

@@ -28,7 +28,13 @@ class MongoDBWrapper(DBWrapper):
 
     def __init__(self, host, port, db_name):
         connection = pymongo.Connection(host, port, safe=True)
+        self.host = host
+        self.port = port
+        self.db_name = db_name
         self.db = connection[db_name]
+
+    def __deepcopy__(self, memo):
+        return MongoDBWrapper(self.host, self.port, self.db_name)
 
     def _modify_document(self, collection, query, exclude_fields=[], **data):
         excluded_fields = {}
@@ -322,7 +328,7 @@ class MongoDBWrapper(DBWrapper):
         data = {
             "id": check_id,
             "description": service_check[0]['description'],
-            "type": service_check[0]['type'],
+            "type": 'service',
             "timestamp": timestamp,
             "team_id": team_id,
             "score": score
@@ -377,7 +383,7 @@ class MongoDBWrapper(DBWrapper):
             "id": check_id,
             "description": attacker_check[0]['description'],
             "comments": attacker_check[0]['comments'],
-            "type": attacker_check[0]['type'],
+            "type": 'attacker',
             "timestamp": timestamp,
             "team_id": team_id,
             "score": score
@@ -426,7 +432,7 @@ class MongoDBWrapper(DBWrapper):
         data = {
             "id": check_id,
             "description": inject_check[0]['description'],
-            "type": inject_check[0]['type'],
+            "type": 'inject',
             "inject_number": inject_check[0]['inject_number'],
             "time_to_check": inject_check[0]['time_to_check'],
             "timestamp": timestamp,

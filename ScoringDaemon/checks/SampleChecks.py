@@ -17,6 +17,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
+from datetime import datetime, timedelta
 
 import time
 from ScoringDaemon.check_types import ServiceCheck, InjectCheck
@@ -30,17 +31,24 @@ class SampleServiceCheck(ServiceCheck):
         return 15
 
     def run_check(self):
-        time.sleep(10)
-        return 5
+        self._score = 5
 
 class SampleInjectCheck(InjectCheck):
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
         super(SampleInjectCheck, self).__init__(machine_id, team_id, db_host, db_port, db_name)
+        self._run_time = datetime.now() + timedelta(seconds=15)
 
     @property
     def timeout(self):
         return 15
 
+    @property
+    def time_to_run(self):
+        return self._run_time
+
+    @property
+    def inject_number(self):
+        return 0
+
     def run_check(self):
-        time.sleep(10)
-        return 5
+        self._score = 5

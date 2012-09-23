@@ -17,6 +17,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
+from copy import deepcopy
 
 import abc
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
@@ -75,10 +76,6 @@ class ServiceCheck(Check):
     def score(self):
         return self._score
 
-    #@property
-    #def check_type(self):
-        #return 'service'
-
 class InjectCheck(Check):
     check_type = 'inject'
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
@@ -94,10 +91,6 @@ class InjectCheck(Check):
     @property
     def machine(self):
         return self._machine_id
-
-    #@property
-    #def check_type(self):
-        #return 'inject'
 
     @abc.abstractproperty
     def time_to_run(self):
@@ -128,7 +121,3 @@ class AttackerCheck(Check):
     @property
     def machine(self):
         return self._machine_id
-
-    #@property
-    #def check_type(self):
-        #return 'attacker'

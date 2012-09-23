@@ -122,14 +122,14 @@ db_data = {
             'description': 'Checks whether MongoDB is up.',
             'machine': 'MongoDB',
             'type': 'service',
-            'class_name': 'MySQLServiceCheck'
+            'class_name': 'SampleServiceCheck'
         },
         {
             'id': 'RemovedFiles',
             'description': 'Checks whether each team removed certain files.',
             'machine': 'Apache',
             'type': 'inject',
-            'class_name': 'RemovedFilesCheck',
+            'class_name': 'SampleInjectCheck',
             'inject_number': '42',
             'time_to_check': datetime.now() + timedelta(hours=1)
         },
@@ -139,7 +139,7 @@ db_data = {
             'machine': 'Redis',
             'type': 'attacker',
             'team_id': '1',
-            'class_name': 'SecurityHole1Check'
+            'class_name': 'SampleAttackerCheck'
         }
     ],
     'completed_checks': [

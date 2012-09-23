@@ -96,13 +96,11 @@ class DaemonTestCase(unittest.TestCase, DBTestCaseMixin):
         self.redis = redis.Redis(config['REDIS']['HOST'], int(config['REDIS']['PORT']), password=config['REDIS']['PASSWORD'])
         self.daemon_channel = config['REDIS']['DAEMON_CHANNEL']
         self.master = Master(config_path)
-        self.master_process = Process(target=self.master.run)
-        self.master_process.start()
+        self.db_wrapper = MongoDBWrapper(db_host, int(db_port), db_name)
 
     def tearDown(self):
-        self.redis.publish(self.daemon_channel, 'shutdown')
-        if self.master_process.is_alive():
-            self.master_process.join(5)
-            if self.master_process.is_alive():
-                self.master_process.terminate()
+        try:
+            self.master.run_command('shutdown')
+        except SystemExit:
+            pass
         self.drop_db_data()
