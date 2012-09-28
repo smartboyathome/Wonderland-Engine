@@ -1,6 +1,6 @@
 from copy import deepcopy
 from DBWrappers.Exceptions import TeamDoesNotExist, MachineDoesNotExist, Exists, DoesNotExist
-from tests import DBTestCase
+from tests.DBWrapperTests import DBTestCase
 
 
 class TestMongoDBTeamConfigs(DBTestCase):

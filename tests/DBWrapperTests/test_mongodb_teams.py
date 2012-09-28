@@ -1,6 +1,6 @@
 from copy import deepcopy
 from DBWrappers.Exceptions import DoesNotExist, Exists
-from tests import DBTestCase
+from tests.DBWrapperTests import DBTestCase
 
 class TestMongoDBTeams(DBTestCase):
     def test_get_all_teams(self):

@@ -118,10 +118,7 @@ class Master(object):
             if check['class_name'] not in self.check_classes:
                 self.db.delete_specific_check(check['id'], check['type'])
             else:
-                self.active_checks.append({
-                    'id': check['id'],
-                    'class': self.check_classes[check['class_name']]
-                })
+                self.active_checks.append(ActiveCheck(check['id'], self.check_classes[check['class_name']]))
 
     def reload_checkers(self):
         self.checkers.clear()
@@ -157,3 +154,8 @@ class CheckerManager(object):
         self.process.shutdown_event.set()
     def start(self):
         self.process.start()
+
+class ActiveCheck(object):
+    def __init__(self, _id, _class):
+        self.check_class = _class
+        self.check_id = _id

@@ -1,6 +1,6 @@
 from copy import deepcopy
 from DBWrappers.Exceptions import Exists, DoesNotExist
-from tests import DBTestCase
+from tests.DBWrapperTests import DBTestCase
 
 class TestMongoDBMachines(DBTestCase):
     def test_get_all_machines(self):

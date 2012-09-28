@@ -1,5 +1,5 @@
 import json
-from tests import FlaskTestCase
+from tests.RestTests import FlaskTestCase
 
 class TestRestSessions(FlaskTestCase):
 

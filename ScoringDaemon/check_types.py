@@ -18,11 +18,12 @@
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
 from copy import deepcopy
+from multiprocessing import Value, Process, Manager
 
 import abc
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
 
-class Check(object):
+class Check(Process):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractproperty
@@ -46,12 +47,8 @@ class Check(object):
         '''
         return
 
-    #@abc.abstractproperty
-    #def check_type(self):
-        #'''
-        #The type of check as a string. These are mapped back to the DB.
-        #'''
-        #return
+    def run(self):
+        self.run_check()
 
     @abc.abstractmethod
     def run_check(self):
@@ -63,9 +60,12 @@ class Check(object):
 class ServiceCheck(Check):
     check_type = 'service'
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+        super(ServiceCheck, self).__init__()
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
-        self._score = 0
+        self._manager = Manager()
+        self._mutable_vars = self._manager.Namespace()
+        self._mutable_vars.score = 0
         self._machine_id = machine_id
 
     @property
@@ -74,19 +74,22 @@ class ServiceCheck(Check):
 
     @property
     def score(self):
-        return self._score
+        return self._mutable_vars.score
 
 class InjectCheck(Check):
     check_type = 'inject'
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+        super(InjectCheck, self).__init__()
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
-        self._score = 0
+        self._manager = Manager()
+        self._mutable_vars = self._manager.Namespace()
+        self._mutable_vars.score = 0
         self._machine_id = machine_id
 
     @property
     def score(self):
-        return self._score
+        return self._mutable_vars.score
 
     @property
     def machine(self):
@@ -109,9 +112,12 @@ class InjectCheck(Check):
 class AttackerCheck(Check):
     check_type = 'attacker'
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+        super(AttackerCheck, self).__init__()
         self.team_id = team_id
         self.db = MongoDBWrapper(db_host, db_port, db_name)
-        self._score = 0
+        self._manager = Manager()
+        self._mutable_vars = self._manager.Namespace()
+        self._mutable_vars.score = 0
         self._machine_id = machine_id
 
     @property

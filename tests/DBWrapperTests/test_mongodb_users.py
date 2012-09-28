@@ -1,7 +1,7 @@
 from copy import deepcopy
 import hashlib
 from DBWrappers.Exceptions import Exists, DoesNotExist
-from tests import DBTestCase
+from tests.DBWrapperTests import DBTestCase
 
 class TestMongoDBUsers(DBTestCase):
     def test_get_all_users(self):

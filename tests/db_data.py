@@ -76,12 +76,12 @@ db_data = {
         },
         {
             'team_id': '2',
-            'score': 0,
+            'score': 5,
             'timestamp': datetime.now() - timedelta(hours=5)
         },
         {
             'team_id': '6',
-            'score': 5,
+            'score': 0,
             'timestamp': datetime.now()
         }
     ],

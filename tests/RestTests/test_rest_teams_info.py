@@ -18,8 +18,8 @@
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from .. import FlaskTestCase
 import json
+from tests.RestTests import FlaskTestCase
 
 class TestRestTeamsInterface(FlaskTestCase):
     def test_get_all_teams_data(self):

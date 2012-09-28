@@ -31,7 +31,8 @@ class SampleServiceCheck(ServiceCheck):
         return 15
 
     def run_check(self):
-        self._score = 5
+        self._mutable_vars.score = 5
+        pass
 
 class SampleInjectCheck(InjectCheck):
     def __init__(self, machine_id, team_id, db_host, db_port, db_name):
@@ -51,4 +52,4 @@ class SampleInjectCheck(InjectCheck):
         return 0
 
     def run_check(self):
-        self._score = 5
+        self._mutable_vars.score = 5
