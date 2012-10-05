@@ -9,7 +9,7 @@ class TestMongoDBServiceChecks(DBTestCase):
         expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'service']
         for item in expected_result:
             del item['type']
-        assert not len(wrapper_result) == 0
+        assert len(wrapper_result) == len(expected_result)
         assert wrapper_result == expected_result
 
     def test_get_specific_service_check(self):
@@ -32,7 +32,7 @@ class TestMongoDBServiceChecks(DBTestCase):
             "machine": 'MongoDB',
             "class_name": 'SampleServiceCheck'
         }]
-        assert len(wrapper_result) != 0
+        assert not len(wrapper_result) == 0
         assert wrapper_result == expected_result
 
     def test_create_service_check_exists(self):
@@ -47,7 +47,7 @@ class TestMongoDBServiceChecks(DBTestCase):
             "machine": 'Redis',
             "class_name": 'SampleServiceCheck'
         }]
-        assert len(wrapper_result) != 0
+        assert not len(wrapper_result) == 0
         assert wrapper_result == expected_result
 
     def test_modify_service_check_nonexistant(self):

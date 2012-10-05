@@ -407,13 +407,13 @@ class MongoDBWrapper(DBWrapper):
         if not len(self.get_specific_inject_check(check_id)) == 0:
             raise Exists("A check with id {} already exists.".format(check_id))
         _class = self.get_specific_check_class(check_class)
-        if len(_class) == 0 or not _class[0]['check_type'] == 'attacker':
-            raise CheckClassDoesNotExist(check_class, 'attacker')
+        if len(_class) == 0 or not _class[0]['check_type'] == 'inject':
+            raise CheckClassDoesNotExist(check_class, 'inject')
         data = {
             "id": check_id,
             "description": description,
             "machine": machine,
-            "type": 'attacker',
+            "type": 'inject',
             "class_name": check_class,
             "inject_number": inject_number,
             "time_to_check":time_to_check
