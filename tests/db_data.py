@@ -101,17 +101,17 @@ db_data = {
     ],
     'check_classes': [
         {
-            'id': 'MongoDBCheck',
+            'id': 'SampleServiceCheck',
             'check_type': 'service',
             'module_id': 'ServiceChecks'
         },
         {
-            'id': 'RemovedFilesCheck',
+            'id': 'SampleInjectCheck',
             'check_type': 'inject',
             'module_id': 'InjectChecks'
         },
         {
-            'id': 'SecurityHole1Check',
+            'id': 'SampleAttackerCheck',
             'check_type': 'attacker',
             'module_id': 'Attacker1Checks'
         }
@@ -120,6 +120,20 @@ db_data = {
         {
             'id': 'MongoDBUp',
             'description': 'Checks whether MongoDB is up.',
+            'machine': 'MongoDB',
+            'type': 'service',
+            'class_name': 'SampleServiceCheck'
+        },
+        {
+            'id': 'EmailUp',
+            'description': 'Checks whether email is up.',
+            'machine': 'MongoDB',
+            'type': 'service',
+            'class_name': 'SampleServiceCheck'
+        },
+        {
+            'id': 'DeadThingUp',
+            'description': 'Checks whether a failing service is up.',
             'machine': 'MongoDB',
             'type': 'service',
             'class_name': 'SampleServiceCheck'

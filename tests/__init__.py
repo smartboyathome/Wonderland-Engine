@@ -40,3 +40,18 @@ class DBTestCaseMixin(object):
 
     def drop_db_data(self):
         self.db.connection.drop_database(self.db.name)
+
+def show_difference_between_dicts(first, second):
+    different_keys = {}
+    different_values = {}
+    for key in set(first.keys()+second.keys()):
+        if key not in first:
+            different_keys[key] = 'first'
+        elif key not in second:
+            different_keys[key] = 'second'
+        elif first[key] != second[key]:
+            different_values[key] = (first[key], second[key])
+    for key in different_keys:
+        print "The key '{}' does not exist in the {} dict".format(key, different_keys[key])
+    for key in different_values:
+        print "Difference in values: '{}' vs '{}'".format(different_values[key][0], different_values[key][1])
