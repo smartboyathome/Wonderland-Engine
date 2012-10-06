@@ -52,27 +52,31 @@ class TestMongoDBInjectChecks(DBTestCase):
         with self.assertRaises(Exists):
             self.db_wrapper.create_inject_check('RemovedFiles', 'Checks whether plans were ruined.', 'MongoDB', 'SampleInjectCheck', 4993, datetime.now())
 
-    '''def test_modify_service_check(self):
-        self.db_wrapper.modify_service_check('EmailUp', description='Checks if the email server is up', machine='Redis')
-        wrapper_result = list(self.db.active_checks.find({'id': 'EmailUp', 'type': 'service'}, {'_id': 0, 'id': 0, 'type': 0}))
+    def test_modify_inject_check(self):
+        time_to_check = datetime.now() + timedelta(seconds=15)
+        self.db_wrapper.modify_inject_check('AdjustedSpamFilter', description='Checks if the spam was caught', machine='Redis', time_to_check=time_to_check)
+        wrapper_result = list(self.db.active_checks.find({'id': 'AdjustedSpamFilter', 'type': 'inject'}, {'_id': 0, 'id': 0, 'type': 0}))
         expected_result = [{
-            "description": 'Checks if the email server is up',
+            "description": 'Checks if the spam was caught',
             "machine": 'Redis',
-            "class_name": 'SampleServiceCheck'
+            "class_name": 'SampleInjectCheck',
+            "inject_number": '14',
+            "time_to_check": time_to_check
         }]
-        assert len(wrapper_result) != 0
+        assert len(wrapper_result) == len(expected_result)
+        self.correct_imprecise_time(wrapper_result[0], expected_result[0])
         assert wrapper_result == expected_result
 
-    def test_modify_service_check_nonexistant(self):
+    def test_modify_inject_check_nonexistant(self):
         with self.assertRaises(DoesNotExist):
-            self.db_wrapper.modify_service_check('NonexistantServiceUp', description='Check whether a nonexistant service is up.', machine='MongoDB', class_name='SampleServiceCheck')
+            self.db_wrapper.modify_inject_check('NonexistantInject', description='Check whether a nonexistant inject was done.', machine='Redis', class_name='SampleInjectCheck')
 
-    def test_delete_service_check(self):
-        self.db_wrapper.delete_service_check('DeadThingUp')
-        wrapper_result = list(self.db.users.find({'id': 'DeadThingUp', 'type': 'service'}, {'_id': 0, 'id': 0, 'type': 0}))
+    def test_delete_inject_check(self):
+        self.db_wrapper.delete_inject_check('UnspecifiedInject')
+        wrapper_result = list(self.db.users.find({'id': 'UnspecifiedInject', 'type': 'inject'}, {'_id': 0, 'id': 0, 'type': 0}))
         expected_result = []
         assert wrapper_result == expected_result
 
-    def test_delete_service_check_nonexistant(self):
+    def test_delete_inject_check_nonexistant(self):
         with self.assertRaises(DoesNotExist):
-            self.db_wrapper.delete_service_check('NonexistantServiceCheck')'''
+            self.db_wrapper.delete_inject_check('NonexistantInject')

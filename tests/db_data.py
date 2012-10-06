@@ -148,6 +148,24 @@ db_data = {
             'time_to_check': datetime.now() + timedelta(hours=1)
         },
         {
+            'id': 'AdjustedSpamFilter',
+            'description': 'Checks whether each team adjusted the spam filter to catch more spam.',
+            'machine': 'MongoDB',
+            'type': 'inject',
+            'class_name': 'SampleInjectCheck',
+            'inject_number': '14',
+            'time_to_check': datetime.now() + timedelta(hours=1, minutes=30)
+        },
+        {
+            'id': 'UnspecifiedInject',
+            'description': 'Checks whether an unspecified inject was completed.',
+            'machine': 'Redis',
+            'type': 'inject',
+            'class_name': 'SampleInjectCheck',
+            'inject_number': '-1',
+            'time_to_check': datetime.now() + timedelta(hours=36)
+        },
+        {
             'id': 'MySecurityHole',
             'description': 'Checks whether my security hole is still there.',
             'machine': 'Redis',
