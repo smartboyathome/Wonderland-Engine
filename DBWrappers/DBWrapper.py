@@ -280,7 +280,7 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def create_attacker_check(self, check_id, description, comments, machine, team_id, check_class):
+    def create_attacker_check(self, check_id, description, machine, team_id, check_class):
         raise NotImplementedError()
 
     @abc.abstractmethod

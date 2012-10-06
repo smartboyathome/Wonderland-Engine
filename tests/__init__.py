@@ -54,4 +54,4 @@ def show_difference_between_dicts(first, second):
     for key in different_keys:
         print "The key '{}' does not exist in the {} dict".format(key, different_keys[key])
     for key in different_values:
-        print "Difference in values for key '{}': '{}' (of type '{}') vs '{}' (of type '{}')".format(key, different_values[key][0], str(type(different_values[key][0])), different_values[key][1], str(type(different_values[key][1])))
+        print "Difference in values for key '{}': '{}' (of type '{}') vs '{}' (of type '{}')".format(key, different_values[key][0], type(different_values[key][0]).__name__, different_values[key][1], type(different_values[key][1]).__name__)

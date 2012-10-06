@@ -172,6 +172,22 @@ db_data = {
             'type': 'attacker',
             'team_id': '1',
             'class_name': 'SampleAttackerCheck'
+        },
+        {
+            'id': 'MongoDBExploit',
+            'description': 'Checks whether the exploit in MongoDB has been patched.',
+            'machine': 'MongoDB',
+            'type': 'attacker',
+            'team_id': '6',
+            'class_name': 'SampleAttackerCheck'
+        },
+        {
+            'id': 'BrokenExploit',
+            'description': 'This exploit is broken and does not work.',
+            'machine': 'Redis',
+            'type': 'attacker',
+            'team_id': '2',
+            'class_name': 'SampleAttackerCheck'
         }
     ],
     'completed_checks': [

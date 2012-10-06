@@ -349,7 +349,7 @@ class MongoDBWrapper(DBWrapper):
     def get_specific_attacker_check(self, check_id, team_id):
         return list(self._query_db('active_checks', {'id': check_id, 'team_id': team_id, 'type': 'attacker'}))
 
-    def create_attacker_check(self, check_id, description, comments, machine, team_id, check_class):
+    def create_attacker_check(self, check_id, description, machine, team_id, check_class):
         if len(self.get_specific_machine(machine)) == 0:
             raise MachineDoesNotExist(machine)
         if len(self.get_specific_team(team_id)) == 0:
@@ -362,7 +362,6 @@ class MongoDBWrapper(DBWrapper):
         data = {
             "id": check_id,
             "description": description,
-            "comments": comments,
             "machine": machine,
             "type": 'attacker',
             "team_id": team_id,
