@@ -73,7 +73,7 @@ class TestMongoDBInjectChecks(DBTestCase):
 
     def test_delete_inject_check(self):
         self.db_wrapper.delete_inject_check('UnspecifiedInject')
-        wrapper_result = list(self.db.users.find({'id': 'UnspecifiedInject', 'type': 'inject'}, {'_id': 0, 'id': 0, 'type': 0}))
+        wrapper_result = list(self.db.active_checks.find({'id': 'UnspecifiedInject', 'type': 'inject'}, {'_id': 0, 'id': 0, 'type': 0}))
         expected_result = []
         assert wrapper_result == expected_result
 

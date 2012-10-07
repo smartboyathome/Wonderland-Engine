@@ -212,7 +212,7 @@ db_data = {
             'description': 'Checks whether MongoDB is up.',
             'type': 'service',
             'timestamp': datetime.now() - timedelta(hours=5),
-            'team_id': '2',
+            'team_id': '6',
             'score': 5
         },
         {
@@ -232,6 +232,33 @@ db_data = {
             'inject_number': 5,
             'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
             'timestamp': datetime.now() - timedelta(hours=5),
+            'team_id': '1',
+            'score': 0
+        },
+        {
+            'id': 'BoardPresentation',
+            'description': 'The teams present to a board on what they did.',
+            'comments': 'This team did great! They definitely deserve full points!',
+            'type': 'manual',
+            'inject_number': '107',
+            'team_id': '6',
+            'score': 10
+        },
+        {
+            'id': 'BoardPresentation',
+            'description': 'The teams present to a board on what they did.',
+            'comments': "This team didn't put any effort into their presentation, so we failed them.",
+            'type': 'manual',
+            'inject_number': '107',
+            'team_id': '1',
+            'score': 0
+        },
+        {
+            'id': 'USBPolicy',
+            'description': 'The teams had to write up a policy on how usb devices could be used.',
+            'comments': "This paper wasn't any good. We couldn't understand what they were saying.",
+            'type': 'manual',
+            'inject_number': '107',
             'team_id': '1',
             'score': 0
         }

@@ -56,7 +56,7 @@ class TestMongoDBServiceChecks(DBTestCase):
 
     def test_delete_service_check(self):
         self.db_wrapper.delete_service_check('DeadThingUp')
-        wrapper_result = list(self.db.users.find({'id': 'DeadThingUp', 'type': 'service'}, {'_id': 0, 'id': 0, 'type': 0}))
+        wrapper_result = list(self.db.active_checks.find({'id': 'DeadThingUp', 'type': 'service'}, {'_id': 0, 'id': 0, 'type': 0}))
         expected_result = []
         assert wrapper_result == expected_result
 

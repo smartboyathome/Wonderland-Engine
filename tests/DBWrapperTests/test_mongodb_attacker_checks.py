@@ -63,7 +63,7 @@ class TestMongoDBAttackerChecks(DBTestCase):
 
     def test_delete_attacker_check(self):
         self.db_wrapper.delete_attacker_check('BrokenExploit', '2')
-        wrapper_result = list(self.db.users.find({'id': 'BrokenExploit', 'type': 'attacker', 'team_id': '2'}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0}))
+        wrapper_result = list(self.db.active_checks.find({'id': 'BrokenExploit', 'type': 'attacker', 'team_id': '2'}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0}))
         expected_result = []
         assert wrapper_result == expected_result
 

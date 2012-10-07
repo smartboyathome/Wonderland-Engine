@@ -466,12 +466,12 @@ class MongoDBWrapper(DBWrapper):
         self.db.completed_checks.insert(data)
 
     def modify_manual_check(self, check_id, team_id, **data):
-        self._modify_document('completed_checks', {'id': check_id, 'team_id': team_id, 'type': 'inject'}, **data)
+        self._modify_document('completed_checks', {'id': check_id, 'team_id': team_id, 'type': 'manual'}, **data)
 
     def delete_manual_check(self, check_id, team_id):
         if len(self.get_specific_manual_check(check_id, team_id)) == 0:
             raise DoesNotExist
-        self.db.active_checks.remove({'id': check_id, 'team_id': team_id})
+        self.db.completed_checks.remove({'id': check_id, 'team_id': team_id})
 
     def get_all_completed_checks(self):
         return list(self._query_db('completed_checks', {}))
