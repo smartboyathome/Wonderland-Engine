@@ -486,7 +486,6 @@ class MongoDBWrapper(DBWrapper):
             raise DoesNotExist
         self.db.completed_checks.remove({'id': check_id, 'team_id': team_id})
 
-    # todo Write unit tests for completed check functions
     def get_all_completed_checks(self):
         return list(self._query_db('completed_checks', {}))
 
@@ -502,6 +501,7 @@ class MongoDBWrapper(DBWrapper):
     def get_all_completed_manual_checks(self):
         return list(self._query_db('completed_checks', {'type': 'manual'}))
 
+    # todo Write unit tests for get all completed checks for team functions
     def get_all_completed_checks_for_team(self, team_id):
         return list(self._query_db('completed_checks', {'team_id': team_id}))
 
@@ -530,6 +530,7 @@ class MongoDBWrapper(DBWrapper):
             raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, '$gt': {'timestamp': timestamp}}))
 
+    # todo write unit tests for get specific completed check functions
     def get_specific_completed_service_check_for_team(self, check_id, team_id):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist
@@ -560,6 +561,7 @@ class MongoDBWrapper(DBWrapper):
             raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'attacker', 'id': check_id, 'timestamp': timestamp}))
 
+    # todo Write unit tests for scoring session functions
     def get_current_scoring_session(self):
         return list(self._query_db('session', {}))
 
@@ -597,6 +599,7 @@ class MongoDBWrapper(DBWrapper):
         completed_checks = list(self.db.completed_checks.find({}))
         self.db.completed_checks.remove(completed_checks)
 
+    # todo Write unit tests for archive scoring session functions
     def archive_current_scoring_session(self, archive_id):
         if not len(self.get_specific_archived_scoring_session(archive_id)) == 0:
             raise ArchivedSessionExists(archive_id)
