@@ -285,7 +285,6 @@ class MongoDBWrapper(DBWrapper):
             raise DoesNotExist
         self.db.check_scripts.remove({'id': module_name})
 
-    # todo Write unit tests for general check functions
     def get_all_checks(self):
         return list(self._query_db('active_checks', {}))
 

@@ -4,7 +4,7 @@ from tests.DBWrapperTests import DBTestCase
 from .. import show_difference_between_dicts
 
 class TestMongoDBAttackerChecks(DBTestCase):
-    def test_get_all_Attacker_checks(self):
+    def test_get_all_attacker_checks(self):
         wrapper_result = self.db_wrapper.get_all_attacker_checks()
         expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'attacker']
         for item in expected_result:

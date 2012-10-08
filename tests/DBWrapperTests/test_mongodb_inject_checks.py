@@ -5,11 +5,6 @@ from tests.DBWrapperTests import DBTestCase
 from .. import show_difference_between_dicts
 
 class TestMongoDBInjectChecks(DBTestCase):
-    def correct_imprecise_time(self, wrapper_result, expected_result):
-        # MongoDB stores time less precisely than Python, so the following function is needed.
-        assert expected_result['time_to_check'] - wrapper_result['time_to_check'] < timedelta(seconds=0.001)
-        expected_result['time_to_check'] = wrapper_result['time_to_check']
-
     def test_get_all_inject_checks(self):
         wrapper_result = self.db_wrapper.get_all_inject_checks()
         expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'inject']
@@ -17,7 +12,7 @@ class TestMongoDBInjectChecks(DBTestCase):
             del item['type']
         assert len(wrapper_result) == len(expected_result)
         for i in range(0, len(wrapper_result)):
-            self.correct_imprecise_time(wrapper_result[i], expected_result[i])
+            self.correct_imprecise_time(wrapper_result[i], expected_result[i], 'time_to_check')
         assert wrapper_result == expected_result
 
     def test_get_specific_inject_check(self):
@@ -25,7 +20,7 @@ class TestMongoDBInjectChecks(DBTestCase):
         result_id = expected_result['id']
         del expected_result['type'], expected_result['id']
         wrapper_result = self.db_wrapper.get_specific_inject_check(result_id)[0]
-        self.correct_imprecise_time(wrapper_result, expected_result)
+        self.correct_imprecise_time(wrapper_result, expected_result, 'time_to_check')
         assert wrapper_result == expected_result
 
     def test_get_specific_inject_check_nonexistant(self):
@@ -45,7 +40,7 @@ class TestMongoDBInjectChecks(DBTestCase):
             'time_to_check': time_to_check
         }]
         assert len(wrapper_result) == len(expected_result)
-        self.correct_imprecise_time(wrapper_result[0], expected_result[0])
+        self.correct_imprecise_time(wrapper_result[0], expected_result[0], 'time_to_check')
         assert wrapper_result == expected_result
 
     def test_create_inject_check_exists(self):
@@ -64,7 +59,7 @@ class TestMongoDBInjectChecks(DBTestCase):
             "time_to_check": time_to_check
         }]
         assert len(wrapper_result) == len(expected_result)
-        self.correct_imprecise_time(wrapper_result[0], expected_result[0])
+        self.correct_imprecise_time(wrapper_result[0], expected_result[0], 'time_to_check')
         assert wrapper_result == expected_result
 
     def test_modify_inject_check_nonexistant(self):
