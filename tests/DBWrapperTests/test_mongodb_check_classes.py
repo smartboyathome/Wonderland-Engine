@@ -58,4 +58,4 @@ class TestMongoDBCheckClasses(DBTestCase):
 
     def test_delete_check_class_nonexistant(self):
         with self.assertRaises(DoesNotExist):
-            self.db_wrapper.delete_service_check('NonexistantClass')
+            self.db_wrapper.delete_check_class('NonexistantClass')

@@ -272,7 +272,6 @@ class MongoDBWrapper(DBWrapper):
             raise DoesNotExist
         self.db.check_classes.remove({'id': class_name})
 
-    # todo Write unit tests for check script functions
     def get_all_check_scripts(self):
         return list(self._query_db('check_scripts', {}))
 
@@ -280,7 +279,7 @@ class MongoDBWrapper(DBWrapper):
         return list(self._query_db('check_scripts', {'id': module_name}))
 
     def create_check_script(self, module_name, path):
-        if not len(self.get_specific_service_check(module_name)) == 0:
+        if not len(self.get_specific_check_script(module_name)) == 0:
             raise Exists("A check script with id {} already exists.".format(module_name))
         data = {
             'id': module_name,
