@@ -112,7 +112,6 @@ class MongoDBWrapper(DBWrapper):
             raise DoesNotExist
         self.db.teams.remove({'id': team_id})
 
-    # todo Write unit tests for team score functions
     def get_scores_for_all_teams(self):
         return list(self._query_db('team_scores', {}))
 
@@ -247,7 +246,6 @@ class MongoDBWrapper(DBWrapper):
             raise DoesNotExist
         self.db.users.remove({'id': username})
 
-    # todo Write unit tests for check class functions
     def get_all_check_classes(self):
         return list(self._query_db('check_classes', {}))
 
