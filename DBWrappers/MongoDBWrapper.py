@@ -119,19 +119,32 @@ class MongoDBWrapper(DBWrapper):
     def get_score_for_team(self, team_id):
         if len(self.get_specific_team(team_id)) == 0:
             raise DoesNotExist
-        return list(self._query_db('team_scores', {'id':team_id}))
+        result = list(self._query_db('team_scores', {'team_id':team_id}))
+        if len(result) == 0:
+            self.calculate_scores_for_team(team_id)
+            result = list(self._query_db('team_scores', {'team_id':team_id}))
+        return result
 
     def calculate_scores_for_team(self, team_id):
         if len(self.get_specific_team(team_id)) == 0:
             raise DoesNotExist
-        old_score = self.db.team_scores.find({'team_id': team_id})
+        old_score = list(self.db.team_scores.find({'team_id': team_id}))
+        if len(old_score) == 0:
+            self.db.team_scores.insert({
+                'team_id': team_id,
+                'score': 0,
+                'timestamp': datetime.now()
+            })
+            old_score = list(self.db.team_scores.find({'team_id': team_id}))
+        old_score = old_score[0]
         new_score = deepcopy(old_score)
-        completed_checks = self.get_all_completed_checks_for_team_since(team_id, new_score['timestamp'])
+        new_score['score'] = 0
+        completed_checks = self.get_all_completed_checks_for_team(team_id)
         for check in completed_checks:
-            new_score['score'] += check
-            if check['timestamp'] > new_score['timestamp']:
-                new_score['timestamp'] = check['timestamp']
+            new_score['score'] += check['score']
+        new_score['timestamp'] = datetime.now()
         self.db.team_scores.update(old_score, new_score)
+        return new_score
 
     def get_all_machines(self):
         return list(self._query_db('machines', {}))
