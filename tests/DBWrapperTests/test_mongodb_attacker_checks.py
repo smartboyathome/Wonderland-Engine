@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime
 from DBWrappers.Exceptions import Exists, DoesNotExist, TeamDoesNotExist
 from tests.DBWrapperTests import DBTestCase
 from .. import show_difference_between_dicts
@@ -60,6 +61,16 @@ class TestMongoDBAttackerChecks(DBTestCase):
     def test_modify_attacker_check_nonexistant(self):
         with self.assertRaises(DoesNotExist):
             self.db_wrapper.modify_attacker_check('NonexistantExploit', '2', description='Check whether a nonexistant exploit still exists.', machine='Redis', class_name='SampleAttackerCheck')
+
+    def test_complete_attacker_check(self):
+        time = self.floor_time_to_milliseconds(datetime.now())
+        self.db_wrapper.complete_attacker_check('MySecurityHole', '2', time, 0)
+        wrapper_result = list(self.db.completed_checks.find({'id': 'MySecurityHole', 'type': 'attacker', 'team_id': '2', 'timestamp': time}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0, 'timestamp': 0}))[0]
+        expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'attacker' and obj['id'] == 'MySecurityHole'][0]
+        del expected_result['id'], expected_result['type'], expected_result['machine'], expected_result['class_name'], expected_result['team_id']
+        expected_result['score'] = 0
+        show_difference_between_dicts(wrapper_result, expected_result)
+        assert wrapper_result == expected_result
 
     def test_delete_attacker_check(self):
         self.db_wrapper.delete_attacker_check('BrokenExploit', '2')

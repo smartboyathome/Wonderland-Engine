@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime
 from DBWrappers.Exceptions import Exists, DoesNotExist
 from tests.DBWrapperTests import DBTestCase
 from .. import show_difference_between_dicts
@@ -53,6 +54,16 @@ class TestMongoDBServiceChecks(DBTestCase):
     def test_modify_service_check_nonexistant(self):
         with self.assertRaises(DoesNotExist):
             self.db_wrapper.modify_service_check('NonexistantServiceUp', description='Check whether a nonexistant service is up.', machine='MongoDB', class_name='SampleServiceCheck')
+
+    def test_complete_service_check(self):
+        time = self.floor_time_to_milliseconds(datetime.now())
+        self.db_wrapper.complete_service_check('MongoDBUp', '1', time, 0)
+        wrapper_result = list(self.db.completed_checks.find({'id': 'MongoDBUp', 'type': 'service', 'team_id': '1', 'timestamp': time}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0, 'timestamp': 0}))[0]
+        expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'service' and obj['id'] == 'MongoDBUp'][0]
+        del expected_result['id'], expected_result['type'], expected_result['machine'], expected_result['class_name']
+        expected_result['score'] = 0
+        show_difference_between_dicts(wrapper_result, expected_result)
+        assert wrapper_result == expected_result
 
     def test_delete_service_check(self):
         self.db_wrapper.delete_service_check('DeadThingUp')

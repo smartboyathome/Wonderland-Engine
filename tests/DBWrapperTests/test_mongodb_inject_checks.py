@@ -66,6 +66,16 @@ class TestMongoDBInjectChecks(DBTestCase):
         with self.assertRaises(DoesNotExist):
             self.db_wrapper.modify_inject_check('NonexistantInject', description='Check whether a nonexistant inject was done.', machine='Redis', class_name='SampleInjectCheck')
 
+    def test_complete_inject_check(self):
+        time = self.floor_time_to_milliseconds(datetime.now())
+        self.db_wrapper.complete_inject_check('RemovedFiles', '2', time, 0)
+        wrapper_result = list(self.db.completed_checks.find({'id': 'RemovedFiles', 'type': 'inject', 'team_id': '2', 'timestamp': time}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0, 'timestamp': 0}))[0]
+        expected_result = [deepcopy(obj) for obj in self.data['active_checks'] if obj['type'] == 'inject' and obj['id'] == 'RemovedFiles'][0]
+        del expected_result['id'], expected_result['type'], expected_result['machine'], expected_result['class_name']
+        expected_result['score'] = 0
+        self.correct_imprecise_time(wrapper_result, expected_result, 'time_to_check')
+        assert wrapper_result == expected_result
+
     def test_delete_inject_check(self):
         self.db_wrapper.delete_inject_check('UnspecifiedInject')
         wrapper_result = list(self.db.active_checks.find({'id': 'UnspecifiedInject', 'type': 'inject'}, {'_id': 0, 'id': 0, 'type': 0}))

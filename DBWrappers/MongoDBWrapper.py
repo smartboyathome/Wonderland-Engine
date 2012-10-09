@@ -332,7 +332,6 @@ class MongoDBWrapper(DBWrapper):
     def modify_service_check(self, check_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'type': 'service'}, **data)
 
-    # todo Write a check for complete_service_check
     def complete_service_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -396,7 +395,6 @@ class MongoDBWrapper(DBWrapper):
         data = {
             "id": check_id,
             "description": attacker_check[0]['description'],
-            "comments": attacker_check[0]['comments'],
             "type": 'attacker',
             "timestamp": timestamp,
             "team_id": team_id,

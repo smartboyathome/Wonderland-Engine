@@ -174,6 +174,14 @@ db_data = {
             'class_name': 'SampleAttackerCheck'
         },
         {
+            'id': 'MySecurityHole',
+            'description': 'Checks whether my security hole is still there.',
+            'machine': 'Redis',
+            'type': 'attacker',
+            'team_id': '2',
+            'class_name': 'SampleAttackerCheck'
+        },
+        {
             'id': 'MongoDBExploit',
             'description': 'Checks whether the exploit in MongoDB has been patched.',
             'machine': 'MongoDB',
