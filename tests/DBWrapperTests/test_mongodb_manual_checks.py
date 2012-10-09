@@ -10,6 +10,8 @@ class TestMongoDBManualChecks(DBTestCase):
         for item in expected_result:
             del item['type']
         assert len(wrapper_result) == len(expected_result)
+        for i in range(0, len(wrapper_result)):
+            self.correct_imprecise_time(wrapper_result[i], expected_result[i], 'timestamp')
         assert wrapper_result == expected_result
 
     def test_get_specific_manual_check(self):
@@ -18,6 +20,7 @@ class TestMongoDBManualChecks(DBTestCase):
         team_id = expected_result['team_id']
         del expected_result['type'], expected_result['id'], expected_result['team_id']
         wrapper_result = self.db_wrapper.get_specific_manual_check(result_id, team_id)[0]
+        self.correct_imprecise_time(wrapper_result, expected_result, 'timestamp')
         assert wrapper_result == expected_result
 
     def test_get_specific_manual_check_nonexistant(self):
@@ -54,6 +57,8 @@ class TestMongoDBManualChecks(DBTestCase):
         expected_result[0]['comments'] = 'They had no preparation whatsoever. They deserve to be failed.'
         del expected_result[0]['id'], expected_result[0]['type'], expected_result[0]['team_id']
         assert len(wrapper_result) == len(expected_result)
+        for i in range(0, len(wrapper_result)):
+            self.correct_imprecise_time(wrapper_result[i], expected_result[i], 'timestamp')
         assert wrapper_result == expected_result
 
     def test_modify_manual_check_nonexistant(self):

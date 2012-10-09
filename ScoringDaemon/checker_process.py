@@ -46,7 +46,6 @@ class CheckerProcess(Process):
             self.run_checks()
 
     def run_checks(self):
-        team = self.db.get_specific_team(self.team_id)
         for check in self.checks:
             print "Checking check object"
             check_obj = copy(check.object)
@@ -67,6 +66,7 @@ class CheckerProcess(Process):
                 else: # it is an attacker check
                     self.db.complete_attacker_check(check.id, self.team_id, datetime.now(), score)
                     check.timestamp = datetime.now() + timedelta(seconds=self.check_delay)
+                self.db.calculate_scores_for_team(self.team_id)
             if self.shutdown_event.is_set():
                 break
 

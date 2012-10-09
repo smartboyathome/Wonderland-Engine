@@ -332,6 +332,7 @@ class MongoDBWrapper(DBWrapper):
     def modify_service_check(self, check_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'type': 'service'}, **data)
 
+    # todo Write a check for complete_service_check
     def complete_service_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -385,6 +386,7 @@ class MongoDBWrapper(DBWrapper):
     def modify_attacker_check(self, check_id, team_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'team_id': team_id, 'type': 'attacker'}, **data)
 
+    # todo Write a check for complete_attacker_check
     def complete_attacker_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -435,6 +437,7 @@ class MongoDBWrapper(DBWrapper):
     def modify_inject_check(self, check_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'type': 'inject'}, **data)
 
+    # todo Write a check for complete_inject_check
     def complete_inject_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -529,7 +532,6 @@ class MongoDBWrapper(DBWrapper):
             raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, '$gt': {'timestamp': timestamp}}))
 
-    # todo write unit tests for get specific completed check functions
     def get_specific_completed_service_check_for_team(self, check_id, team_id):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist

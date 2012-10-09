@@ -232,7 +232,7 @@ db_data = {
             'inject_number': 5,
             'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
             'timestamp': datetime.now() - timedelta(hours=5),
-            'team_id': '1',
+            'team_id': '6',
             'score': 0
         },
         {
@@ -241,6 +241,7 @@ db_data = {
             'comments': 'This team did great! They definitely deserve full points!',
             'type': 'manual',
             'inject_number': '107',
+            'timestamp': datetime.now() - timedelta(hours=4),
             'team_id': '6',
             'score': 10
         },
@@ -250,6 +251,7 @@ db_data = {
             'comments': "This team didn't put any effort into their presentation, so we failed them.",
             'type': 'manual',
             'inject_number': '107',
+            'timestamp': datetime.now() - timedelta(hours=3, minutes=55),
             'team_id': '1',
             'score': 0
         },
@@ -258,9 +260,37 @@ db_data = {
             'description': 'The teams had to write up a policy on how usb devices could be used.',
             'comments': "This paper wasn't any good. We couldn't understand what they were saying.",
             'type': 'manual',
-            'inject_number': '107',
+            'inject_number': '114',
+            'timestamp': datetime.now() - timedelta(hours=3, minutes=50),
             'team_id': '1',
             'score': 0
+        },
+        {
+            'id': 'MySecurityHole',
+            'description': 'Checks whether my security hole is still there.',
+            'machine': 'Redis',
+            'type': 'attacker',
+            'timestamp': datetime.now() - timedelta(hours=2, minutes=22),
+            'team_id': '1',
+            'score': -5
+        },
+        {
+            'id': 'MySecurityHole',
+            'description': 'Checks whether my security hole is still there.',
+            'machine': 'Redis',
+            'type': 'attacker',
+            'timestamp': datetime.now() - timedelta(hours=1, minutes=52),
+            'team_id': '1',
+            'score': -5
+        },
+        {
+            'id': 'MySecurityHole',
+            'description': 'Checks whether my security hole is still there.',
+            'machine': 'Redis',
+            'type': 'attacker',
+            'timestamp': datetime.now() - timedelta(hours=1, minutes=22),
+            'team_id': '1',
+            'score': -5
         }
     ],
     'users': [
