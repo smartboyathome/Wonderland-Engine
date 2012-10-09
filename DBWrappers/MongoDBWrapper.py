@@ -501,7 +501,6 @@ class MongoDBWrapper(DBWrapper):
     def get_all_completed_manual_checks(self):
         return list(self._query_db('completed_checks', {'type': 'manual'}))
 
-    # todo Write unit tests for get all completed checks for team functions
     def get_all_completed_checks_for_team(self, team_id):
         return list(self._query_db('completed_checks', {'team_id': team_id}))
 
