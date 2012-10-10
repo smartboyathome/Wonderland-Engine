@@ -385,7 +385,6 @@ class MongoDBWrapper(DBWrapper):
     def modify_attacker_check(self, check_id, team_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'team_id': team_id, 'type': 'attacker'}, **data)
 
-    # todo Write a check for complete_attacker_check
     def complete_attacker_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -435,7 +434,6 @@ class MongoDBWrapper(DBWrapper):
     def modify_inject_check(self, check_id, **data):
         self._modify_document('active_checks', {'id': check_id, 'type': 'inject'}, **data)
 
-    # todo Write a check for complete_inject_check
     def complete_inject_check(self, check_id, team_id, timestamp, score):
         if len(self.get_specific_team(team_id)) == 0:
             raise TeamDoesNotExist(team_id)
@@ -560,7 +558,6 @@ class MongoDBWrapper(DBWrapper):
             raise TeamDoesNotExist
         return list(self._query_db('completed_checks', {'team_id': team_id, 'type': 'attacker', 'id': check_id, 'timestamp': timestamp}))
 
-    # todo Write unit tests for scoring session functions
     def get_current_scoring_session(self):
         return list(self._query_db('session', {}))
 
@@ -568,15 +565,14 @@ class MongoDBWrapper(DBWrapper):
         old_session = list(self.db.session.find({}))
         session = {}
         if not len(old_session) == 0:
-            session = old_session[0]
+            session = deepcopy(old_session[0])
         if not 'state' in session or session['state'] == 'stopped':
             session['state'] = 'started'
         else:
             return
-        if 'start_time' not in session:
-            session['start_time'] = datetime.now()
+        session['start_time'] = datetime.now()
         session['end_time'] = datetime(1,1,1)
-        if '_id' in session:
+        if not len(old_session) == 0:
             self.db.session.update(old_session[0], session)
         else:
             self.db.session.insert(session)
@@ -592,11 +588,11 @@ class MongoDBWrapper(DBWrapper):
 
     def clear_current_scoring_session(self):
         session = list(self.db.session.find({}))
-        if len(session) == 0:
-            return
-        self.db.session.remove(session)
+        for i in range(0, len(session)):
+            self.db.session.remove(session[i])
         completed_checks = list(self.db.completed_checks.find({}))
-        self.db.completed_checks.remove(completed_checks)
+        for i in range(0, len(completed_checks)):
+            self.db.completed_checks.remove(completed_checks[i])
 
     # todo Write unit tests for archive scoring session functions
     def archive_current_scoring_session(self, archive_id):

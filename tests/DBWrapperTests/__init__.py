@@ -19,7 +19,7 @@ class DBTestCase(unittest.TestCase, DBTestCaseMixin):
     def correct_imprecise_time(self, wrapper_result, expected_result, key):
         # MongoDB stores time less precisely than Python, so the following function is needed.
         assert expected_result[key] - wrapper_result[key] < timedelta(microseconds=1000)
-        expected_result[key] = self.floor_time_to_milliseconds(expected_result[key])
+        expected_result[key] = wrapper_result[key]
 
     def floor_time_to_milliseconds(self, time):
         return datetime(time.year, time.month, time.day, time.hour, time.minute, time.second, (time.microsecond // 1000)*1000)
