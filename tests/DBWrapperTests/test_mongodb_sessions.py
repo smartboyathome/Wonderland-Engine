@@ -14,11 +14,10 @@ class TestMongoDBSessions(DBTestCase):
         assert wrapper_result == expected_result
 
     def test_start_current_scoring_session(self):
-        start_time = datetime.now()
         self.db_wrapper.start_current_scoring_session()
         wrapper_result = list(self.db.session.find({}, {'_id': 0}))
         expected_result = [{
-            'start_time': start_time,
+            'start_time': wrapper_result[0]['start_time'],
             'end_time': datetime(1,1,1),
             'state': 'started'
         }]
@@ -28,13 +27,12 @@ class TestMongoDBSessions(DBTestCase):
         assert wrapper_result == expected_result
 
     def test_stop_current_scoring_session(self):
-        start_time = datetime.now()
         self.db_wrapper.start_current_scoring_session()
         end_time = datetime.now()
         self.db_wrapper.stop_current_scoring_session()
         wrapper_result = list(self.db.session.find({}, {'_id': 0}))
         expected_result = [{
-            'start_time': start_time,
+            'start_time': wrapper_result[0]['start_time'],
             'end_time': end_time,
             'state': 'stopped'
         }]

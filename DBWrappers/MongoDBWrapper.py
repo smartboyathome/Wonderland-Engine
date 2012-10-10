@@ -570,7 +570,8 @@ class MongoDBWrapper(DBWrapper):
             session['state'] = 'started'
         else:
             return
-        session['start_time'] = datetime.now()
+        if len(old_session) == 0:
+            session['start_time'] = datetime.now()
         session['end_time'] = datetime(1,1,1)
         if not len(old_session) == 0:
             self.db.session.update(old_session[0], session)
