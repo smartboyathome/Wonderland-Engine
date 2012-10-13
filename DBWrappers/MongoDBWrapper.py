@@ -598,10 +598,13 @@ class MongoDBWrapper(DBWrapper):
     # todo Write unit tests for archive scoring session functions
     def archive_current_scoring_session(self, archive_id):
         if not len(self.get_specific_archived_scoring_session(archive_id)) == 0:
-            raise ArchivedSessionExists(archive_id)
+            raise Exists(archive_id)
+        session = self.get_current_scoring_session()
+        if not (len(session) == 0 or session[0]['state'] == 'stopped'):
+            raise ScoringServerRunning
         session_archive = {
             'id': archive_id,
-            'session': self.get_current_scoring_session(),
+            'session': session,
             'teams': self.get_all_teams(),
             'team_configs': self.get_all_team_configs_for_all_machines(),
             'team_scores': self.get_scores_for_all_teams(),
@@ -612,8 +615,6 @@ class MongoDBWrapper(DBWrapper):
             'machines': self.get_all_machines(),
             'users': self.get_all_users()
         }
-        if not len(session_archive['session']) == 0 or not session_archive['session']['state'] == 'stopped':
-            raise ScoringServerRunning
         self.db.archived_sessions.insert(session_archive)
 
     def get_all_archived_scoring_sessions(self):
