@@ -17,4 +17,4 @@ class TestCheckerProcess(CheckerProcessTestCase):
         stuff = self.db_wrapper.get_all_completed_checks_for_team(self.team)
         scores = self.db_wrapper.get_scores_for_all_teams()
         score = [obj for obj in scores if obj['team_id'] == self.team][0]['score']
-        assert score == 5
+        assert score == 20
