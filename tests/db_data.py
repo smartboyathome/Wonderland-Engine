@@ -145,7 +145,7 @@ db_data = {
             'type': 'inject',
             'class_name': 'SampleInjectCheck',
             'inject_number': '42',
-            'time_to_check': datetime.now() + timedelta(hours=1)
+            'time_to_check': datetime.now() + timedelta(seconds=3)
         },
         {
             'id': 'AdjustedSpamFilter',

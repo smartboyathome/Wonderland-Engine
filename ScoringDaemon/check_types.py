@@ -122,7 +122,7 @@ class AttackerCheck(Check):
 
     @property
     def score(self):
-        return self._score
+        return self._mutable_vars.score
 
     @property
     def machine(self):

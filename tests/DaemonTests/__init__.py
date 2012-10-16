@@ -3,7 +3,7 @@ from configobj import ConfigObj
 import redis
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringDaemon.checker_process import CheckerProcess
-from ScoringDaemon.checks.SampleChecks import SampleServiceCheck, SampleInjectCheck
+from ScoringDaemon.checks.SampleChecks import SampleServiceCheck, SampleInjectCheck, SampleAttackerCheck
 from ScoringDaemon.master import Master, ActiveCheck
 from tests import DBTestCaseMixin, config_path
 
@@ -29,20 +29,38 @@ class MasterTestCase(unittest.TestCase, DBTestCaseMixin):
 class CheckerProcessTestCase(unittest.TestCase, DBTestCaseMixin):
     def setUp(self):
         config = ConfigObj(config_path)['CORE']
-        db_host = config['DATABASE']['HOST']
-        db_port = config['DATABASE']['PORT']
-        db_name = config['DATABASE']['DB_NAME']
-        self.init_db_data(db_host, db_port, db_name)
-        self.db_wrapper = MongoDBWrapper(db_host, int(db_port), db_name)
-        service_check_data = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleServiceCheck']
-        service_check_id = service_check_data[0]['id']
-        inject_check_id = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleInjectCheck'][0]['id']
-        self.checkers = [
-            ActiveCheck(service_check_id, SampleServiceCheck),
-            ActiveCheck(inject_check_id, SampleInjectCheck)
-        ]
+        self.db_host = config['DATABASE']['HOST']
+        self.db_port = config['DATABASE']['PORT']
+        self.db_name = config['DATABASE']['DB_NAME']
+        self.check_delay =  config['DAEMON']['CHECK_DELAY']
+        self.init_db_data(self.db_host, self.db_port, self.db_name)
+        self.db_wrapper = MongoDBWrapper(self.db_host, int(self.db_port), self.db_name)
         self.team = '6'
-        self.process = CheckerProcess(self.team, self.checkers, db_host, int(db_port), db_name, config['DAEMON']['CHECK_DELAY'])
+
+    def setup_process_with_no_checks(self):
+        self.checkers = []
+        self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
+
+    def setup_process_with_service_check(self):
+        service_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleServiceCheck'][0]
+        self.checkers = [
+            ActiveCheck(service_check['id'], SampleServiceCheck)
+        ]
+        self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
+
+    def setup_process_with_inject_check(self):
+        inject_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleInjectCheck'][0]
+        self.checkers =[
+            ActiveCheck(inject_check['id'], SampleInjectCheck)
+        ]
+        self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
+
+    def setup_process_with_attacker_check(self):
+        attacker_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleAttackerCheck' and obj['team_id'] == self.team][0]
+        self.checkers =[
+            ActiveCheck(attacker_check['id'], SampleAttackerCheck)
+        ]
+        self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
 
     def tearDown(self):
         if self.process.is_alive():

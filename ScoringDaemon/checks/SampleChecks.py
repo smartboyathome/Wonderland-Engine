@@ -20,7 +20,7 @@
 from datetime import datetime, timedelta
 
 import time
-from ScoringDaemon.check_types import ServiceCheck, InjectCheck
+from ScoringDaemon.check_types import ServiceCheck, InjectCheck, AttackerCheck
 
 class SampleServiceCheck(ServiceCheck):
     def __init__(self, machine, team_id, db_host, db_port, db_name):
@@ -35,9 +35,9 @@ class SampleServiceCheck(ServiceCheck):
         pass
 
 class SampleInjectCheck(InjectCheck):
-    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name, time_to_check):
         super(SampleInjectCheck, self).__init__(machine_id, team_id, db_host, db_port, db_name)
-        self._run_time = datetime.now() + timedelta(seconds=15)
+        self._run_time = time_to_check
 
     @property
     def timeout(self):
@@ -53,3 +53,14 @@ class SampleInjectCheck(InjectCheck):
 
     def run_check(self):
         self._mutable_vars.score = 5
+
+class SampleAttackerCheck(AttackerCheck):
+    def __init__(self, machine_id, team_id, db_host, db_port, db_name):
+        super(SampleAttackerCheck, self).__init__(machine_id, team_id, db_host, db_port, db_name)
+
+    @property
+    def timeout(self):
+        return 15
+
+    def run_check(self):
+        self._mutable_vars.score = -5

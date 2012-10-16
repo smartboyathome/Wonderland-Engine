@@ -34,12 +34,14 @@ class CheckerProcess(Process):
         self.checks = []
         for check in checks:
             check_db_data = self.db.get_specific_check(check.check_id, check.check_class.check_type)
-            check_data = check_db_data[0]
-            check_obj = check.check_class(check_data['machine'], team_id, db_host, db_port, db_name)
-            if issubclass(check.check_class, InjectCheck):
-                self.checks.append(Checker(check.check_id, check_obj, check_obj.time_to_run))
-            elif issubclass(check.check_class, (ServiceCheck, AttackerCheck)):
-                self.checks.append(Checker(check.check_id, check_obj, datetime.now()))
+            if len(check_db_data) > 0:
+                check_data = check_db_data[0]
+                if issubclass(check.check_class, InjectCheck):
+                    check_obj = check.check_class(check_data['machine'], team_id, db_host, db_port, db_name, check_data['time_to_check'])
+                    self.checks.append(Checker(check.check_id, check_obj, check_obj.time_to_run))
+                elif issubclass(check.check_class, (ServiceCheck, AttackerCheck)):
+                    check_obj = check.check_class(check_data['machine'], team_id, db_host, db_port, db_name)
+                    self.checks.append(Checker(check.check_id, check_obj, datetime.now()))
 
     def run(self):
         while not self.shutdown_event.is_set():
@@ -47,7 +49,6 @@ class CheckerProcess(Process):
 
     def run_checks(self):
         for check in self.checks:
-            print "Checking check object"
             check_obj = copy(check.object)
             now = datetime.now()
             if check.time_to_run < now:
@@ -63,7 +64,7 @@ class CheckerProcess(Process):
                 elif issubclass(type(check_obj), ServiceCheck):
                     self.db.complete_service_check(check.id, self.team_id, datetime.now(), score)
                     check.timestamp = datetime.now() + timedelta(seconds=self.check_delay)
-                else: # it is an attacker check
+                elif issubclass(type(check_obj), AttackerCheck):
                     self.db.complete_attacker_check(check.id, self.team_id, datetime.now(), score)
                     check.timestamp = datetime.now() + timedelta(seconds=self.check_delay)
                 self.db.calculate_scores_for_team(self.team_id)
