@@ -25,7 +25,7 @@ from ScoringServer import create_app
 config_path = os.path.join(os.getcwd(), 'testing.cfg')
 create_app(config_path)
 
-from tests.db_data import db_data
+from tests.db_data import generate_db_data
 
 class DBTestCaseMixin(object):
     def init_db_data(self, db_host, db_port, db_name):
@@ -33,7 +33,7 @@ class DBTestCaseMixin(object):
         if db_name in self.db.connection.database_names():
             #teardown wasn't run last time, so lets run it now.
             self.drop_db_data()
-        self.data = deepcopy(db_data)
+        self.data = generate_db_data()
         for key in self.data:
             mongodb_data = deepcopy(self.data[key])
             self.db[key].insert(mongodb_data)

@@ -48,9 +48,12 @@ class CheckerProcess(Process):
             self.run_checks()
 
     def run_checks(self):
-        for check in self.checks:
+        indices_to_remove = []
+        for i in range(0, len(self.checks)):
+            check = self.checks[i]
             check_obj = copy(check.object)
             now = datetime.now()
+            print check.time_to_run, '<', now, '=', check.time_to_run < now
             if check.time_to_run < now:
                 check_process = Process(target=check_obj.run_check)
                 check_process.start()
@@ -60,7 +63,8 @@ class CheckerProcess(Process):
                 score = check_obj.score
                 if issubclass(type(check_obj), InjectCheck):
                     self.db.complete_inject_check(check.id, self.team_id, datetime.now(), score)
-                    self.checks[:] = [obj for obj in self.checks if not obj == check]
+                    #self.checks[:] = [obj for obj in self.checks if not obj == check]
+                    indices_to_remove.append(i)
                 elif issubclass(type(check_obj), ServiceCheck):
                     self.db.complete_service_check(check.id, self.team_id, datetime.now(), score)
                     check.timestamp = datetime.now() + timedelta(seconds=self.check_delay)
@@ -70,6 +74,9 @@ class CheckerProcess(Process):
                 self.db.calculate_scores_for_team(self.team_id)
             if self.shutdown_event.is_set():
                 break
+        indices_to_remove.sort(reverse=True)
+        for i in indices_to_remove:
+            del self.checks[i]
 
 class Checker(object):
     def __init__(self, id, object, time_to_run):

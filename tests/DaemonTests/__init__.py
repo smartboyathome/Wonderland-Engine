@@ -62,6 +62,17 @@ class CheckerProcessTestCase(unittest.TestCase, DBTestCaseMixin):
         ]
         self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
 
+    def setup_process_with_all_check_types(self):
+        service_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleServiceCheck'][0]
+        inject_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleInjectCheck'][0]
+        attacker_check = [obj for obj in self.data['active_checks'] if obj['class_name'] == 'SampleAttackerCheck' and obj['team_id'] == self.team][0]
+        self.checkers = [
+            ActiveCheck(service_check['id'], SampleServiceCheck),
+            ActiveCheck(inject_check['id'], SampleInjectCheck),
+            ActiveCheck(attacker_check['id'], SampleAttackerCheck)
+        ]
+        self.process = CheckerProcess(self.team, self.checkers, self.db_host, int(self.db_port), self.db_name, self.check_delay)
+
     def tearDown(self):
         if self.process.is_alive():
             self.process.shutdown_event.set()

@@ -25,6 +25,7 @@ class TestCheckerProcess(CheckerProcessTestCase):
         self.setup_process_with_inject_check()
         self.process.run_checks()
         score = self.db_wrapper.get_score_for_team(self.team)
+        print score[0]['score']
         assert score[0]['score'] == 0
         time.sleep(3)
         self.process.run_checks()
@@ -36,3 +37,16 @@ class TestCheckerProcess(CheckerProcessTestCase):
         self.process.run_checks()
         score = self.db_wrapper.get_score_for_team(self.team)
         assert score[0]['score'] == 10
+
+    def test_checker_all_types(self):
+        self.setup_process_with_all_check_types()
+        self.process.run_checks()
+        score = self.db_wrapper.get_score_for_team(self.team)
+        # score = 15 (orig) + 5 (SampleServiceCheck) + -5 (SampleAttackerCheck)
+        assert score[0]['score'] == 15
+        time.sleep(4)
+        self.process.run_checks()
+        score = self.db_wrapper.get_score_for_team(self.team)
+        # score = 15 (orig) + 5 (SampleServiceCheck) + -5 (SampleAttackerCheck) + 5 (SampleInjectCheck)
+        print score[0]['score']
+        assert score[0]['score'] == 20
