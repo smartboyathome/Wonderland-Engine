@@ -208,7 +208,7 @@ class MongoDBWrapper(DBWrapper):
     def delete_team_config_for_machine(self, team_id, machine_id):
         if len(self.get_team_config_for_machine(team_id, machine_id)) == 0:
             raise DoesNotExist
-        self.db.team_configs.remove('team_configs', {'team_id': team_id, 'machine_id': machine_id})
+        self.db.team_configs.remove({'team_id': team_id, 'machine_id': machine_id})
 
     def get_all_users(self):
         return list(self._query_db('users', {}, exclude_fields=['password']))
