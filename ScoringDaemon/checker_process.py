@@ -21,6 +21,7 @@ from __future__ import division
 from copy import deepcopy, copy
 from datetime import datetime, timedelta
 from multiprocessing import Process, Event
+import random
 from DBWrappers.MongoDBWrapper import MongoDBWrapper
 from ScoringDaemon.check_types import InjectCheck, ServiceCheck, AttackerCheck
 
@@ -42,6 +43,7 @@ class CheckerProcess(Process):
                 elif issubclass(check.check_class, (ServiceCheck, AttackerCheck)):
                     check_obj = check.check_class(check_data['machine'], team_id, db_host, db_port, db_name)
                     self.checks.append(Checker(check.check_id, check_obj, datetime.now()))
+        random.shuffle(self.checks, random.random)
 
     def run(self):
         while not self.shutdown_event.is_set():
