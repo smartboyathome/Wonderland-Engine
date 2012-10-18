@@ -75,8 +75,9 @@ def test_route():
     resp = Response("{'id': 'Wonderland Scoring Engine', 'version': 0.1}", 200)
     return resp
 
+# Yes, we still want to run this even on import.
 mods = load_plugins(os.path.join(os.path.dirname(__file__), 'blueprints'))
 for name in mods:
     mod = mods[name]
-    if hasattr(mod, 'blueprint') and hasattr(mod, 'url_prefix'):
-        app.register_blueprint(mod.blueprint, url_prefix=mod.url_prefix)
+    if hasattr(mod, 'blueprint'):
+        app.register_blueprint(mod.blueprint)

@@ -25,8 +25,7 @@ from flask_login import UserMixin, current_user
 from ScoringServer import login_manager, app
 from ScoringServer.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles
 
-blueprint = Blueprint(__name__, 'session')
-url_prefix = '/session'
+blueprint = Blueprint(__name__, 'session', url_prefix='/session')
 
 def hash_password(password):
     if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
