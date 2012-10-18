@@ -60,14 +60,16 @@ def db_exception_handler(error):
 
 @app.errorhandler(BaseException)
 def general_exception_handler(error):
-    '''error_dict = {
-        'type': 'ServerError',
-        'reason': 'The server encountered a problem. Please try again later.'
-    }'''
-    error_dict = {
-        'type': type(error).__name__,
-        'reason': error.message
-    }
+    if app.config['SERVER']['DEBUG_OUTPUT'] == 'True':
+        error_dict = {
+            'type': type(error).__name__,
+            'reason': error.message
+        }
+    else:
+        error_dict = {
+            'type': 'ServerError',
+            'reason': 'The server encountered a problem. Please try again later.'
+        }
     return json.dumps(error_dict), 500
 
 @app.route("/")

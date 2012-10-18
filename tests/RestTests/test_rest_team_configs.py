@@ -69,6 +69,22 @@ class TestRestTeamConfigsInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
+    def test_create_team_config_for_machine_exists(self):
+        self.login_user('admin', 'admin')
+        query_data = {
+            "machine_id": "MongoDB",
+            "username": "team1",
+            "password": "team1mongo",
+            "port": "27017"
+        }
+        result_data = {
+            "type": "Exists",
+            "reason": "A config for team '1' machine 'MongoDB' already exists"
+        }
+        post = self.app.post('/teams/1/configs', data=json.dumps(query_data), follow_redirects=True)
+        assert post.status_code == 403
+        assert json.loads(post.data) == result_data
+
     def test_create_team_config_for_machine_invalid_param(self):
         self.login_user('admin', 'admin')
         query_data = {
@@ -179,11 +195,12 @@ class TestRestTeamConfigsInterface(FlaskTestCase):
 
     def test_delete_team_config_for_machine(self):
         self.login_user('admin', 'admin')
+        before_result = self.app.get('/teams/2/configs/Redis')
+        assert before_result.status_code == 200
         delete = self.app.delete('/teams/2/configs/Redis')
         assert delete.status_code == 204
-        result = self.app.get('/teams/2/configs/Redis')
-        print result.status_code, result.data
-        assert result.status_code == 404
+        after_result = self.app.get('/teams/2/configs/Redis')
+        assert after_result.status_code == 404
 
     def test_delete_team_config_for_machine_with_params(self):
         self.login_user('admin', 'admin')

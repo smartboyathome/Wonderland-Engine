@@ -25,7 +25,7 @@ def get_all_configs_for_team(team_id):
 def create_team_config_for_machine(team_id):
     data = json.loads(request.data)
     if len(g.db.get_team_config_for_machine(team_id, data['machine_id'])) != 0:
-        return create_error_response("TeamExists",  "A config for team '{}' machine '{}' already exists".format(team_id, data['machine_id']))
+        return create_error_response("Exists",  "A config for team '{}' machine '{}' already exists".format(team_id, data['machine_id']))
     g.db.create_team_config_for_machine(team_id, **data)
     resp = redirect(url_for(".get_config_for_team", team_id=team_id, machine_id=data['machine_id']), code=201)
     return resp

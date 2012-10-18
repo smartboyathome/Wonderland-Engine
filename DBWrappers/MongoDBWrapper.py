@@ -595,7 +595,6 @@ class MongoDBWrapper(DBWrapper):
         for i in range(0, len(completed_checks)):
             self.db.completed_checks.remove(completed_checks[i])
 
-    # todo Write unit tests for archive scoring session functions
     def archive_current_scoring_session(self, archive_id):
         if not len(self.get_specific_archived_scoring_session(archive_id)) == 0:
             raise Exists(archive_id)
