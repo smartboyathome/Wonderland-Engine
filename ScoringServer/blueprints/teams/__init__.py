@@ -24,4 +24,5 @@ blueprint = Blueprint(__name__, 'teams')
 url_prefix = '/teams'
 
 from . import teams_info
-from . import team_config
+from . import team_configs
+from . import team_scores

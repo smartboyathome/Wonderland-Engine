@@ -19,11 +19,20 @@
 '''
 
 from collections import defaultdict
+from datetime import datetime
 from functools import wraps
 import json, imp, os
 from flask import Response, request
 from flask.globals import g
 from flask_login import current_user
+
+def convert_datetime_to_timestamp(dt):
+    retval = (dt - datetime(1970, 1, 1)).total_seconds()
+    retval = int(retval * 1000) / 1000.0
+    return retval
+
+def convert_timestamp_to_datetime(ts):
+    return datetime.fromtimestamp(ts)
 
 def load_plugins(path):
     dir_list = os.listdir(path)
