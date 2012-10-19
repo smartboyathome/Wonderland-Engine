@@ -24,8 +24,6 @@ from configobj import ConfigObj
 from flask_login import LoginManager
 import os
 from validate import Validator
-from ScoringServer.itsdangerous_session import ItsdangerousSessionInterface
-from ScoringServer.redis_signed_session import RedisSignedSessionInterface
 
 __all__ = ['app', 'create_app', 'run_app']
 
