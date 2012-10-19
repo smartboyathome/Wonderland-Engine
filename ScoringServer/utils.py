@@ -26,6 +26,34 @@ from flask import Response, request
 from flask.globals import g
 from flask_login import current_user
 
+def convert_all_datetime_to_timestamp(obj, dt_keys):
+    '''
+    This function will take a list of keys which hold datetime objects, and
+    recursively search a list or dictionary for those keys to convert them from
+    a datetime to a floating point timestamp object. This is done in place in
+    the provided list or dictionary.
+    '''
+    if isinstance(obj, list):
+        for i in obj:
+            convert_all_datetime_to_timestamp(i, dt_keys)
+    elif isinstance(obj, dict):
+        for i in obj:
+            if i in dt_keys and isinstance(obj[i], datetime):
+                obj[i] = convert_datetime_to_timestamp(obj[i])
+            elif isinstance(obj[i], list) or isinstance(obj[i], dict):
+                convert_all_datetime_to_timestamp(obj[i], dt_keys)
+
+def convert_all_timestamp_to_datetime(obj, ts_keys):
+    if isinstance(obj, list):
+        for i in obj:
+            convert_all_datetime_to_timestamp(i, ts_keys)
+    elif isinstance(obj, dict):
+        for i in obj:
+            if i in ts_keys and isinstance(obj[i], float):
+                obj[i] = convert_timestamp_to_datetime(obj[i])
+            elif isinstance(obj[i], list) or isinstance(obj[i], dict):
+                convert_all_datetime_to_timestamp(obj[i], ts_keys)
+
 def convert_datetime_to_timestamp(dt):
     retval = (dt - datetime(1970, 1, 1)).total_seconds()
     retval = int(retval * 1000) / 1000.0

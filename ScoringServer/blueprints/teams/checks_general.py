@@ -17,12 +17,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
+from datetime import datetime
 
-from flask import Blueprint
+from flask import Response, g
+from . import blueprint
+from flask.ext.login import login_required
+from ScoringServer.utils import requires_no_parameters, requires_roles, convert_all_datetime_to_timestamp
+from bson import json_util
+import json
 
-blueprint = Blueprint(__name__, 'teams', url_prefix='/teams')
-
-from . import info
-from . import configs
-from . import scores
-from . import checks_general
+@blueprint.route("/<team_id>/checks", methods=['GET'])
+@login_required
+@requires_roles('administrator', 'organizer')
+@requires_no_parameters
+def get_all_checks_for_team(team_id):
+    data = g.db.get_all_completed_checks_for_team(team_id)
+    convert_all_datetime_to_timestamp(data, ['timestamp', 'time_to_check'])
+    js = json.dumps(data, default=json_util.default)
+    resp = Response(js, status=200, mimetype='application/json')
+    return resp
