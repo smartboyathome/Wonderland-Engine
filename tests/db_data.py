@@ -50,6 +50,10 @@ def generate_db_data():
             {
                 'id': 'Apache',
                 'general_ip': '127.0.0.3'
+            },
+            {
+                'id': 'DomainController',
+                'general_ip': '127.0.0.4'
             }
         ],
         'team_configs': [

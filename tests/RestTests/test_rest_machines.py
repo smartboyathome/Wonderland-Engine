@@ -66,10 +66,10 @@ class TestRestMachinesInterface(FlaskTestCase):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "Dovecot",
-            "general_ip": "127.0.0.4"
+            "general_ip": "127.0.0.5"
         }
         result_data = {
-            "general_ip": "127.0.0.4"
+            "general_ip": "127.0.0.5"
         }
         post = self.app.post('/machines/', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
@@ -97,7 +97,7 @@ class TestRestMachinesInterface(FlaskTestCase):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "Dovecot",
-            "general_ip": "127.0.0.4",
+            "general_ip": "127.0.0.5",
             "failure": "assured"
         }
         post_data = {
@@ -113,7 +113,7 @@ class TestRestMachinesInterface(FlaskTestCase):
     def test_create_machine_data_missing_param(self):
         self.login_user('admin', 'admin')
         query_data = {
-            "general_ip": "127.0.0.4"
+            "general_ip": "127.0.0.5"
         }
         post_data = {
             "type": "IllegalParameter",

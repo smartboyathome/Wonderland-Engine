@@ -209,3 +209,5 @@ class TestRestTeamsInterface(FlaskTestCase):
         delete = self.app.delete('/teams/1', data=json.dumps(query_data))
         assert delete.status_code == 403
         assert json.loads(delete.data) == delete_data
+        before_result = self.app.get('/teams/1')
+        assert before_result.status_code == 200

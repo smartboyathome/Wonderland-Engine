@@ -18,16 +18,12 @@
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from flask import Response, g
 from . import blueprint
-from datetime import datetime
-from flask.ext.login import login_required, current_user
-import json
+from flask.ext.login import login_required
+from ScoringServer.utils import requires_no_parameters, requires_roles, convert_datetime_to_timestamp
 from bson import json_util
-from flask.globals import request, g
-from flask.helpers import url_for
-from flask.wrappers import Response
-from werkzeug.utils import redirect
-from ScoringServer.utils import requires_no_parameters, requires_roles, requires_parameters, create_error_response, convert_datetime_to_timestamp
+import json
 
 @blueprint.route("/scores", methods=['GET'])
 @login_required

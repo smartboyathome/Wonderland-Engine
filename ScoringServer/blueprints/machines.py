@@ -17,15 +17,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import json
-from bson import json_util
-from flask.blueprints import Blueprint
+from flask import Response, url_for, redirect, g, request, Blueprint
 from flask.ext.login import login_required
-from flask.globals import g, request
-from flask.helpers import url_for
-from flask.wrappers import Response
-from werkzeug.utils import redirect
-from ScoringServer.utils import requires_roles, requires_no_parameters, requires_parameters, create_error_response
+from ScoringServer.utils import create_error_response, requires_parameters, requires_no_parameters, requires_roles
+from bson import json_util
+import json
 
 blueprint = Blueprint(__name__, 'machines', url_prefix='/machines')
 
