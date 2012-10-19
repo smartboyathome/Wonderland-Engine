@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo']
+extensions = ['sphinx.ext.todo', 'sphinxcontrib.httpdomain']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Cheshire Engine'
+project = u'Wonderland Engine'
 copyright = u'2012, Alexander Abbott'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'CheshireEngine.tex', u'Cheshire Engine Documentation',
+  ('index', 'CheshireEngine.tex', u'Wonderland Engine Documentation',
    u'Alexander Abbott', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'cheshireengine', u'Cheshire Engine Documentation',
+    ('index', 'cheshireengine', u'Wonderland Engine Documentation',
      [u'Alexander Abbott'], 1)
 ]
 
@@ -227,7 +227,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'CheshireEngine', u'Cheshire Engine Documentation',
+  ('index', 'CheshireEngine', u'Wonderland Engine Documentation',
    u'Alexander Abbott', 'CheshireEngine', 'One line description of project.',
    'Miscellaneous'),
 ]
