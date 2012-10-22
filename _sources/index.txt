@@ -9,10 +9,10 @@ Wonderland Engine |version| Documentation
 Overview
 --------
 
-The Cheshire Cyber Defense Scoring Engine aims to be a highly flexible scoring
-engine for use in Cybersecurity competitions. Inspired by the Pacific Rim
-Collegiate Cyber Defense Competition, Cheshire aims to allow greater modularity
-for administrators, while also allowing automation of some currently
+The Wonderland Cyber Defense Scoring Engine aims to be a highly flexible
+scoring engine for use in Cybersecurity competitions. Inspired by the Pacific
+Rim Collegiate Cyber Defense Competition, Wonderland aims to allow greater
+modularity for administrators, while also allowing automation of some currently
 unautomated procedures. Using MongoDB, Redis, Flask, and Sphinx, it will score
 any type of cyber defense competition, big or small, using different
 types of pluggable checks. It was designed and programmed from the ground up by
@@ -34,10 +34,9 @@ GNU Affero Public License.
 Dinah
    The name of the future Web GUI for this engine.
 
-Indices and tables
-==================
+Source
+------
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+To download and test the newest version of the Wonderland Engine, please visit
+`the github repository <https://github.com/smartboyathome/Cheshire-Engine/>`_
+and make sure to report any issues you come across.
