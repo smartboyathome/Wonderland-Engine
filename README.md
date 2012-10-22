@@ -13,3 +13,5 @@ ScoringDaemon's new name will be WhiteRabbit.
 ScoringServer's new name will be CheshireCat.
 The web frontend will be named Dinah.
 DBWrapper's new name will be Caterpillar.
+
+Documentation: http://smartboyathome.github.com/Cheshire-Engine/
