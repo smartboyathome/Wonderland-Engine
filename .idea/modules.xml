@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../Cheshire-Docs/.idea/Cheshire-Docs.iml" filepath="$PROJECT_DIR$/../Cheshire-Docs/.idea/Cheshire-Docs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Cheshire-Engine.iml" filepath="$PROJECT_DIR$/.idea/Cheshire-Engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Wonderland-Docs/.idea/Wonderland-Docs.iml" filepath="$PROJECT_DIR$/../Wonderland-Docs/.idea/Wonderland-Docs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Wonderland-Engine.iml" filepath="$PROJECT_DIR$/.idea/Wonderland-Engine.iml" />
     </modules>
   </component>
 </project>

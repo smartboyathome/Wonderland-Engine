@@ -20,7 +20,7 @@
 
 from copy import deepcopy
 import pymongo, os
-from ScoringServer import create_app
+from CheshireCat import create_app
 
 config_path = os.path.join(os.getcwd(), 'testing.cfg')
 create_app(config_path)
