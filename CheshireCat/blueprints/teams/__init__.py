@@ -27,3 +27,4 @@ from . import configs
 from . import scores
 from . import checks_general
 from . import checks_services
+from . import checks_injects
