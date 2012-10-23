@@ -24,7 +24,7 @@ from tests import show_difference_between_dicts
 from tests.CheshireCatTests import FlaskTestCase
 
 class TestRestTeamChecksGeneralInterface(FlaskTestCase):
-    def test_get_specific_team_check_list(self):
+    def test_get_all_checks_for_specific_team(self):
         self.login_user('admin', 'admin')
         rest_result = self.app.get('/teams/1/checks')
         print rest_result.status_code, rest_result.data
@@ -37,7 +37,7 @@ class TestRestTeamChecksGeneralInterface(FlaskTestCase):
             convert_all_datetime_to_timestamp(i, ['timestamp', 'time_to_check'])
         assert json_result == expected_result
 
-    def test_get_specific_team_check_list_with_params(self):
+    def test_get_all_checks_for_specific_team_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
