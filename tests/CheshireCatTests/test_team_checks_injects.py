@@ -53,10 +53,10 @@ class TestRestTeamChecksInjectsInterface(FlaskTestCase):
 
     def test_get_specific_inject_check_for_specific_team(self):
         self.login_user('admin', 'admin')
-        rest_result = self.app.get('/teams/1/checks/injects/MongoDBUp')
+        rest_result = self.app.get('/teams/1/checks/injects/RemovedFiles')
         print rest_result.status_code, rest_result.data
         assert rest_result.status_code == 200
-        expected_result = [obj for obj in self.data['completed_checks'] if obj['team_id'] == '1' and obj['type'] == 'inject' and obj['id'] == 'MongoDBUp']
+        expected_result = [obj for obj in self.data['completed_checks'] if obj['team_id'] == '1' and obj['type'] == 'inject' and obj['id'] == 'RemovedFiles']
         json_result = json.loads(rest_result.data)
         assert len(json_result) == len(expected_result)
         for i in expected_result:
@@ -73,7 +73,7 @@ class TestRestTeamChecksInjectsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/teams/1/checks/injects/MongoDBUp', data=json.dumps(query_data))
+        result = self.app.get('/teams/1/checks/injects/RemovedFiles', data=json.dumps(query_data))
         print result.data
         assert result.status_code == 403
         assert json.loads(result.data) == result_data

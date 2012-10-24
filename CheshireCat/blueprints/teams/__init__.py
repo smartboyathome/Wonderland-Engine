@@ -28,3 +28,4 @@ from . import scores
 from . import checks_general
 from . import checks_services
 from . import checks_injects
+from . import checks_attacks

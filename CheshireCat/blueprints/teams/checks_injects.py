@@ -43,7 +43,9 @@ def get_all_inject_checks_for_team(team_id):
 @requires_no_parameters
 def get_specific_inject_checks_for_team(team_id, check_id):
     data = g.db.get_specific_completed_inject_check_for_team(check_id, team_id)
-    convert_all_datetime_to_timestamp(data, ['timestamp'])
+    if len(data) == 0:
+        return Response(status=404)
+    convert_all_datetime_to_timestamp(data, ['timestamp', 'time_to_check'])
     js = json.dumps(data, default=json_util.default)
     resp = Response(js, status=200, mimetype='application/json')
     return resp

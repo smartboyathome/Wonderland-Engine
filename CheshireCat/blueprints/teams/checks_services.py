@@ -43,6 +43,8 @@ def get_all_service_checks_for_team(team_id):
 @requires_no_parameters
 def get_specific_service_checks_for_team(team_id, check_id):
     data = g.db.get_specific_completed_service_check_for_team(check_id, team_id)
+    if len(data) == 0:
+        return Response(status=404)
     convert_all_datetime_to_timestamp(data, ['timestamp'])
     js = json.dumps(data, default=json_util.default)
     resp = Response(js, status=200, mimetype='application/json')
