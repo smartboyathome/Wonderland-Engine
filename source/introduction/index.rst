@@ -76,4 +76,6 @@ outside of traditional pipes. I considered using sockets, but decided that
 wouldn't allow for the flexibility that I needed. Eventually, I ended up using
 Redis's pubsub feature. By utilizing this, the REST interface did not care
 about what daemon, if any, it communicated with, and the daemon didn't care
-about what clients it was getting its commands from.
+about what clients it was getting its commands from. All data that needed to be
+shared would be stored in MongoDB anyway, so it works well until MongoDB gets
+triggers.

@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Wonderland Engine |version| Documentation
-=======================================
+=========================================
 
 Overview
 --------
@@ -19,16 +19,16 @@ types of pluggable checks. It was designed and programmed from the ground up by
 Alexander Abbott during the summer and fall of 2012, and is available under the
 GNU Affero Public License.
 
-:doc:`Introduction <introduction>`
+:doc:`Introduction <introduction/index>`
    Introduction to the Wonderland Engine, including the high-level design.
 
-:doc:`Doorknob <doorknob>`
+:doc:`Doorknob <doorknob/index>`
    The Database Wrapper
 
-:doc:`Cheshire Cat <cheshire_cat>`
+:doc:`Cheshire Cat <cheshire_cat/index>`
    The REST API
 
-:doc:`White Rabbit <white_rabbit>`
+:doc:`White Rabbit <white_rabbit/index>`
    The Scoring Daemon
 
 Dinah
@@ -40,3 +40,8 @@ Source
 To download and test the newest version of the Wonderland Engine, please visit
 `the github repository <https://github.com/smartboyathome/Cheshire-Engine/>`_
 and make sure to report any issues you come across.
+
+TODO
+----
+
+.. todolist::
