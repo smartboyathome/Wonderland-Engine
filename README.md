@@ -8,4 +8,4 @@ for administrators, while also allowing automation of some currently
 unautomated procedures. As an added bonus, this engine supports public and
 private IPs, as well as IPv6 in the future.
 
-Documentation: http://smartboyathome.github.com/Cheshire-Engine/
+Documentation: http://smartboyathome.github.com/Wonderland-Engine/
