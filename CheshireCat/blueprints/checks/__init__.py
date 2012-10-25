@@ -20,12 +20,6 @@
 
 from flask import Blueprint
 
-blueprint = Blueprint(__name__, 'teams', url_prefix='/teams')
+blueprint = Blueprint(__name__, 'checks', url_prefix='/checks')
 
-from . import info
-from . import configs
-from . import scores
-from . import checks_general
-from . import checks_services
-from . import checks_injects
-from . import checks_attacks
+from . import attacks
