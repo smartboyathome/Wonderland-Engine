@@ -38,7 +38,7 @@ Source
 ------
 
 To download and test the newest version of the Wonderland Engine, please visit
-`the github repository <https://github.com/smartboyathome/Cheshire-Engine/>`_
+`the github repository <https://github.com/smartboyathome/Wonderland-Engine/>`_
 and make sure to report any issues you come across.
 
 TODO
