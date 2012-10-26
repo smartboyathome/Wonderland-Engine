@@ -24,7 +24,33 @@ from tests import show_difference_between_dicts
 from tests.CheshireCatTests import FlaskTestCase
 
 class TestRestTeamChecksGeneralInterface(FlaskTestCase):
-    def test_get_all_checks_for_specific_team(self):
+    def test_get_all_completed_checks(self):
+        self.login_user('admin', 'admin')
+        rest_result = self.app.get('/teams/checks')
+        print rest_result.status_code, rest_result.data
+        assert rest_result.status_code == 200
+        expected_result = [obj for obj in self.data['completed_checks']]
+        json_result = json.loads(rest_result.data)
+        assert len(json_result) == len(expected_result)
+        for i in expected_result:
+            convert_all_datetime_to_timestamp(i, ['timestamp', 'time_to_check'])
+        assert json_result == expected_result
+
+    def test_get_all_completed_checks_with_params(self):
+        self.login_user('admin', 'admin')
+        query_data = {
+            "failure": "assured"
+        }
+        result_data = {
+            "type": "IllegalParameter",
+            "reason": "Parameters are not allowed for this interface."
+        }
+        result = self.app.get('/teams/checks', data=json.dumps(query_data))
+        print result.data
+        assert result.status_code == 403
+        assert json.loads(result.data) == result_data
+
+    def test_get_all_completed_checks_for_specific_team(self):
         self.login_user('admin', 'admin')
         rest_result = self.app.get('/teams/1/checks')
         print rest_result.status_code, rest_result.data
@@ -37,7 +63,7 @@ class TestRestTeamChecksGeneralInterface(FlaskTestCase):
             convert_all_datetime_to_timestamp(i, ['timestamp', 'time_to_check'])
         assert json_result == expected_result
 
-    def test_get_all_checks_for_specific_team_with_params(self):
+    def test_get_all_completed_checks_for_specific_team_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
