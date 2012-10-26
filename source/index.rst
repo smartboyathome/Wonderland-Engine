@@ -19,6 +19,14 @@ types of pluggable checks. It was designed and programmed from the ground up by
 Alexander Abbott during the summer and fall of 2012, and is available under the
 GNU Affero Public License.
 
+.. toctree::
+   :hidden:
+
+   introduction/index
+   doorknob/index
+   cheshire_cat/index
+   white_rabbit/index
+
 :doc:`Introduction <introduction/index>`
    Introduction to the Wonderland Engine, including the high-level design.
 
