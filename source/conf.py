@@ -132,7 +132,13 @@ html_static_path = ['_static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    'index': ['sidebarintro.html', 'sourcelink.html', 'searchbox.html'],
+    'cheshire_cat/*': ['sidebarlogo-cheshire_cat.html', 'localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'],
+    'white_rabbit/*': ['sidebarlogo-white_rabbit.html', 'localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'],
+    'doorknob/*': ['sidebarlogo-doorknob.html', 'localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'],
+    'introduction/*': ['sidebarlogo-engine.html', 'localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
