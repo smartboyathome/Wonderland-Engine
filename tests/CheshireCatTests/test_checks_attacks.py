@@ -23,7 +23,7 @@ from CheshireCat.utils import convert_all_datetime_to_timestamp
 from tests import show_difference_between_dicts
 from tests.CheshireCatTests import FlaskTestCase
 
-class TestRestTeamsInterface(FlaskTestCase):
+class TestRestCheckAttacksInterface(FlaskTestCase):
     def test_get_all_attack_checks(self):
         self.login_user('admin', 'admin')
         rest_result = self.app.get('/checks/attacks')
@@ -255,7 +255,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         assert patch.status_code == 403
         assert json.loads(patch.data) == patch_data
 
-    def test_delete_team_data(self):
+    def test_delete_attack_check_for_team(self):
         self.login_user('admin', 'admin')
         before_result = self.app.get('/checks/attacks/MongoDBExploit/teams/6')
         assert before_result.status_code == 200
@@ -264,7 +264,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         after_result = self.app.get('/checks/attacks/MongoDBExploit/teams/6')
         assert after_result.status_code == 404
 
-    def test_delete_team_data_with_params(self):
+    def test_delete_attack_check_for_team_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"

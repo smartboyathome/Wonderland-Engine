@@ -23,3 +23,4 @@ from flask import Blueprint
 blueprint = Blueprint(__name__, 'checks', url_prefix='/checks')
 
 from . import attacks
+from . import services
