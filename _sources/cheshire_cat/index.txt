@@ -120,11 +120,3 @@ Team Manual Checks
 * Modify specific manual check for specific team
 
 * Remove specific manual check for specific team
-
-.. todo::
-
-   Redefinition of some of the team check URLs are needed. Team check URLs
-   should only refer to completed checks, whereas check creation should all be
-   done in the check URL interface group only. This means that
-   CheshireCat/blueprints/teams/checks_attacks.py needs to be changed to
-   reflect this design decision.

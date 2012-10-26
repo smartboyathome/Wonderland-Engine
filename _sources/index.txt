@@ -52,4 +52,7 @@ and make sure to report any issues you come across.
 TODO
 ----
 
+If there are any items that need to be done, they will be listed below. If it
+blank, then that means there is nothing that needs to be done!
+
 .. todolist::
