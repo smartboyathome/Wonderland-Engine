@@ -29,3 +29,4 @@ from . import checks_general
 from . import checks_services
 from . import checks_injects
 from . import checks_attacks
+from . import checks_manual
