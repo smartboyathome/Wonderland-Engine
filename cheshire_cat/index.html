@@ -1,0 +1,219 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cheshire Cat &mdash; Wonderland Engine 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Wonderland Engine 0.1 documentation" href="../index.html" />
+    <link rel="next" title="White Rabbit" href="../white_rabbit/index.html" />
+    <link rel="prev" title="Doorknob" href="../doorknob/index.html" />
+   
+  
+  <link rel="apple-touch-icon" href="../_static/'wonderland-engine-logo-small.png'" />
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="../white_rabbit/index.html" title="White Rabbit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../doorknob/index.html" title="Doorknob"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Wonderland Engine 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cheshire-cat">
+<h1>Cheshire Cat<a class="headerlink" href="#cheshire-cat" title="Permalink to this headline">¶</a></h1>
+<p>Cheshire Cat is the name of the REST API that was built to allow access to the
+underlying scoring engine. It talks to to the scoring engine through
+<a class="reference internal" href="../doorknob/index.html"><em>Doorknob</em></a>
+and Redis, and is generally a frontend to Doorknob
+in general. All the views are pluggable, loaded dynamically from the blueprints
+folder, so routes can be added, removed, and renamed easily, without having to
+modify any other code. Each route has a number of properties, such as whether
+users need to be logged in to access it, what user role(s) are allowed to
+access it, and what parameters are allowed to be passed to it. Unless otherwise
+stated, all routes require a user to log in to be able to access them.</p>
+<div class="section" id="default-routes">
+<h2>Default routes<a class="headerlink" href="#default-routes" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--">
+<tt class="descname">GET </tt><tt class="descname">/</tt><a class="headerlink" href="#get--" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name and version of the engine.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><pre>GET /
+Host: example.com
+Accept: application/json, text/javascript</pre>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+{
+   'id': 'Wonderland Scoring Engine',
+   'version': 0.1
+}</pre>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="routes-overview">
+<h2>Routes Overview<a class="headerlink" href="#routes-overview" title="Permalink to this headline">¶</a></h2>
+<p>Teams</p>
+<ul class="simple">
+<li>Get all teams</li>
+<li>Create team</li>
+<li>Get specific team</li>
+<li>Modify team</li>
+<li>Remove team</li>
+</ul>
+<p>Current Team</p>
+<ul class="simple">
+<li>Get current team</li>
+</ul>
+<p>Team Configuration</p>
+<ul class="simple">
+<li>Get all configs for team</li>
+<li>Create team config for machine</li>
+<li>Get team config for machine</li>
+<li>Modify team config for machine</li>
+<li>Remove team config for machine</li>
+</ul>
+<p>Current Team Configuration</p>
+<ul class="simple">
+<li>Get all configs for current team</li>
+<li>Create config for current team&#8217;s machine</li>
+<li>Get specific config for current team&#8217;s machine</li>
+<li>Modify config for current team&#8217;s machine</li>
+<li>Remove config for current team&#8217;s machine</li>
+</ul>
+<p>Team Checks</p>
+<ul class="simple">
+<li>Get all completed checks for specific team</li>
+</ul>
+<p>Team Service Checks</p>
+<ul class="simple">
+<li>Get all completed service checks for specific team</li>
+<li>Get specific completed service check for specific team</li>
+</ul>
+<p>Team Inject Checks</p>
+<ul class="simple">
+<li>Get all completed inject checks for specific team</li>
+<li>Get specific completed inject check for specific team</li>
+</ul>
+<p>Team Attacker Checks</p>
+<ul class="simple">
+<li>Get all completed attacker checks for specific team</li>
+<li>Create attacker check for specific team</li>
+<li>Get specific completed attacker check for specific team</li>
+<li>Modify specific attacker check for specific team</li>
+<li>Remove specific attacker check for specific team</li>
+</ul>
+<p>Team Manual Checks</p>
+<ul class="simple">
+<li>Get all completed manual checks for specific team</li>
+<li>Create manual check for specific team</li>
+<li>Get specific completed manual check for specific team</li>
+<li>Modify specific manual check for specific team</li>
+<li>Remove specific manual check for specific team</li>
+</ul>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Redefinition of some of the team check URLs are needed. Team check URLs
+should only refer to completed checks, whereas check creation should all be
+done in the check URL interface group only. This means that
+CheshireCat/blueprints/teams/checks_attacks.py needs to be changed to
+reflect this design decision.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cheshire Cat</a><ul>
+<li><a class="reference internal" href="#default-routes">Default routes</a></li>
+<li><a class="reference internal" href="#routes-overview">Routes Overview</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../doorknob/index.html" title="previous chapter">Doorknob</a></li>
+      <li>Next: <a href="../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/cheshire_cat/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2012, Alexander Abbott.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
