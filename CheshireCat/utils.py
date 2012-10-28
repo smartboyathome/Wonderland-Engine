@@ -60,7 +60,7 @@ def convert_datetime_to_timestamp(dt):
     return retval
 
 def convert_timestamp_to_datetime(ts):
-    return datetime.fromtimestamp(ts)
+    return datetime.utcfromtimestamp(ts)
 
 def load_plugins(path):
     dir_list = os.listdir(path)

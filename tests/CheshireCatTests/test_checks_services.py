@@ -235,7 +235,7 @@ class TestRestChecksServicesInterface(FlaskTestCase):
         after_result = self.app.get('/checks/services/EmailUp')
         assert after_result.status_code == 404
 
-    def test_delete_team_data_with_params(self):
+    def test_delete_service_check_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
