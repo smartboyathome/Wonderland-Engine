@@ -460,11 +460,17 @@ class MongoDBWrapper(DBWrapper):
     def get_all_manual_checks(self):
         return list(self._query_db('completed_checks', {'type': 'manual'}))
 
-    def get_specific_manual_check(self, check_id, team_id):
+    def get_all_manual_checks_for_team(self, team_id):
+        return list(self._query_db('completed_checks', {'type': 'manual', 'team_id': team_id}))
+
+    def get_specific_manual_check(self, check_id):
+        return list(self._query_db('completed_checks', {'id': check_id, 'type': 'manual'}))
+
+    def get_specific_manual_check_for_team(self, check_id, team_id):
         return list(self._query_db('completed_checks', {'id': check_id, 'team_id': team_id, 'type': 'manual'}))
 
-    def create_manual_check(self, check_id, description, comments, inject_number, team_id, points_awarded):
-        if not len(self.get_specific_manual_check(check_id, team_id)) == 0:
+    def create_manual_check(self, check_id, description, comments, inject_number, team_id, points_awarded, timestamp):
+        if not len(self.get_specific_manual_check_for_team(check_id, team_id)) == 0:
             raise Exists("A check with id {} already exists.".format(check_id))
         data = {
             "id": check_id,
@@ -473,7 +479,8 @@ class MongoDBWrapper(DBWrapper):
             "type": 'manual',
             "inject_number": inject_number,
             "team_id": team_id,
-            "score": points_awarded
+            "score": points_awarded,
+            "timestamp": timestamp
         }
         self.db.completed_checks.insert(data)
 
@@ -481,7 +488,7 @@ class MongoDBWrapper(DBWrapper):
         self._modify_document('completed_checks', {'id': check_id, 'team_id': team_id, 'type': 'manual'}, **data)
 
     def delete_manual_check(self, check_id, team_id):
-        if len(self.get_specific_manual_check(check_id, team_id)) == 0:
+        if len(self.get_specific_manual_check_for_team(check_id, team_id)) == 0:
             raise DoesNotExist
         self.db.completed_checks.remove({'id': check_id, 'team_id': team_id})
 

@@ -256,11 +256,19 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_specific_manual_check(self, check_id, team_id):
+    def get_all_manual_checks_for_team(self, team_id):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def create_manual_check(self, check_id, description, comments, inject_number, team_id, points_awarded):
+    def get_specific_manual_check(self, check_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_specific_manual_check_for_team(self, check_id, team_id):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def create_manual_check(self, check_id, description, comments, inject_number, team_id, points_awarded, timestamp):
         raise NotImplementedError()
 
     @abc.abstractmethod

@@ -25,3 +25,4 @@ blueprint = Blueprint(__name__, 'checks', url_prefix='/checks')
 from . import attacks
 from . import services
 from . import injects
+from . import manual
