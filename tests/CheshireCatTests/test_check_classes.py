@@ -23,18 +23,18 @@ from CheshireCat.utils import convert_datetime_to_timestamp, convert_all_datetim
 from tests import show_difference_between_dicts
 from tests.CheshireCatTests import FlaskTestCase
 
-class TestRestTeamCheckScriptsInterface(FlaskTestCase):
-    def test_get_all_check_scripts(self):
+class TestRestTeamCheckClassesInterface(FlaskTestCase):
+    def test_get_all_check_classes(self):
         self.login_user('admin', 'admin')
-        rest_result = self.app.get('/check_scripts/')
+        rest_result = self.app.get('/check_classes/')
         print rest_result.status_code, rest_result.data
         assert rest_result.status_code == 200
-        expected_result = [obj for obj in self.data['check_scripts']]
+        expected_result = [obj for obj in self.data['check_classes']]
         json_result = json.loads(rest_result.data)
         assert len(json_result) == len(expected_result)
         assert json_result == expected_result
 
-    def test_get_all_check_scripts_with_params(self):
+    def test_get_all_check_classes_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
@@ -43,23 +43,23 @@ class TestRestTeamCheckScriptsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/check_scripts/', data=json.dumps(query_data))
+        result = self.app.get('/check_classes/', data=json.dumps(query_data))
         print result.data
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
-    def test_get_specific_check_script(self):
+    def test_get_specific_check_class(self):
         self.login_user('admin', 'admin')
-        rest_result = self.app.get('/check_scripts/ServiceChecks')
+        rest_result = self.app.get('/check_classes/SampleServiceCheck')
         assert rest_result.status_code == 200
-        expected_result = [obj for obj in self.data['check_scripts'] if obj['id'] == 'ServiceChecks']
+        expected_result = [obj for obj in self.data['check_classes'] if obj['id'] == 'SampleServiceCheck']
         for i in expected_result:
             del i['id']
         json_result = json.loads(rest_result.data)
         assert len(json_result) == len(expected_result)
         assert json_result == expected_result
 
-    def test_get_specific_check_script_with_params(self):
+    def test_get_specific_check_class_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
@@ -68,7 +68,7 @@ class TestRestTeamCheckScriptsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/check_scripts/ServiceChecks', data=json.dumps(query_data))
+        result = self.app.get('/check_classes/SampleServiceCheck', data=json.dumps(query_data))
         print result.data
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
