@@ -21,10 +21,20 @@
 from collections import defaultdict
 from datetime import datetime
 from functools import wraps
+import hashlib
 import json, imp, os
+import bcrypt
 from flask import Response, request
 from flask.globals import g
 from flask_login import current_user
+
+def hash_password(password):
+    from CheshireCat import app
+    if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
+        return bcrypt.hashpw(password, bcrypt.gensalt(14))
+    elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
+        return hashlib.md5(password).hexdigest()
+    return password
 
 def convert_all_datetime_to_timestamp(obj, dt_keys):
     '''

@@ -8,7 +8,7 @@ blueprint = Blueprint(__name__, 'check_scripts', url_prefix='/check_scripts')
 
 @blueprint.route("/", methods=['GET'])
 @login_required
-@requires_roles('administrator', 'organizer')
+@requires_roles('administrator')
 @requires_no_parameters
 def get_all_check_scripts():
     data = g.db.get_all_check_scripts()
@@ -18,7 +18,7 @@ def get_all_check_scripts():
 
 @blueprint.route("/<script_id>", methods=['GET'])
 @login_required
-@requires_roles('administrator', 'organizer')
+@requires_roles('administrator')
 @requires_no_parameters
 def get_specific_check_script(script_id):
     data = g.db.get_specific_check_script(script_id)

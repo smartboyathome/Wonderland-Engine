@@ -28,7 +28,7 @@ import json
 
 @blueprint.route("/attacks", methods=['GET'])
 @login_required
-@requires_roles('administrator', 'organizer')
+@requires_roles('administrator', 'organizer', 'attacker')
 @requires_no_parameters
 def get_all_attack_checks():
     data = g.db.get_all_attacker_checks()
@@ -39,7 +39,7 @@ def get_all_attack_checks():
 
 @blueprint.route("/attacks/teams/<team_id>", methods=['GET'])
 @login_required
-@requires_roles('administrator', 'organizer')
+@requires_roles('administrator', 'organizer', 'attacker')
 @requires_no_parameters
 def get_all_attack_checks_for_team(team_id):
     data = g.db.get_all_attacker_checks_for_team(team_id)
@@ -50,7 +50,7 @@ def get_all_attack_checks_for_team(team_id):
 
 @blueprint.route("/attacks/teams/<team_id>", methods=['POST'])
 @login_required
-@requires_roles('administrator')
+@requires_roles('administrator', 'attacker')
 @requires_parameters(required=['id', 'description', 'machine', 'class_name'])
 def create_attack_check_for_team(team_id):
     data = json.loads(request.data)
@@ -63,7 +63,7 @@ def create_attack_check_for_team(team_id):
 
 @blueprint.route("/attacks/<check_id>/teams/<team_id>", methods=['GET'])
 @login_required
-@requires_roles('administrator', 'organizer')
+@requires_roles('administrator', 'organizer', 'attacker')
 @requires_no_parameters
 def get_specific_attack_check_for_team(team_id, check_id):
     data = g.db.get_specific_attacker_check(check_id, team_id)
@@ -76,7 +76,7 @@ def get_specific_attack_check_for_team(team_id, check_id):
 
 @blueprint.route("/attacks/<check_id>/teams/<team_id>", methods=['PATCH'])
 @login_required
-@requires_roles('administrator')
+@requires_roles('administrator', 'attacker')
 @requires_parameters(optional=['description', 'machine', 'class_name'])
 def modify_attacker_check_for_team(team_id, check_id):
     data = json.loads(request.data)
@@ -90,7 +90,7 @@ def modify_attacker_check_for_team(team_id, check_id):
 
 @blueprint.route("/attacks/<check_id>/teams/<team_id>", methods=['DELETE'])
 @login_required
-@requires_roles('administrator')
+@requires_roles('administrator', 'attacker')
 @requires_no_parameters
 def delete_attacker_check_for_team(team_id, check_id):
     data = list(g.db.get_specific_attacker_check(check_id, team_id))

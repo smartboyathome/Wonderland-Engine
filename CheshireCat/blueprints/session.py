@@ -23,16 +23,9 @@ from flask.ext.login import login_required, login_user, logout_user
 from flask.globals import request
 from flask_login import UserMixin, current_user
 from CheshireCat import login_manager, app
-from CheshireCat.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles
+from CheshireCat.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles, hash_password
 
 blueprint = Blueprint(__name__, 'session', url_prefix='/session')
-
-def hash_password(password):
-    if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
-        return bcrypt.hashpw(password, bcrypt.gensalt(14))
-    elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
-        return hashlib.md5(password).hexdigest()
-    return password
 
 @login_manager.user_loader
 def load_user(username):
@@ -53,7 +46,7 @@ def get_current_session_info():
 
 @blueprint.route("/", methods=['PATCH'])
 @login_required
-@requires_parameters(optional=['password', 'email', 'role', 'team'])
+@requires_parameters(optional=['password', 'email'])
 def modify_current_user():
     user = current_user.get_id()
     data = json.loads(request.data)
