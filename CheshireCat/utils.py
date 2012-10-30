@@ -27,6 +27,7 @@ import bcrypt
 from flask import Response, request
 from flask.globals import g
 from flask_login import current_user
+from numbers import Real
 
 def hash_password(password):
     from CheshireCat import app
@@ -36,7 +37,7 @@ def hash_password(password):
         return hashlib.md5(password).hexdigest()
     return password
 
-def convert_all_datetime_to_timestamp(obj, dt_keys):
+def convert_all_datetime_to_timestamp(obj, dt_keys=None):
     '''
     This function will take a list of keys which hold datetime objects, and
     recursively search a list or dictionary for those keys to convert them from
@@ -48,18 +49,18 @@ def convert_all_datetime_to_timestamp(obj, dt_keys):
             convert_all_datetime_to_timestamp(i, dt_keys)
     elif isinstance(obj, dict):
         for i in obj:
-            if i in dt_keys and isinstance(obj[i], datetime):
+            if (dt_keys is None or i in dt_keys) and isinstance(obj[i], datetime):
                 obj[i] = convert_datetime_to_timestamp(obj[i])
             elif isinstance(obj[i], list) or isinstance(obj[i], dict):
                 convert_all_datetime_to_timestamp(obj[i], dt_keys)
 
-def convert_all_timestamp_to_datetime(obj, ts_keys):
+def convert_all_timestamp_to_datetime(obj, ts_keys=None):
     if isinstance(obj, list):
         for i in obj:
             convert_all_datetime_to_timestamp(i, ts_keys)
     elif isinstance(obj, dict):
         for i in obj:
-            if i in ts_keys and isinstance(obj[i], float):
+            if (ts_keys is None or i in ts_keys) and isinstance(obj[i], Real):
                 obj[i] = convert_timestamp_to_datetime(obj[i])
             elif isinstance(obj[i], list) or isinstance(obj[i], dict):
                 convert_all_datetime_to_timestamp(obj[i], ts_keys)
