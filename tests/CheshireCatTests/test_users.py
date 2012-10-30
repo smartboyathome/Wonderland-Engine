@@ -24,7 +24,7 @@ from tests import show_difference_between_dicts
 from tests.CheshireCatTests import FlaskTestCase
 
 class TestRestUsersInterface(FlaskTestCase):
-    def test_get_all_users_data(self):
+    def test_get_all_users(self):
         self.login_user('admin', 'admin')
         result = self.app.get('/users/')
         assert result.status_code == 200
@@ -35,7 +35,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert len(json_result) == len(expected_result)
         assert json_result == self.data['users']
 
-    def test_get_all_users_data_with_params(self):
+    def test_get_all_users_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
@@ -61,7 +61,7 @@ class TestRestUsersInterface(FlaskTestCase):
             show_difference_between_dicts(i, j)
         assert json_result == result_data
 
-    def test_get_specific_user_data_with_params(self):
+    def test_get_specific_users_with_role_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
@@ -74,7 +74,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
-    def test_get_specific_user_data(self):
+    def test_get_specific_user(self):
         self.login_user('admin', 'admin')
         result = self.app.get('/users/team1')
         result_data = [obj for obj in self.data['users'] if obj['id'] == 'team1'][0]
@@ -82,7 +82,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_get_specific_user_data_with_params(self):
+    def test_get_specific_user_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
@@ -95,7 +95,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
-    def test_create_team_user_data(self):
+    def test_create_team_user(self):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "team6",
@@ -116,7 +116,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_create_org_user_data(self):
+    def test_create_org_user(self):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "organizers",
@@ -135,7 +135,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_create_user_data_exists(self):
+    def test_create_user_exists(self):
         self.login_user('admin', 'admin')
         query_data = {
             'id': 'team1',
@@ -153,7 +153,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
 
-    def test_create_user_data_invalid_param(self):
+    def test_create_user_invalid_param(self):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "team6",
@@ -173,7 +173,7 @@ class TestRestUsersInterface(FlaskTestCase):
         result = self.app.get('/users/Dovecot')
         assert result.status_code == 404
 
-    def test_create_user_data_missing_param(self):
+    def test_create_user_missing_param(self):
         self.login_user('admin', 'admin')
         query_data = {
             "password": "uw bothell",
@@ -195,7 +195,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_create_user_data_no_data(self):
+    def test_create_user_no_data(self):
         self.login_user('admin', 'admin')
         post_data = {
             "type": "IllegalParameter",
@@ -205,7 +205,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
 
-    def test_modify_user_data(self):
+    def test_modify_user(self):
         self.login_user('admin', 'admin')
         query_data = {
             "email": "organizers@example.com"
@@ -221,7 +221,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_modify_user_data_invalid_param(self):
+    def test_modify_user_invalid_param(self):
         self.login_user('admin', 'admin')
         query_data = {
             "id": "white_team",
@@ -240,7 +240,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_modify_user_data_no_param(self):
+    def test_modify_user_no_param(self):
         self.login_user('admin', 'admin')
         query_data = {}
         result_data = [obj for obj in self.data['users'] if obj['id'] == 'white_team'][0]
@@ -251,7 +251,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
-    def test_modify_user_data_no_data(self):
+    def test_modify_user_no_data(self):
         self.login_user('admin', 'admin')
         patch_data = {
             "type": "IllegalParameter",
@@ -261,7 +261,7 @@ class TestRestUsersInterface(FlaskTestCase):
         assert patch.status_code == 403
         assert json.loads(patch.data) == patch_data
 
-    def test_delete_user_data(self):
+    def test_delete_user(self):
         self.login_user('admin', 'admin')
         before_result = self.app.get('/users/evil_red_team')
         assert before_result.status_code == 200
@@ -270,7 +270,7 @@ class TestRestUsersInterface(FlaskTestCase):
         after_result = self.app.get('/users/evil_red_team')
         assert after_result.status_code == 404
 
-    def test_delete_user_data_with_params(self):
+    def test_delete_user_with_params(self):
         self.login_user('admin', 'admin')
         query_data = {
             "failure": "assured"
