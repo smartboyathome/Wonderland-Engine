@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; Wonderland Engine 0.1 documentation</title>
+    <title>Introduction &mdash; Wonderland Engine 0.9.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1',
+        VERSION:     '0.9.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Wonderland Engine 0.1 documentation" href="../index.html" />
+    <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../index.html" />
     <link rel="next" title="Doorknob" href="../doorknob/index.html" />
-    <link rel="prev" title="Wonderland Engine 0.1 Documentation" href="../index.html" />
+    <link rel="prev" title="Wonderland Engine 0.9 Documentation" href="../index.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
@@ -49,9 +49,9 @@
           <a href="../doorknob/index.html" title="Doorknob"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Wonderland Engine 0.1 Documentation"
+          <a href="../index.html" title="Wonderland Engine 0.9 Documentation"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Wonderland Engine 0.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -90,16 +90,24 @@ hard coded, and in fact it took a significant amount of effort on the
 competition organizer&#8217;s part to set it up for new competitions such as the
 smaller ones that my team started to participate in during the summer and fall
 of 2012.</p>
+<p>This wasn&#8217;t the only problem, however. The database didn&#8217;t have any concept of
+&#8216;timed&#8217; checks (what I call inject checks). This meant that judges had to
+recieve paper instructions on how to run scripts installed on each competition
+machine and interpret the output themselves. It also didn&#8217;t have any concept of
+checks which could subtract points for attackers successfully being able to
+break in to the systems that teams are supposed to protect. It didn&#8217;t even
+support IPv6, which will become very important in the next few years.</p>
 <p>This is why I decided that, for my Cooperative Education project that was
-required for me to graduate university, I would create a new engine to replace
-the old one. I worked closely with the people who set up the PRCCDC event every
-year as well as the aforementioned smaller competitons to design it how they
-needed it. Throughout the lifecycle of this project, I have learned many new
-skills in both python and project management that I hope to use in future jobs.
-I hope to continue working on this in the future.</p>
+required for me to graduate from University of Washington Bothell&#8217;s CSSE
+program, I would create a new engine to replace the old one. I worked closely
+with the people who set up the PRCCDC event every year as well as the
+aforementioned smaller competitons to design it how they needed it. Throughout
+the lifecycle of this project, I have learned many new skills in both python
+and project management that I hope to use in future jobs. I hope to continue
+working on this in the future.</p>
 </div>
-<div class="section" id="design">
-<h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="engine-design">
+<h2>Engine Design<a class="headerlink" href="#engine-design" title="Permalink to this headline">¶</a></h2>
 <p>The Wonderland Engine was created with modularity as the most crucial element
 of its design. Before even starting on any code, I took a month to create a
 50-page design document which described its architecture and each path that the
@@ -122,16 +130,78 @@ for each team&#8217;s network. By utilizing this private IP, the engine would be
 to access the various team machines while allowing teams to maintain good
 security practices.</p>
 <p>Very early on, the scoring server was separated out into two different modules.
-These were the scoring daemon and the REST server that gave access to the data
-that the scoring server generated. Unfortunately, python servers are started
-with several processes, which forced me to consider options for communication
-outside of traditional pipes. I considered using sockets, but decided that
-wouldn&#8217;t allow for the flexibility that I needed. Eventually, I ended up using
-Redis&#8217;s pubsub feature. By utilizing this, the REST interface did not care
-about what daemon, if any, it communicated with, and the daemon didn&#8217;t care
-about what clients it was getting its commands from. All data that needed to be
-shared would be stored in MongoDB anyway, so it works well until MongoDB gets
-triggers.</p>
+These were the scoring daemon (aka White Rabbit) and the REST server (aka
+Cheshire Cat that gave access to the data that the scoring server generated.
+Unfortunately, python servers are started with several processes, which forced
+me to consider options for communication outside of traditional pipes. I
+considered using sockets, but decided that wouldn&#8217;t allow for the flexibility
+that I needed. Eventually, I ended up using Redis&#8217;s pubsub feature. By
+utilizing this, the REST interface did not care about what daemon, if any, it
+communicated with, and the daemon didn&#8217;t care about what clients it was getting
+its commands from. This allows for a more modular approach to detecting changes
+across databases.</p>
+<p>From these design decisions emerged the the three base components included with
+the engine, Cheshire Cat, White Rabbit, and Doorknob. White Rabbit, as with the
+character from the books, is mostly concerned with making sure that all the
+checks run in a timely manner. Cheshire Cat just lazily takes the REST calls
+and converts them into data to be submitted to or returned from the database,
+and will occasionally notify White Rabbit that data it is concerned about in
+the database has changed through Redis. Doorknob is the wrapper around the
+database, which is where all the data for the scoring engine lives, and so,
+again like the character from the book, can be considered the portal to
+Wonderland itself. Details on each are available below.</p>
+</div>
+<div class="section" id="uml-diagrams">
+<h2>UML Diagrams<a class="headerlink" href="#uml-diagrams" title="Permalink to this headline">¶</a></h2>
+<p>I have included these UML diagrams in order to facilitate the understanding of
+the designs mentioned above. Included with each diagram is a description
+describing each step in the diagram. Hopefully someone will find them helpful
+in understanding the engine.</p>
+<div class="section" id="engine-architecture">
+<h3>Engine Architecture<a class="headerlink" href="#engine-architecture" title="Permalink to this headline">¶</a></h3>
+<img alt="../_images/Wonderland-Overall-Design.png" class="align-center" src="../_images/Wonderland-Overall-Design.png" />
+<p>This image further emphasizes the three-pronged approach of the Wonderland
+Engine, emphasizing the roles that each component takes and the communication
+channels for each component. These communication channels are lettered, and
+will be explained in the points that follow.</p>
+<blockquote>
+<div><p><strong>A:</strong> Cheshire Cat pulls most of its information from Doorknob, the
+database wrapper. It may do some processing on the data before sending it
+back to the client, such as serializing some objects that are not normally
+JSON serializable (such as datetimes), but usually the data is as you would
+see it if you looked in the database. In addition, it does some data
+validation that would not be appropriate for the wrapper to do, such as
+checking that a role is in a set of defined roles for users.</p>
+<p><strong>B:</strong> Doorknob does most of the heavy lifting by providing a common
+interface among databases in order to ease communication between both White
+Rabbit and Cheshire Cat and the database itself. One thing to knote is that
+Doorknob does not have to communicate with MongoDB, as is pictured above. A
+wrapper for MongoDB is included by default, but any database with a wrapper
+that implements Doorknob&#8217;s DBWrapper abstract class may be used instead. If
+you would like to use another database, feel free to write a new wrapper
+class and submit a patch!</p>
+<p><strong>C:</strong> White Rabbit communicates with the database in order to store a list
+of loaded check modules and classes, and to get the list of checks to use
+for its checking processes. It also stores the score after running each
+check in the database, and recalculates the scores after each change.</p>
+<p><strong>D:</strong> If certain portions of the database are changed that affect checking
+(such as the list of active checks in the database), Cheshire Cat will
+publish a command to a Redis pubsub channel specified in the Engine config
+file. This allows for any program listening on that channel to recieve and
+interpret any sent commands as they wish, regardless of programming
+language or implementation.</p>
+<p><strong>E:</strong> White Rabbit listens to the Redis pubsub channel specified in the
+Engine&#8217;s config file for commands that signal changes it should enact on.
+These changes could include the list of checks being changed, or whether
+to start or stop checking. If you would like more information on this,
+please see the documentation for <a class="reference internal" href="../doorknob/index.html"><em>Doorknob</em></a>.</p>
+</div></blockquote>
+<p>Unfortunately, due to time constraints, D and E (the communication through
+Redis&#8217;s pubsub channels) are hard coded into both Cheshire Cat and White
+Rabbit. I would like to abstract this out too, so that you could use other
+pubsub providers (such as ZeroMQ) without much hassle. If you would like this,
+feel free to file a new issue on the Github tracker and propose a design!</p>
+</div>
 </div>
 </div>
 
@@ -145,21 +215,25 @@ triggers.</p>
 </a></p>
 
 <a href="https://github.com/smartboyathome/Wonderland-Engine/">
-    <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
+    <img style="position: fixed; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
 </a>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Introduction</a><ul>
 <li><a class="reference internal" href="#purpose">Purpose</a></li>
 <li><a class="reference internal" href="#background">Background</a></li>
-<li><a class="reference internal" href="#design">Design</a></li>
+<li><a class="reference internal" href="#engine-design">Engine Design</a></li>
+<li><a class="reference internal" href="#uml-diagrams">UML Diagrams</a><ul>
+<li><a class="reference internal" href="#engine-architecture">Engine Architecture</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../index.html" title="previous chapter">Wonderland Engine 0.1 Documentation</a></li>
+      <li>Previous: <a href="../index.html" title="previous chapter">Wonderland Engine 0.9 Documentation</a></li>
       <li>Next: <a href="../doorknob/index.html" title="next chapter">Doorknob</a></li>
   </ul></li>
 </ul>

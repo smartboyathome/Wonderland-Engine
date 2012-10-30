@@ -33,16 +33,25 @@ competition organizer's part to set it up for new competitions such as the
 smaller ones that my team started to participate in during the summer and fall
 of 2012.
 
-This is why I decided that, for my Cooperative Education project that was
-required for me to graduate university, I would create a new engine to replace
-the old one. I worked closely with the people who set up the PRCCDC event every
-year as well as the aforementioned smaller competitons to design it how they
-needed it. Throughout the lifecycle of this project, I have learned many new
-skills in both python and project management that I hope to use in future jobs.
-I hope to continue working on this in the future.
+This wasn't the only problem, however. The database didn't have any concept of
+'timed' checks (what I call inject checks). This meant that judges had to
+recieve paper instructions on how to run scripts installed on each competition
+machine and interpret the output themselves. It also didn't have any concept of
+checks which could subtract points for attackers successfully being able to
+break in to the systems that teams are supposed to protect. It didn't even
+support IPv6, which will become very important in the next few years.
 
-Design
-------
+This is why I decided that, for my Cooperative Education project that was
+required for me to graduate from University of Washington Bothell's CSSE
+program, I would create a new engine to replace the old one. I worked closely
+with the people who set up the PRCCDC event every year as well as the
+aforementioned smaller competitons to design it how they needed it. Throughout
+the lifecycle of this project, I have learned many new skills in both python
+and project management that I hope to use in future jobs. I hope to continue
+working on this in the future.
+
+Engine Design
+-------------
 
 The Wonderland Engine was created with modularity as the most crucial element
 of its design. Before even starting on any code, I took a month to create a
@@ -69,13 +78,84 @@ to access the various team machines while allowing teams to maintain good
 security practices.
 
 Very early on, the scoring server was separated out into two different modules.
-These were the scoring daemon and the REST server that gave access to the data
-that the scoring server generated. Unfortunately, python servers are started
-with several processes, which forced me to consider options for communication
-outside of traditional pipes. I considered using sockets, but decided that
-wouldn't allow for the flexibility that I needed. Eventually, I ended up using
-Redis's pubsub feature. By utilizing this, the REST interface did not care
-about what daemon, if any, it communicated with, and the daemon didn't care
-about what clients it was getting its commands from. All data that needed to be
-shared would be stored in MongoDB anyway, so it works well until MongoDB gets
-triggers.
+These were the scoring daemon (aka White Rabbit) and the REST server (aka
+Cheshire Cat that gave access to the data that the scoring server generated.
+Unfortunately, python servers are started with several processes, which forced
+me to consider options for communication outside of traditional pipes. I
+considered using sockets, but decided that wouldn't allow for the flexibility
+that I needed. Eventually, I ended up using Redis's pubsub feature. By
+utilizing this, the REST interface did not care about what daemon, if any, it
+communicated with, and the daemon didn't care about what clients it was getting
+its commands from. This allows for a more modular approach to detecting changes
+across databases.
+
+From these design decisions emerged the the three base components included with
+the engine, Cheshire Cat, White Rabbit, and Doorknob. White Rabbit, as with the
+character from the books, is mostly concerned with making sure that all the
+checks run in a timely manner. Cheshire Cat just lazily takes the REST calls
+and converts them into data to be submitted to or returned from the database,
+and will occasionally notify White Rabbit that data it is concerned about in
+the database has changed through Redis. Doorknob is the wrapper around the
+database, which is where all the data for the scoring engine lives, and so,
+again like the character from the book, can be considered the portal to
+Wonderland itself. Details on each are available below.
+
+UML Diagrams
+------------
+
+I have included these UML diagrams in order to facilitate the understanding of
+the designs mentioned above. Included with each diagram is a description
+describing each step in the diagram. Hopefully someone will find them helpful
+in understanding the engine.
+
+Engine Architecture
+^^^^^^^^^^^^^^^^^^^
+
+.. image:: Wonderland-Overall-Design.png
+    :align: center
+
+This image further emphasizes the three-pronged approach of the Wonderland
+Engine, emphasizing the roles that each component takes and the communication
+channels for each component. These communication channels are lettered, and
+will be explained in the points that follow.
+
+    **A:** Cheshire Cat pulls most of its information from Doorknob, the
+    database wrapper. It may do some processing on the data before sending it
+    back to the client, such as serializing some objects that are not normally
+    JSON serializable (such as datetimes), but usually the data is as you would
+    see it if you looked in the database. In addition, it does some data
+    validation that would not be appropriate for the wrapper to do, such as
+    checking that a role is in a set of defined roles for users.
+
+    **B:** Doorknob does most of the heavy lifting by providing a common
+    interface among databases in order to ease communication between both White
+    Rabbit and Cheshire Cat and the database itself. One thing to knote is that
+    Doorknob does not have to communicate with MongoDB, as is pictured above. A
+    wrapper for MongoDB is included by default, but any database with a wrapper
+    that implements Doorknob's DBWrapper abstract class may be used instead. If
+    you would like to use another database, feel free to write a new wrapper
+    class and submit a patch!
+
+    **C:** White Rabbit communicates with the database in order to store a list
+    of loaded check modules and classes, and to get the list of checks to use
+    for its checking processes. It also stores the score after running each
+    check in the database, and recalculates the scores after each change.
+
+    **D:** If certain portions of the database are changed that affect checking
+    (such as the list of active checks in the database), Cheshire Cat will
+    publish a command to a Redis pubsub channel specified in the Engine config
+    file. This allows for any program listening on that channel to recieve and
+    interpret any sent commands as they wish, regardless of programming
+    language or implementation.
+
+    **E:** White Rabbit listens to the Redis pubsub channel specified in the
+    Engine's config file for commands that signal changes it should enact on.
+    These changes could include the list of checks being changed, or whether
+    to start or stop checking. If you would like more information on this,
+    please see the documentation for :doc:`Doorknob </doorknob/index>`.
+
+Unfortunately, due to time constraints, D and E (the communication through
+Redis's pubsub channels) are hard coded into both Cheshire Cat and White
+Rabbit. I would like to abstract this out too, so that you could use other
+pubsub providers (such as ZeroMQ) without much hassle. If you would like this,
+feel free to file a new issue on the Github tracker and propose a design!
