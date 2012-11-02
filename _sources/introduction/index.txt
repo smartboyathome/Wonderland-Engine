@@ -22,7 +22,7 @@ Pacific Rim Collegiate Cyber Defense Competition. While competing during the
 2012 Competition, my team had done a pretty reasonable move and blocked any
 incoming requests from outside our network from reaching the database, domain,
 and intranet systems. For most systems, this is a very reasonable layout, but
-unfortunately the database wasn't written to accomodate this.
+unfortunately the database wasn't written to accommodate this.
 
 The database that was in use up until that competition was hard coded to use
 the public IPs of each system it was checking the uptime on. All these systems
@@ -35,7 +35,7 @@ of 2012.
 
 This wasn't the only problem, however. The database didn't have any concept of
 'timed' checks (what I call inject checks). This meant that judges had to
-recieve paper instructions on how to run scripts installed on each competition
+receive paper instructions on how to run scripts installed on each competition
 machine and interpret the output themselves. It also didn't have any concept of
 checks which could subtract points for attackers successfully being able to
 break in to the systems that teams are supposed to protect. It didn't even
@@ -45,7 +45,7 @@ This is why I decided that, for my Cooperative Education project that was
 required for me to graduate from University of Washington Bothell's CSSE
 program, I would create a new engine to replace the old one. I worked closely
 with the people who set up the PRCCDC event every year as well as the
-aforementioned smaller competitons to design it how they needed it. Throughout
+aforementioned smaller competitions to design it how they needed it. Throughout
 the lifecycle of this project, I have learned many new skills in both python
 and project management that I hope to use in future jobs. I hope to continue
 working on this in the future.
@@ -83,7 +83,7 @@ Cheshire Cat that gave access to the data that the scoring server generated.
 Unfortunately, python servers are started with several processes, which forced
 me to consider options for communication outside of traditional pipes. I
 considered using sockets, but decided that wouldn't allow for the flexibility
-that I needed. Eventually, I ended up using Redis's pubsub feature. By
+that I needed. Eventually, I ended up using Redis's pub sub feature. By
 utilizing this, the REST interface did not care about what daemon, if any, it
 communicated with, and the daemon didn't care about what clients it was getting
 its commands from. This allows for a more modular approach to detecting changes
@@ -99,6 +99,48 @@ the database has changed through Redis. Doorknob is the wrapper around the
 database, which is where all the data for the scoring engine lives, and so,
 again like the character from the book, can be considered the portal to
 Wonderland itself. Details on each are available below.
+
+Doorknob
+--------
+
+Doorknob was one of the first pieces of code to actually be created because, at
+the time, I did not know whether I'd be using a SQL-based architecture such as
+MySQL or PostgreSQL, or a NoSQL-based one with MongoDB. In addition, I knew
+that not everyone would like to have to install MongoDB just for this engine,
+so I decided that the database should be able to be swapped out for another if
+so desired. Due to these desires, Doorknob came into existence.
+
+One design approach I considered that would have worked great for MongoDB was
+that I use an ORM model and encapsulate each type of object into a class
+utilizing metaclasses for transforming them into database-level objects. Quite
+a few good frameworks exist already for MongoDB, MySQL, and PostgreSQL, but
+none allow for either of those to be used. In addition to the fact that ORMs
+can be rather tricky when it comes to handling data that requires more than
+one table in traditional SQL databases (thinking of things like key-value
+stores or arrays), one that supported both SQL and NoSQL would only be able to
+reliably support a few common object types such as ints and strings. This would
+have spun out of control quickly, and would have made it harder for developers
+to create new wrappers for their preferred database.
+
+Instead, I decided to create an abstract class that contained an abstract
+method for each action either White Rabbit or Cheshire Cat would need. These
+would have the arguments that they needed and be able to interpret them
+accordingly depending on the database in use. If you wanted to support a
+different database, all you'd have to do is inherit from the DBWrapper class
+and implement all the abstract methods that it creates. With this technique,
+what the DBWrapper does and doesn't support can be adequately specified and
+it would require minimal conceptual confusion from the developer.
+
+However, this approach does have its downsides too. In terms of amount of code,
+this approach generates a lot more, with DBWrapper containing 88 methods at the
+time of this writing. However, many of those do similar things but with
+different sets of data (such as users vs machines). This may have been able to
+be handled in a more object-oriented way, with different classes that inherit
+from a common class, for example, but allowing that common class to be dynamic
+and deciding how it would be abstract enough to work across different databases
+would have presented similar problems to an ORM-style model. Due to these
+conceptual downsides, I took the KISS (Keep It Super Simple) approach and
+used one method per action per set of data.
 
 UML Diagrams
 ------------
@@ -129,7 +171,7 @@ will be explained in the points that follow.
 
     **B:** Doorknob does most of the heavy lifting by providing a common
     interface among databases in order to ease communication between both White
-    Rabbit and Cheshire Cat and the database itself. One thing to knote is that
+    Rabbit and Cheshire Cat and the database itself. One thing to note is that
     Doorknob does not have to communicate with MongoDB, as is pictured above. A
     wrapper for MongoDB is included by default, but any database with a wrapper
     that implements Doorknob's DBWrapper abstract class may be used instead. If
@@ -143,19 +185,19 @@ will be explained in the points that follow.
 
     **D:** If certain portions of the database are changed that affect checking
     (such as the list of active checks in the database), Cheshire Cat will
-    publish a command to a Redis pubsub channel specified in the Engine config
-    file. This allows for any program listening on that channel to recieve and
+    publish a command to a Redis pub sub channel specified in the Engine config
+    file. This allows for any program listening on that channel to receive and
     interpret any sent commands as they wish, regardless of programming
     language or implementation.
 
-    **E:** White Rabbit listens to the Redis pubsub channel specified in the
+    **E:** White Rabbit listens to the Redis pub sub channel specified in the
     Engine's config file for commands that signal changes it should enact on.
     These changes could include the list of checks being changed, or whether
     to start or stop checking. If you would like more information on this,
     please see the documentation for :doc:`Doorknob </doorknob/index>`.
 
 Unfortunately, due to time constraints, D and E (the communication through
-Redis's pubsub channels) are hard coded into both Cheshire Cat and White
+Redis's pub sub channels) are hard coded into both Cheshire Cat and White
 Rabbit. I would like to abstract this out too, so that you could use other
-pubsub providers (such as ZeroMQ) without much hassle. If you would like this,
+pub sub providers (such as ZeroMQ) without much hassle. If you would like this,
 feel free to file a new issue on the Github tracker and propose a design!
