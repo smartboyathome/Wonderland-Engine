@@ -169,6 +169,13 @@ easily be sniffed, so if security is a concern (such as with large
 competitions), then you should enable HTTPS in your web serving software (aka,
 Apache, Nginx, Lighttpd, or Microsoft IIS).
 
+The interfaces for Cheshire Cat are pluggable, defined as modules within the
+blueprints folder. Any routes defined within a module in this folder will be
+automatically loaded when Cheshire Cat is started up, making it easy to add
+and test new routes. By using this, no new routes have to be defined anywhere
+else, and the information about each route is kept with that route. Check the
+Cheshire docs if you would like to create new interfaces for Cheshire Cat.
+
 Due to its simplicity, this is all that can be said about the design of
 Cheshire Cat. If you are wanting to use it with your application, I would
 suggest checking its docs for all the REST interfaces.
