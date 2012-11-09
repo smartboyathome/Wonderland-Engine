@@ -154,8 +154,24 @@ machines that would inevitably be deployed for Cyber Defense Competitions. By
 using a REST interface for the data, no special software would have to be
 deployed to any machines in order to communicate with the scoring engine. A web
 frontend could be created to make AJAX calls to the scoring engine, which would
-then work in any standard web browser. Plus, by using a REST interface, the
-scoring engine can be located on a separate machine from the actual 
+then work in any standard web browser or via the command line when using tools
+like curl. Plus, by using a REST interface, the scoring engine can be located
+on a separate machine from the actual scoring process, allowing for more
+control over the scoring engine's environment.
+
+The design of Cheshire Cat is fairly simple. It submits and queries data
+through Doorknob to the administrator's database of choice. That data is then
+returned to the user in JSON, with dates being represented by a Unix timestamp.
+It does provide a basic authentication system and authorization system in order
+to manage access to the interfaces that it provides, but it does not provide
+security for this data. If it is run over standard HTTP, the user tokens could
+easily be sniffed, so if security is a concern (such as with large
+competitions), then you should enable HTTPS in your web serving software (aka,
+Apache, Nginx, Lighttpd, or Microsoft IIS).
+
+Due to its simplicity, this is all that can be said about the design of
+Cheshire Cat. If you are wanting to use it with your application, I would
+suggest checking its docs for all the REST interfaces.
 
 UML Diagrams
 ------------
