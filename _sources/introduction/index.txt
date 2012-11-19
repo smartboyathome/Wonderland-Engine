@@ -169,16 +169,52 @@ easily be sniffed, so if security is a concern (such as with large
 competitions), then you should enable HTTPS in your web serving software (aka,
 Apache, Nginx, Lighttpd, or Microsoft IIS).
 
-The interfaces for Cheshire Cat are pluggable, defined as modules within the
-blueprints folder. Any routes defined within a module in this folder will be
-automatically loaded when Cheshire Cat is started up, making it easy to add
-and test new routes. By using this, no new routes have to be defined anywhere
-else, and the information about each route is kept with that route. Check the
-Cheshire docs if you would like to create new interfaces for Cheshire Cat.
+The interfaces for Cheshire Cat are all written as plugins, defined as modules
+within the blueprints folder. Any routes defined within a module in this folder
+will beautomatically loaded when Cheshire Cat is started up, making it easy to
+add and test new routes. By using this, no new routes have to be defined
+anywhere else, and the information about each route is kept with that route.
+Check the Cheshire docs if you would like to create new interfaces for Cheshire
+Cat.
 
 Due to its simplicity, this is all that can be said about the design of
 Cheshire Cat. If you are wanting to use it with your application, I would
 suggest checking its docs for all the REST interfaces.
+
+White Rabbit
+------------
+
+White Rabbit is the work horse behind the scoring engine, in that it manages
+all the checks that are being run for each team. It is similar to Cron, the job
+scheduler for Unix-like operating systems, and allows for you to schedule
+checks to be run in certain intervals or at a specific time. Checks can be one
+of four types: Service, Attacker, Inject, and Manual. Each of these types have
+different properties and intended uses in scoring a competition.
+
+Service checks are checks that will run for all teams at periodic intervals.
+These checks are meant to be used for checking whether certain services remain
+up throughout the competition. The scoring engine will add the number of points
+returned by the check to the overall score.
+
+Attacker checks are similar to Service checks, but will run for only a certain
+team at periodic intervals. The intention is that the attacker, after finding a
+security hole for a specific team, will write a test for that security hole,
+and then submit that check to the administrator of the scoring engine. The
+scoring engine will then run the check and deduct the appropriate number of
+points from the user.
+
+Inject checks are checks that are intended to be run at a certain time in order
+to judge the successful completion of a business task. This may be as simple as
+whether a team removed some infected files from the system or whether they had
+set up a new service. These are only scored once, unlike the Service and
+Attacker checks.
+
+Manual checks are checks that have to be added manually to the database, and
+are not handled explicitly by White Rabbit, but are still useful to mention
+here. These checks are intended for items that can not be easily scored in an
+automated fashion, such as presentations or reports. These are scored
+immediately upon being submitted into the engine, and are available to cover
+any types of checks not covered by the other three checks.
 
 UML Diagrams
 ------------
