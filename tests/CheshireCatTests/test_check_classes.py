@@ -26,7 +26,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestTeamCheckClassesInterface(FlaskTestCase):
     def test_get_all_check_classes(self):
         self.login_user('admin', 'admin')
-        rest_result = self.app.get('/check_classes/')
+        rest_result = self.app.get('/check_classes')
         print rest_result.status_code, rest_result.data
         assert rest_result.status_code == 200
         expected_result = [obj for obj in self.data['check_classes']]
@@ -43,7 +43,7 @@ class TestRestTeamCheckClassesInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/check_classes/', data=json.dumps(query_data))
+        result = self.app.get('/check_classes', data=json.dumps(query_data))
         print result.data
         assert result.status_code == 403
         assert json.loads(result.data) == result_data

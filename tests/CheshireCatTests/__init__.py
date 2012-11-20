@@ -46,7 +46,7 @@ class FlaskTestCase(unittest.TestCase, DBTestCaseMixin):
             'username': username,
             'password': password
         }
-        return self.app.post('/session/', data=json.dumps(query_data))
+        return self.app.post('/session', data=json.dumps(query_data))
 
     def logout_user(self):
-        self.app.delete('/session/')
+        self.app.delete('/session')

@@ -25,7 +25,7 @@ import json
 
 blueprint = Blueprint(__name__, 'check_scripts', url_prefix='/check_scripts')
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_roles('administrator')
 @requires_no_parameters

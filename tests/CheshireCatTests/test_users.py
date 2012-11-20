@@ -26,7 +26,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestUsersInterface(FlaskTestCase):
     def test_get_all_users(self):
         self.login_user('admin', 'admin')
-        result = self.app.get('/users/')
+        result = self.app.get('/users')
         assert result.status_code == 200
         json_result = json.loads(result.data)
         expected_result = self.data['users']
@@ -44,7 +44,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/users/', data=json.dumps(query_data))
+        result = self.app.get('/users', data=json.dumps(query_data))
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
@@ -109,7 +109,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "role": "team",
             "team": "6"
         }
-        post = self.app.post('/users/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/users', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
         assert post.headers['Location'] == 'http://localhost/users/team6'
         result = self.app.get('/users/team6')
@@ -128,7 +128,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "email": "organizers@example.com",
             "role": "organizer"
         }
-        post = self.app.post('/users/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/users', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
         assert post.headers['Location'] == 'http://localhost/users/organizers'
         result = self.app.get('/users/organizers')
@@ -148,7 +148,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "type": "Exists",
             "reason": "A user with the id 'team1' already exists"
         }
-        post = self.app.post('/users/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/users', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
@@ -167,7 +167,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameter 'failure' is not valid for this interface."
         }
-        post = self.app.post('/users/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/users', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
         result = self.app.get('/users/Dovecot')
@@ -188,10 +188,10 @@ class TestRestUsersInterface(FlaskTestCase):
         result_data = self.data['users']
         for i in result_data:
             del i['password']
-        post = self.app.post('/users/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/users', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
-        result = self.app.get('/users/')
+        result = self.app.get('/users')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
@@ -201,7 +201,7 @@ class TestRestUsersInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
         }
-        post = self.app.post('/users/', follow_redirects=True)
+        post = self.app.post('/users', follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
 

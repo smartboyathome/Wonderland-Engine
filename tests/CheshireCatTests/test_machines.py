@@ -24,7 +24,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestMachinesInterface(FlaskTestCase):
     def test_get_all_machines_data(self):
         self.login_user('admin', 'admin')
-        result = self.app.get('/machines/')
+        result = self.app.get('/machines')
         assert result.status_code == 200
         assert json.loads(result.data) == self.data['machines']
 
@@ -37,7 +37,7 @@ class TestRestMachinesInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/machines/', data=json.dumps(query_data))
+        result = self.app.get('/machines', data=json.dumps(query_data))
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
@@ -71,7 +71,7 @@ class TestRestMachinesInterface(FlaskTestCase):
         result_data = {
             "general_ip": "127.0.0.5"
         }
-        post = self.app.post('/machines/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/machines', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
         assert post.headers['Location'] == 'http://localhost/machines/Dovecot'
         result = self.app.get('/machines/Dovecot')
@@ -88,7 +88,7 @@ class TestRestMachinesInterface(FlaskTestCase):
             "type": "Exists",
             "reason": "A machine with the id 'MongoDB' already exists"
         }
-        post = self.app.post('/machines/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/machines', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
@@ -104,7 +104,7 @@ class TestRestMachinesInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameter 'failure' is not valid for this interface."
         }
-        post = self.app.post('/machines/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/machines', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
         result = self.app.get('/machines/Dovecot')
@@ -120,10 +120,10 @@ class TestRestMachinesInterface(FlaskTestCase):
             "reason": "Required parameter 'id' is not specified."
         }
         result_data = self.data['machines']
-        post = self.app.post('/machines/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/machines', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
-        result = self.app.get('/machines/')
+        result = self.app.get('/machines')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
@@ -133,7 +133,7 @@ class TestRestMachinesInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
         }
-        post = self.app.post('/machines/', follow_redirects=True)
+        post = self.app.post('/machines', follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
 

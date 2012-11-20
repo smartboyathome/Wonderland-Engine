@@ -25,7 +25,7 @@ import json
 
 blueprint = Blueprint(__name__, 'scoring', url_prefix='/scoring')
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_roles('administrator', 'organizer')
 @requires_no_parameters
@@ -38,7 +38,7 @@ def get_scoring_session():
     resp = Response(js, status=200, mimetype='application/json')
     return resp
 
-@blueprint.route("/", methods=['POST'])
+@blueprint.route("", methods=['POST'])
 @login_required
 @requires_roles('administrator')
 @requires_no_parameters
@@ -48,7 +48,7 @@ def start_scoring_session():
     resp = Response(status=204)
     return resp
 
-@blueprint.route("/", methods=['PATCH'])
+@blueprint.route("", methods=['PATCH'])
 @login_required
 @requires_roles('administrator')
 @requires_no_parameters
@@ -58,7 +58,7 @@ def stop_scoring_session():
     resp = Response(status=204)
     return resp
 
-@blueprint.route("/", methods=['DELETE'])
+@blueprint.route("", methods=['DELETE'])
 @login_required
 @requires_roles('administrator')
 @requires_no_parameters

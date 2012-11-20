@@ -24,7 +24,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestSessions(FlaskTestCase):
 
     def test_session_not_logged_in(self):
-        result = self.app.get('/session/')
+        result = self.app.get('/session')
         assert result.status_code == 401
 
     def test_session_logged_in(self):
@@ -34,18 +34,18 @@ class TestRestSessions(FlaskTestCase):
             'email': 'admin@example.com',
             'role': 'administrator'
         }
-        result = self.app.get('/session/')
+        result = self.app.get('/session')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
     def test_login_user(self):
         result = self.login_user('admin', 'admin')
         assert result.status_code == 201
-        assert result.headers['Location'] == 'http://localhost/session/'
+        assert result.headers['Location'] == 'http://localhost/session'
 
     def test_logout_user(self):
         self.login_user('admin', 'admin')
-        result = self.app.delete('/session/')
+        result = self.app.delete('/session')
         assert result.status_code == 204
 
     def test_modify_current_user(self):
@@ -54,9 +54,9 @@ class TestRestSessions(FlaskTestCase):
             'password': 'red_team_sucks',
             'email': 'team999@example.com'
         }
-        result = self.app.patch('/session/', data=json.dumps(query_data))
+        result = self.app.patch('/session', data=json.dumps(query_data))
         assert result.status_code == 204
-        self.app.delete('/session/')
+        self.app.delete('/session')
         result = self.login_user('evil_red_team', 'red_team_sucks')
         assert result.status_code == 201
 

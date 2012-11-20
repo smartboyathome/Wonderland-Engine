@@ -26,7 +26,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
     def test_get_all_archived_scoring_sessions(self):
         self.login_user('admin', 'admin')
-        result = self.app.get('/archives/')
+        result = self.app.get('/archives')
         expected_result = self.data['archived_sessions']
         convert_all_datetime_to_timestamp(expected_result)
         assert result.status_code == 200
@@ -41,7 +41,7 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/archives/', data=json.dumps(query_data))
+        result = self.app.get('/archives', data=json.dumps(query_data))
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
@@ -76,7 +76,7 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
         result_data = [obj for obj in self.data['archived_sessions'] if obj['id'] == 'first_session'][0]
         del result_data['id']
         convert_all_datetime_to_timestamp(result_data)
-        post = self.app.post('/archives/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/archives', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
         assert post.headers['Location'] == 'http://localhost/archives/second_session'
         result = self.app.get('/archives/second_session')
@@ -92,7 +92,7 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
             "type": "Exists",
             "reason": "An archived scoring session with the id 'first_session' already exists"
         }
-        post = self.app.post('/archives/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/archives', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
@@ -107,7 +107,7 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameter 'failure' is not valid for this interface."
         }
-        post = self.app.post('/archives/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/archives', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
         result = self.app.get('/archives/Dovecot')
@@ -123,10 +123,10 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
         result_data = self.data['archived_sessions']
         for i in result_data:
             convert_all_datetime_to_timestamp(i)
-        post = self.app.post('/archives/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/archives', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
-        result = self.app.get('/archives/')
+        result = self.app.get('/archives')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
@@ -136,6 +136,6 @@ class TestRestArchivedScoringSessionsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
         }
-        post = self.app.post('/archives/', follow_redirects=True)
+        post = self.app.post('/archives', follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data

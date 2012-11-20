@@ -35,7 +35,7 @@ def load_user(username):
 def unauthenticated_request():
     return create_error_response('NotLoggedIn', 'You must log in to access this resource.', status_code=401)
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_no_parameters
 def get_current_session_info():
@@ -44,7 +44,7 @@ def get_current_session_info():
     js = json.dumps(user)
     return Response(js, status=200, mimetype='application/json')
 
-@blueprint.route("/", methods=['PATCH'])
+@blueprint.route("", methods=['PATCH'])
 @login_required
 @requires_parameters(optional=['password', 'email'])
 def modify_current_user():
@@ -54,7 +54,7 @@ def modify_current_user():
     g.db.modify_user(user, **data)
     return Response(status=204)
 
-@blueprint.route("/", methods=['POST'])
+@blueprint.route("", methods=['POST'])
 @requires_parameters(required=['username', 'password'])
 def create_new_session():
     data = json.loads(request.data)
@@ -67,7 +67,7 @@ def create_new_session():
         return create_error_response(type(e).__name__, e.message)
     return redirect(url_for('session.get_current_session_info'), code=201)
 
-@blueprint.route("/", methods=['DELETE'])
+@blueprint.route("", methods=['DELETE'])
 def remove_current_session():
     logout_user()
     return Response(status=204)

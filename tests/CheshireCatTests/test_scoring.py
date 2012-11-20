@@ -25,7 +25,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestScoringInterface(FlaskTestCase):
     def test_get_current_scoring_session(self):
         self.login_user('admin', 'admin')
-        rest_result = self.app.get('/scoring/')
+        rest_result = self.app.get('/scoring')
         expected_result = self.data['session'][0]
         convert_all_datetime_to_timestamp(expected_result, ['start_time', 'end_time'])
         assert rest_result.status_code == 200
@@ -41,13 +41,13 @@ class TestRestScoringInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/scoring/', data=json.dumps(query_data))
+        result = self.app.get('/scoring', data=json.dumps(query_data))
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
     def test_start_scoring_session(self):
         self.login_user('admin', 'admin')
-        post = self.app.post('/scoring/')
+        post = self.app.post('/scoring')
         assert post.status_code == 204
         assert list(self.db['session'].find())[0]['state'] == 'started'
 
@@ -60,17 +60,17 @@ class TestRestScoringInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        post = self.app.post('/scoring/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/scoring', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
 
     def test_stop_scoring_session(self):
         self.login_user('admin', 'admin')
-        post = self.app.post('/scoring/')
+        post = self.app.post('/scoring')
         assert post.status_code == 204
         assert list(self.db['session'].find())[0]['state'] == 'started'
-        patch = self.app.patch('/scoring/')
+        patch = self.app.patch('/scoring')
         assert patch.status_code == 204
         assert list(self.db['session'].find())[0]['state'] == 'stopped'
 
@@ -84,18 +84,18 @@ class TestRestScoringInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        post = self.app.patch('/scoring/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.patch('/scoring', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
 
     def test_clear_scoring_session(self):
         self.login_user('admin', 'admin')
-        before_result = self.app.get('/scoring/')
+        before_result = self.app.get('/scoring')
         assert before_result.status_code == 200
-        delete = self.app.delete('/scoring/')
+        delete = self.app.delete('/scoring')
         assert delete.status_code == 204
-        after_result = self.app.get('/scoring/')
+        after_result = self.app.get('/scoring')
         assert after_result.status_code == 404
 
     def test_delete_machine_data_with_params(self):

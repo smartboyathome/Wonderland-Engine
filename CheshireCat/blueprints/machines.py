@@ -25,7 +25,7 @@ import json
 
 blueprint = Blueprint(__name__, 'machines', url_prefix='/machines')
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_roles('administrator', 'organizer')
 @requires_no_parameters
@@ -35,7 +35,7 @@ def get_all_machines():
     resp = Response(js, status=200, mimetype='application/json')
     return resp
 
-@blueprint.route("/", methods=['POST'])
+@blueprint.route("", methods=['POST'])
 @login_required
 @requires_roles('administrator')
 @requires_parameters(required=['id', 'general_ip'])

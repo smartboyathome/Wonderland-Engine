@@ -25,7 +25,7 @@ import json
 
 blueprint = Blueprint(__name__, 'current_team', url_prefix='/current_team')
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_roles('team')
 @requires_no_parameters

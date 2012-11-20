@@ -26,7 +26,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestCurrentTeamInterface(FlaskTestCase):
     def test_get_current_team_data(self):
         self.login_user('team1', 'uw seattle')
-        rest_result = self.app.get('/current_team/')
+        rest_result = self.app.get('/current_team')
         print rest_result.status_code, rest_result.data
         assert rest_result.status_code == 200
         expected_result = [obj for obj in self.data['teams'] if obj['id'] == '1'][0]
@@ -44,7 +44,7 @@ class TestRestCurrentTeamInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/current_team/', data=json.dumps(query_data))
+        result = self.app.get('/current_team', data=json.dumps(query_data))
         print result.data
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
