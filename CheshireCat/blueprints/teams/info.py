@@ -25,7 +25,7 @@ from CheshireCat.utils import create_error_response, requires_parameters, requir
 from bson import json_util
 import json
 
-@blueprint.route("/", methods=['GET'])
+@blueprint.route("", methods=['GET'])
 @login_required
 @requires_roles('administrator', 'organizer')
 @requires_no_parameters
@@ -35,7 +35,7 @@ def get_all_teams():
     resp = Response(js, status=200, mimetype='application/json')
     return resp
 
-@blueprint.route("/", methods=['POST'])
+@blueprint.route("", methods=['POST'])
 @login_required
 @requires_roles('administrator')
 @requires_parameters(required=['name', 'id'])

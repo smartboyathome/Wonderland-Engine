@@ -24,7 +24,7 @@ from tests.CheshireCatTests import FlaskTestCase
 class TestRestTeamsInterface(FlaskTestCase):
     def test_get_all_teams_data(self):
         self.login_user('admin', 'admin')
-        result = self.app.get('/teams/')
+        result = self.app.get('/teams')
         assert result.status_code == 200
         assert json.loads(result.data) == self.data['teams']
 
@@ -37,7 +37,7 @@ class TestRestTeamsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameters are not allowed for this interface."
         }
-        result = self.app.get('/teams/', data=json.dumps(query_data))
+        result = self.app.get('/teams', data=json.dumps(query_data))
         assert result.status_code == 403
         assert json.loads(result.data) == result_data
 
@@ -70,7 +70,7 @@ class TestRestTeamsInterface(FlaskTestCase):
         result_data = {
             "name": "University of Washington, Tacoma"
         }
-        post = self.app.post('/teams/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/teams', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 201
         assert post.headers['Location'] == 'http://localhost/teams/7'
         result = self.app.get('/teams/7')
@@ -87,7 +87,7 @@ class TestRestTeamsInterface(FlaskTestCase):
             "type": "Exists",
             "reason": "A team with the id '6' already exists"
         }
-        post = self.app.post('/teams/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/teams', data=json.dumps(query_data), follow_redirects=True)
         print post.status_code, post.data
         assert post.status_code == 403
         assert json.loads(post.data) == result_data
@@ -103,7 +103,7 @@ class TestRestTeamsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "Parameter 'failure' is not valid for this interface."
         }
-        post = self.app.post('/teams/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/teams', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
         result = self.app.get('/teams/7')
@@ -119,10 +119,10 @@ class TestRestTeamsInterface(FlaskTestCase):
             "reason": "Required parameter 'id' is not specified."
         }
         result_data = self.data['teams']
-        post = self.app.post('/teams/', data=json.dumps(query_data), follow_redirects=True)
+        post = self.app.post('/teams', data=json.dumps(query_data), follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
-        result = self.app.get('/teams/')
+        result = self.app.get('/teams')
         assert result.status_code == 200
         assert json.loads(result.data) == result_data
 
@@ -132,7 +132,7 @@ class TestRestTeamsInterface(FlaskTestCase):
             "type": "IllegalParameter",
             "reason": "No parameters were specified."
         }
-        post = self.app.post('/teams/', follow_redirects=True)
+        post = self.app.post('/teams', follow_redirects=True)
         assert post.status_code == 403
         assert json.loads(post.data) == post_data
 
