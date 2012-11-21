@@ -19,17 +19,17 @@ are to be used by looking in Cheshire Cat's tests.
 .. toctree::
    :hidden:
 
-   default_routes
-   team_routes
+   routes/default
+   routes/teams
 
 Routes Overview
 ---------------
 
-:doc:`Defaults <default_routes>`
+:doc:`Defaults <routes/default>`
 
 * :ref:`Index <cheshire-default-routes-index>`
 
-:doc:`Teams <team_routes>`
+:doc:`Teams <routes/teams>`
 
 * :ref:`Get all teams <cheshire-team-routes-all>`
 
