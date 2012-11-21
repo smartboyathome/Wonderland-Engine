@@ -13,29 +13,33 @@ to access it, and what parameters are allowed to be passed to it. Unless
 otherwise stated, all routes require a user to log in to be able to access
 them.
 
+*Please note*: Until this documentation is complete, you can find how routes
+are to be used by looking in Cheshire Cat's tests.
+
 .. toctree::
    :hidden:
 
    default_routes
+   team_routes
 
 Routes Overview
 ---------------
 
-:doc:`Default Routes <default_routes>`
+:doc:`Defaults <default_routes>`
 
 * :ref:`Index <cheshire-default-routes-index>`
 
-Teams
+:doc:`Teams <team_routes>`
 
-* Get all teams
+* :ref:`Get all teams <cheshire-team-routes-all>`
 
-* Create team
+* :ref:`Create team <cheshire-team-routes-create>`
 
-* Get specific team
+* :ref:`Get specific team <cheshire-team-routes-specific>`
 
-* Modify team
+* :ref:`Modify team <cheshire-team-routes-modify>`
 
-* Remove team
+* :ref:`Remove team <cheshire-team-routes-delete>`
 
 Current Team
 
