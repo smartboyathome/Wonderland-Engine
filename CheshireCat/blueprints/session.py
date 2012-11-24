@@ -23,7 +23,7 @@ from flask.ext.login import login_required, login_user, logout_user
 from flask.globals import request
 from flask_login import UserMixin, current_user
 from CheshireCat import login_manager, app
-from CheshireCat.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles, hash_password
+from CheshireCat.utils import requires_parameters, requires_no_parameters, create_error_response, requires_roles, hash_password, check_password
 
 blueprint = Blueprint(__name__, 'session', url_prefix='/session')
 
@@ -58,9 +58,17 @@ def modify_current_user():
 @requires_parameters(required=['username', 'password'])
 def create_new_session():
     data = json.loads(request.data)
-    data['password'] = hash_password(data['password'])
-    if g.db.get_specific_user(data['username'], data['password']) == []:
-        return create_error_response('IncorrectLogin', 'Either the user does not exist or password is incorrect.')
+    #data['password'] = hash_password(data['password'])
+    incorrect_login_desc = 'Either the user does not exist or password is incorrect.'
+    incorrect_login_err = 'IncorrectLogin'
+    user_data = g.db.get_specific_user_with_password(data['username'])
+    if user_data == []:
+        return create_error_response(incorrect_login_desc, incorrect_login_err)
+    unhashed_password = data['password']
+    hashed_password = user_data[0][u'password']
+    valid_password = check_password(unhashed_password, hashed_password)
+    if not valid_password:
+        return create_error_response(incorrect_login_desc, incorrect_login_err)
     try:
         login_user(User(data['username']), remember=True)
     except BaseException, e:

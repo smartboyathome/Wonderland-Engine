@@ -112,6 +112,10 @@ class DBWrapper(object):
         raise NotImplementedError()
 
     @abc.abstractmethod
+    def get_specific_user_with_password(self, username):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def create_user(self, username, password_hash, email, role, **extra_info):
         raise NotImplementedError()
 

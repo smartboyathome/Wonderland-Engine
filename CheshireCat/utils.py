@@ -37,6 +37,14 @@ def hash_password(password):
         return hashlib.md5(password).hexdigest()
     return password
 
+def check_password(password, hashed_password):
+    from CheshireCat import app
+    if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
+        return bcrypt.hashpw(password, hashed_password) == hashed_password
+    elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
+        return hashlib.md5(password).hexdigest() == hashed_password
+    return password
+
 def convert_all_datetime_to_timestamp(obj, dt_keys=None):
     '''
     This function will take a list of keys which hold datetime objects, and

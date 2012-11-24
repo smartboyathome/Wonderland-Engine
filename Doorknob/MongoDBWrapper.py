@@ -222,6 +222,9 @@ class MongoDBWrapper(DBWrapper):
         else:
             return list(self._query_db('users', {'id': username, 'password': password_hash}))
 
+    def get_specific_user_with_password(self, username):
+        return list(self._query_db('users', {'id': username}))
+
     def create_user(self, username, password_hash, email, role, **extra_info):
         if role not in ('administrator', 'organizer', 'attacker', 'team'):
             raise TypeError('Role must be one of "administrator", "organizer", "attacker", or "team".')
