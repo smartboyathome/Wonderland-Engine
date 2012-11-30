@@ -138,7 +138,6 @@ Get Specific Team
       HTTP/1.1 200 OK
       Content-Type: application/json
       {
-         'id': '1',
          'name': 'Team A'
       }
 

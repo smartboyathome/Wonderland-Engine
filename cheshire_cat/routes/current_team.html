@@ -1,0 +1,146 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Current Team Routes &mdash; Wonderland Engine 0.9.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="current-team-routes">
+<h1>Current Team Routes<a class="headerlink" href="#current-team-routes" title="Permalink to this headline">¶</a></h1>
+<p>This interface deals with getting information on the team that the currently
+logged in user belongs to.</p>
+<div class="section" id="get-current-team">
+<span id="cheshire-current-team-routes-get"></span><h2>Get Current Team<a class="headerlink" href="#get-current-team" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--current_team">
+<tt class="descname">GET </tt><tt class="descname">/current_team</tt><a class="headerlink" href="#get--current_team" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/current_team</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+{
+   'name': 'Team A'
+}</pre>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><em>There are no URL parameters for this interface.</em></dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional JSON parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted parameters with your GET request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Current Team Routes</a><ul>
+<li><a class="reference internal" href="#get-current-team">Get Current Team</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/cheshire_cat/routes/current_team.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2012, Alexander Abbott.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

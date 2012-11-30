@@ -21,6 +21,7 @@ are to be used by looking in Cheshire Cat's tests.
 
    routes/default
    routes/teams
+   routes/current_team
    routes/team_configs
 
 Routes Overview
@@ -42,9 +43,9 @@ Routes Overview
 
 * :ref:`Remove team <cheshire-team-routes-delete>`
 
-Current Team
+:doc:`Current Team <routes/current_team>`
 
-* Get current team
+* :ref:`Get current team <cheshire-current_team-routes-get>`
 
 :doc:`Team Configuration <routes/team_configs>`
 
