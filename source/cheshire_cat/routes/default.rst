@@ -34,6 +34,10 @@ Index
          'version': 0.9
       }
 
+   **Requires Authentication**: No
+
+   **Allowed Roles**: Administrator, Organizer, Attacker, Team, Anonymous
+
    **URL Parameters**:
       *There are no URL parameters for this interface.*
 
@@ -42,6 +46,9 @@ Index
 
    **Optional JSON Parameters**:
       *No optional JSON parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
 
    **Exceptions**:
       * *IllegalParameter*: You submitted parameters with your GET request.

@@ -1,25 +1,29 @@
 Team Routes
 ===========
 
-These routes relate to retrieving and manipulating a team's information, which,
-by default, includes the name of the team and their ID (used for the IPs of
-machines). They do not deal with team configuration or team checks, however.
+These routes relate to retrieving and manipulating a team's configuration for
+their machines. These can hold any relevant data pertaining to the machines
+that you would like teams to be able to edit. This data is meant to be used by
+checks in order to facilitate checking whether a service is up, such as
+authentication information for getting access to that service. There is no
+checking done on these fields in order to tell whether they are needed or not
+by the checks, for that I suggest reading the documentation on the checks
+themselves.
 
-.. _cheshire-team-routes-all:
+.. _cheshire-team_configs-routes-all:
 
-Get All Teams
--------------
+Get All Configs for a Team
+--------------------------
 
-.. http:get:: /teams
+.. http:get:: /teams/(team_id)/configs
 
-   Gets information for all teams that have been created in the current scoring
-   session.
+   Gets all machine configs for a specific team.
 
    **Example request**:
 
    .. sourcecode:: http
 
-      GET /teams HTTP/1.1
+      GET /teams/1/configs HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
 
@@ -31,12 +35,25 @@ Get All Teams
       Content-Type: application/json
       [
          {
-             'id': '1',
-             'name': 'Team A'
+            'team_id': '1',
+            'machine_id': 'MongoDB',
+            'username': 'team1',
+            'password': 'team1mongo',
+            'port': '27017'
          },
          {
-             'id': '2',
-             'name': 'Team B'
+            'team_id': '1',
+            'machine_id': 'Redis',
+            'username': 'team1',
+            'password': 'team1redis',
+            'port': 6379
+         },
+         {
+            'team_id': '1',
+            'machine_id': 'Apache',
+            'username': 'team1',
+            'password': 'team1apache',
+            'port': 80
          }
       ]
 
@@ -45,7 +62,8 @@ Get All Teams
    **Allowed Roles**: Administrator, Organizer
 
    **URL Parameters**:
-      *There are no URL parameters for this interface.*
+      * *team_id*: The ID of the team which you want to get the machine config
+        for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -60,26 +78,29 @@ Get All Teams
       * *IllegalParameter*: You submitted parameters with your GET request.
         Parameters are not allowed on this interface.
 
-.. _cheshire-team-routes-create:
+.. _cheshire-team_configs-routes-create:
 
-Create Team
------------
+Create Config for a Team
+------------------------
 
-.. http:post:: /teams
+.. http:post:: /teams/(team_id)/configs
 
-   Creates a new team for use in the current scoring session.
+   Creates a new machine config for the team to use in the current scoring
+   session.
 
    **Example request**:
 
    .. sourcecode:: http
 
-      POST /teams HTTP/1.1
+      POST /teams/1/configs HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
       Content-Type: application/json
       {
-         'name': 'Team C',
-         'id': '3'
+         "machine_id": "MongoDB",
+         "username": "team1",
+         "password": "team1mongo",
+         "port": "27017"
       }
 
    **Example response**:
@@ -87,25 +108,25 @@ Create Team
    .. sourcecode:: http
 
       HTTP/1.1 201 Created
-      Location: http://example.com/teams/3
+      Location: http://example.com/teams/3/configs/MongoDB
 
    **Requires Authentication**: Yes
 
    **Allowed Roles**: Administrator
 
    **URL Parameters**:
-      *There are no URL parameters for this interface.*
+      * *team_id*: The ID of the team which you want to get the machine config
+        for.
 
    **Required JSON Parameters**:
-      * *name*: This is the name of the team.
-      * *id*: This is the ID of the team, which is what is placed in the
-        relevant position in each machine's ID.
+      * *machine_id*: This is the name of the team.
 
    **Optional JSON Parameters**:
-     *No optional parameters are allowed for this interface.*
+     *This allows any parameters to be entered except for those that are*
+     *forbidden below.*
 
    **Forbidden JSON Parameters**:
-      *No JSON parameters are forbidden for this interface.*
+      * *team_id*
 
    **Exceptions**:
      * *Exists*: A team with the specified ID already exists. You must specify
@@ -114,20 +135,20 @@ Create Team
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
 
-.. _cheshire-team-routes-specific:
+.. _cheshire-team_configs-routes-specific:
 
-Get Specific Team
------------------
+Get Specific Config for a Team
+------------------------------
 
-.. http:get:: /teams/(team_id)
+.. http:get:: /teams/(team_id)/configs/(machine_id)
 
-   Gets information on a specific team with the ID ``team_id``.
+   Gets a specific machine's config for a specific team.
 
    **Example request**:
 
    .. sourcecode:: http
 
-      GET /teams/1 HTTP/1.1
+      GET /teams/1/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
 
@@ -138,8 +159,9 @@ Get Specific Team
       HTTP/1.1 200 OK
       Content-Type: application/json
       {
-         'id': '1',
-         'name': 'Team A'
+         "username": "team1",
+         "password": "team1mongo",
+         "port": "27017"
       }
 
    **Requires Authentication**: Yes
@@ -147,7 +169,8 @@ Get Specific Team
    **Allowed Roles**: Administrator, Organizer
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting information for.
+      * *team_id*: The ID for the team you are requesting the config for.
+      * *machine_id*: The ID for the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -162,14 +185,14 @@ Get Specific Team
       * *IllegalParameter*: You submitted parameters with your GET request.
         Parameters are not allowed on this interface.
 
-.. _cheshire-team-routes-modify:
+.. _cheshire-team_configs-routes-modify:
 
-Modify Team
------------
+Modify Specific Config for Team
+-------------------------------
 
-.. http:patch:: /teams/(team_id)
+.. http:patch:: /teams/(team_id)/configs/(machine_id)
 
-   Modifies the information for a team specified by ``team_id``.
+   Modifies a specific machine's config for a specific team.
 
    **Example request**:
 
@@ -180,7 +203,9 @@ Modify Team
       Accept: application/json, text/javascript
       Content-Type: application/json
       {
-         'name': 'A'
+         "username": "team1a",
+         "password": "team1amongo",
+         "port": "27018"
       }
 
    **Example response**:
@@ -194,36 +219,39 @@ Modify Team
    **Allowed Roles**: Administrator
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting information for.
+      * *team_id*: The ID for the team you are requesting the config for.
+      * *machine_id*: The ID for the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
 
    **Optional JSON Parameters**:
-     * *name*: The name of the team.
+      *This allows any parameters to be entered except for those that are*
+      *forbidden below.*
 
    **Forbidden JSON Parameters**:
-      *No JSON parameters are forbidden for this interface.*
+      * *team_id*
+      * *machine_id*
 
    **Exceptions**:
      * *IllegalParameter*: Either a parameter submitted in the request is not
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
 
-.. _cheshire-team-routes-delete:
+.. _cheshire-team_configs-routes-delete:
 
-Delete Team
------------
+Delete Specific Config for Team
+-------------------------------
 
-.. http:delete:: /teams/(team_id)
+.. http:delete:: /teams/(team_id)/configs/(machine_id)
 
-   Deletes a team specified by ``team_id``.
+   Deletes a specific machine's config for a specific team.
 
    **Example request**:
 
    .. sourcecode:: http
 
-      DELETE /teams/1 HTTP/1.1
+      DELETE /teams/1/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
 
@@ -238,7 +266,8 @@ Delete Team
    **Allowed Roles**: Administrator
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting information for.
+      * *team_id*: The ID for the team you are requesting the config for.
+      * *machine_id*: The ID for the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*

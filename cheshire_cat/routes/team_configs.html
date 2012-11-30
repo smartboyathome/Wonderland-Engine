@@ -27,7 +27,7 @@
     <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
     <link rel="up" title="Cheshire Cat" href="../index.html" />
     <link rel="next" title="White Rabbit" href="../../white_rabbit/index.html" />
-    <link rel="prev" title="Default Routes" href="default.html" />
+    <link rel="prev" title="Team Routes" href="teams.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
@@ -50,7 +50,7 @@
           <a href="../../white_rabbit/index.html" title="White Rabbit"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="default.html" title="Default Routes"
+          <a href="teams.html" title="Team Routes"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Cheshire Cat</a> &raquo;</li> 
@@ -64,18 +64,22 @@
             
   <div class="section" id="team-routes">
 <h1>Team Routes<a class="headerlink" href="#team-routes" title="Permalink to this headline">¶</a></h1>
-<p>These routes relate to retrieving and manipulating a team&#8217;s information, which,
-by default, includes the name of the team and their ID (used for the IPs of
-machines). They do not deal with team configuration or team checks, however.</p>
-<div class="section" id="get-all-teams">
-<span id="cheshire-team-routes-all"></span><h2>Get All Teams<a class="headerlink" href="#get-all-teams" title="Permalink to this headline">¶</a></h2>
+<p>These routes relate to retrieving and manipulating a team&#8217;s configuration for
+their machines. These can hold any relevant data pertaining to the machines
+that you would like teams to be able to edit. This data is meant to be used by
+checks in order to facilitate checking whether a service is up, such as
+authentication information for getting access to that service. There is no
+checking done on these fields in order to tell whether they are needed or not
+by the checks, for that I suggest reading the documentation on the checks
+themselves.</p>
+<div class="section" id="get-all-configs-for-a-team">
+<span id="cheshire-team-configs-routes-all"></span><h2>Get All Configs for a Team<a class="headerlink" href="#get-all-configs-for-a-team" title="Permalink to this headline">¶</a></h2>
 <dl class="get">
-<dt id="get--teams">
-<tt class="descname">GET </tt><tt class="descname">/teams</tt><a class="headerlink" href="#get--teams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets information for all teams that have been created in the current scoring
-session.</p>
+<dt id="get--teams-(team_id)-configs">
+<tt class="descname">GET </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs</tt><a class="headerlink" href="#get--teams-(team_id)-configs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all machine configs for a specific team.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/teams</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/teams/1/configs</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
 </pre></div>
@@ -84,21 +88,38 @@ session.</p>
 <div class="highlight-http"><pre>HTTP/1.1 200 OK
 Content-Type: application/json
 [
-   {
-       'id': '1',
-       'name': 'Team A'
-   },
-   {
-       'id': '2',
-       'name': 'Team B'
-   }
+  {
+    'team_id': '1',
+    'machine_id': 'MongoDB',
+    'username': 'team1',
+    'password': 'team1mongo',
+    'port': '27017'
+  },
+  {
+    'team_id': '1',
+    'machine_id': 'Redis',
+    'username': 'team1',
+    'password': 'team1redis',
+    'port': 6379
+  },
+  {
+    'team_id': '1',
+    'machine_id': 'Apache',
+    'username': 'team1',
+    'password': 'team1apache',
+    'port': 80
+  }
 ]</pre>
 </div>
 <p><strong>Requires Authentication</strong>: Yes</p>
 <p><strong>Allowed Roles</strong>: Administrator, Organizer</p>
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
-<dd><em>There are no URL parameters for this interface.</em></dd>
+<dd><ul class="first last simple">
+<li><em>team_id</em>: The ID of the team which you want to get the machine config
+for.</li>
+</ul>
+</dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
 <dd><em>No JSON parameters are required for this interface.</em></dd>
 <dt><strong>Optional JSON Parameters</strong>:</dt>
@@ -115,43 +136,52 @@ Parameters are not allowed on this interface.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="create-team">
-<span id="cheshire-team-routes-create"></span><h2>Create Team<a class="headerlink" href="#create-team" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-config-for-a-team">
+<span id="cheshire-team-configs-routes-create"></span><h2>Create Config for a Team<a class="headerlink" href="#create-config-for-a-team" title="Permalink to this headline">¶</a></h2>
 <dl class="post">
-<dt id="post--teams">
-<tt class="descname">POST </tt><tt class="descname">/teams</tt><a class="headerlink" href="#post--teams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new team for use in the current scoring session.</p>
+<dt id="post--teams-(team_id)-configs">
+<tt class="descname">POST </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs</tt><a class="headerlink" href="#post--teams-(team_id)-configs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new machine config for the team to use in the current scoring
+session.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http"><pre>POST /teams HTTP/1.1
+<div class="highlight-http"><pre>POST /teams/1/configs HTTP/1.1
 Host: example.com
 Accept: application/json, text/javascript
 Content-Type: application/json
 {
-   'name': 'Team C',
-   'id': '3'
+   "machine_id": "MongoDB",
+   "username": "team1",
+   "password": "team1mongo",
+   "port": "27017"
 }</pre>
 </div>
 <p><strong>Example response</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
-<span class="na">Location</span><span class="o">:</span> <span class="l">http://example.com/teams/3</span>
+<span class="na">Location</span><span class="o">:</span> <span class="l">http://example.com/teams/3/configs/MongoDB</span>
 </pre></div>
 </div>
 <p><strong>Requires Authentication</strong>: Yes</p>
 <p><strong>Allowed Roles</strong>: Administrator</p>
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
-<dd><em>There are no URL parameters for this interface.</em></dd>
+<dd><ul class="first last simple">
+<li><em>team_id</em>: The ID of the team which you want to get the machine config
+for.</li>
+</ul>
+</dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>name</em>: This is the name of the team.</li>
-<li><em>id</em>: This is the ID of the team, which is what is placed in the
-relevant position in each machine&#8217;s ID.</li>
+<li><em>machine_id</em>: This is the name of the team.</li>
 </ul>
 </dd>
 <dt><strong>Optional JSON Parameters</strong>:</dt>
-<dd><em>No optional parameters are allowed for this interface.</em></dd>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
 <dt><strong>Forbidden JSON Parameters</strong>:</dt>
-<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dd><ul class="first last simple">
+<li><em>team_id</em></li>
+</ul>
+</dd>
 <dt><strong>Exceptions</strong>:</dt>
 <dd><ul class="first last simple">
 <li><em>Exists</em>: A team with the specified ID already exists. You must specify
@@ -165,14 +195,14 @@ See the reason in the exception for more information.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="get-specific-team">
-<span id="cheshire-team-routes-specific"></span><h2>Get Specific Team<a class="headerlink" href="#get-specific-team" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-specific-config-for-a-team">
+<span id="cheshire-team-configs-routes-specific"></span><h2>Get Specific Config for a Team<a class="headerlink" href="#get-specific-config-for-a-team" title="Permalink to this headline">¶</a></h2>
 <dl class="get">
-<dt id="get--teams-(team_id)">
-<tt class="descname">GET </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><a class="headerlink" href="#get--teams-(team_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets information on a specific team with the ID <tt class="docutils literal"><span class="pre">team_id</span></tt>.</p>
+<dt id="get--teams-(team_id)-configs-(machine_id)">
+<tt class="descname">GET </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#get--teams-(team_id)-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a specific machine&#8217;s config for a specific team.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/teams/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/teams/1/configs/MongoDB</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
 </pre></div>
@@ -181,8 +211,9 @@ See the reason in the exception for more information.</li>
 <div class="highlight-http"><pre>HTTP/1.1 200 OK
 Content-Type: application/json
 {
-   'id': '1',
-   'name': 'Team A'
+   "username": "team1",
+   "password": "team1mongo",
+   "port": "27017"
 }</pre>
 </div>
 <p><strong>Requires Authentication</strong>: Yes</p>
@@ -190,7 +221,8 @@ Content-Type: application/json
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting information for.</li>
+<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
@@ -209,19 +241,21 @@ Parameters are not allowed on this interface.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="modify-team">
-<span id="cheshire-team-routes-modify"></span><h2>Modify Team<a class="headerlink" href="#modify-team" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="modify-specific-config-for-team">
+<span id="cheshire-team-configs-routes-modify"></span><h2>Modify Specific Config for Team<a class="headerlink" href="#modify-specific-config-for-team" title="Permalink to this headline">¶</a></h2>
 <dl class="patch">
-<dt id="patch--teams-(team_id)">
-<tt class="descname">PATCH </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><a class="headerlink" href="#patch--teams-(team_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modifies the information for a team specified by <tt class="docutils literal"><span class="pre">team_id</span></tt>.</p>
+<dt id="patch--teams-(team_id)-configs-(machine_id)">
+<tt class="descname">PATCH </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#patch--teams-(team_id)-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies a specific machine&#8217;s config for a specific team.</p>
 <p><strong>Example request</strong>:</p>
 <div class="highlight-http"><pre>PATCH /teams/1 HTTP/1.1
 Host: example.com
 Accept: application/json, text/javascript
 Content-Type: application/json
 {
-   'name': 'A'
+   "username": "team1a",
+   "password": "team1amongo",
+   "port": "27018"
 }</pre>
 </div>
 <p><strong>Example response</strong>:</p>
@@ -233,18 +267,21 @@ Content-Type: application/json
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting information for.</li>
+<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
 <dd><em>No JSON parameters are required for this interface.</em></dd>
 <dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>name</em>: The name of the team.</li>
+<li><em>team_id</em></li>
+<li><em>machine_id</em></li>
 </ul>
 </dd>
-<dt><strong>Forbidden JSON Parameters</strong>:</dt>
-<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
 <dt><strong>Exceptions</strong>:</dt>
 <dd><ul class="first last simple">
 <li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
@@ -256,14 +293,14 @@ See the reason in the exception for more information.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="delete-team">
-<span id="cheshire-team-routes-delete"></span><h2>Delete Team<a class="headerlink" href="#delete-team" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="delete-specific-config-for-team">
+<span id="cheshire-team-configs-routes-delete"></span><h2>Delete Specific Config for Team<a class="headerlink" href="#delete-specific-config-for-team" title="Permalink to this headline">¶</a></h2>
 <dl class="delete">
-<dt id="delete--teams-(team_id)">
-<tt class="descname">DELETE </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><a class="headerlink" href="#delete--teams-(team_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a team specified by <tt class="docutils literal"><span class="pre">team_id</span></tt>.</p>
+<dt id="delete--teams-(team_id)-configs-(machine_id)">
+<tt class="descname">DELETE </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#delete--teams-(team_id)-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a specific machine&#8217;s config for a specific team.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/teams/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/teams/1/configs/MongoDB</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
 <span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
 </pre></div>
@@ -277,7 +314,8 @@ See the reason in the exception for more information.</li>
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting information for.</li>
+<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
@@ -307,11 +345,11 @@ Parameters are not allowed on this interface.</li>
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Team Routes</a><ul>
-<li><a class="reference internal" href="#get-all-teams">Get All Teams</a></li>
-<li><a class="reference internal" href="#create-team">Create Team</a></li>
-<li><a class="reference internal" href="#get-specific-team">Get Specific Team</a></li>
-<li><a class="reference internal" href="#modify-team">Modify Team</a></li>
-<li><a class="reference internal" href="#delete-team">Delete Team</a></li>
+<li><a class="reference internal" href="#get-all-configs-for-a-team">Get All Configs for a Team</a></li>
+<li><a class="reference internal" href="#create-config-for-a-team">Create Config for a Team</a></li>
+<li><a class="reference internal" href="#get-specific-config-for-a-team">Get Specific Config for a Team</a></li>
+<li><a class="reference internal" href="#modify-specific-config-for-team">Modify Specific Config for Team</a></li>
+<li><a class="reference internal" href="#delete-specific-config-for-team">Delete Specific Config for Team</a></li>
 </ul>
 </li>
 </ul>
@@ -319,14 +357,14 @@ Parameters are not allowed on this interface.</li>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../index.html">Cheshire Cat</a><ul>
-      <li>Previous: <a href="default.html" title="previous chapter">Default Routes</a></li>
+      <li>Previous: <a href="teams.html" title="previous chapter">Team Routes</a></li>
       <li>Next: <a href="../../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
   </ul></li>
   </ul></li>
 </ul>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../_sources/cheshire_cat/routes/teams.txt"
+    <li><a href="../../_sources/cheshire_cat/routes/team_configs.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
