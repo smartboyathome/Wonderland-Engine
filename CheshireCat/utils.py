@@ -43,7 +43,7 @@ def check_password(password, hashed_password):
         return bcrypt.hashpw(password, hashed_password) == hashed_password
     elif app.config['SERVER']['PASSWORD_HASH'] == 'md5':
         return hashlib.md5(password).hexdigest() == hashed_password
-    return password
+    return False
 
 def convert_all_datetime_to_timestamp(obj, dt_keys=None):
     '''

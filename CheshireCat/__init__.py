@@ -24,6 +24,8 @@ from configobj import ConfigObj
 from flask_login import LoginManager
 import os
 from validate import Validator
+from CheshireCat.utils import hash_password
+from Doorknob.MongoDBWrapper import MongoDBWrapper
 
 __all__ = ['app', 'create_app', 'run_app']
 
@@ -54,6 +56,12 @@ def create_app(_config_file=os.path.join(os.getcwd(), 'settings.cfg')):
     global login_manager
     login_manager = LoginManager()
     login_manager.init_app(app)
+
+    # Initialize our database
+    db = MongoDBWrapper(config['HOST'], int(config['PORT']), config['DB_NAME'])
+    db.init_db()
+    if len(db.get_all_users_with_role('administrator')) == 0:
+        db.create_user('admin', hash_password('admin'), 'admin@example.com', 'administrator')
 
     # Initialize CheshireCat
     # Import the views, to apply the decorators which use the global app object.
