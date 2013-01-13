@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
     <link rel="up" title="Cheshire Cat" href="../index.html" />
-    <link rel="next" title="White Rabbit" href="../../white_rabbit/index.html" />
-    <link rel="prev" title="Team Routes" href="teams.html" />
+    <link rel="next" title="Team Routes" href="current_team_configs.html" />
+    <link rel="prev" title="Current Team Routes" href="current_team.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
@@ -47,10 +47,10 @@
           <a href="../../http-routingtable.html" title="HTTP Routing Table"
              >routing table</a> |</li>
         <li class="right" >
-          <a href="../../white_rabbit/index.html" title="White Rabbit"
+          <a href="current_team_configs.html" title="Team Routes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="teams.html" title="Team Routes"
+          <a href="current_team.html" title="Current Team Routes"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Cheshire Cat</a> &raquo;</li> 
@@ -171,7 +171,8 @@ for.</li>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>machine_id</em>: This is the name of the team.</li>
+<li><em>machine_id</em>: This is the name of the machine the config is being
+created for.</li>
 </ul>
 </dd>
 <dt><strong>Optional JSON Parameters</strong>:</dt>
@@ -184,8 +185,8 @@ for.</li>
 </dd>
 <dt><strong>Exceptions</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>Exists</em>: A team with the specified ID already exists. You must specify
-a different ID for the team.</li>
+<li><em>Exists</em>: A config for a machine with the specified ID already exists.
+You should modify the config instead of trying to recreate it.</li>
 <li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
 allowed on this interface, or a parameter is missing from the request.
 See the reason in the exception for more information.</li>
@@ -221,8 +222,8 @@ Content-Type: application/json
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
-<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
+<li><em>team_id</em>: The ID of the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID of the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
@@ -248,7 +249,7 @@ Parameters are not allowed on this interface.</li>
 <tt class="descname">PATCH </tt><tt class="descname">/teams/</tt><big>(</big><em>team_id</em><big>)</big><tt class="descname">/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#patch--teams-(team_id)-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies a specific machine&#8217;s config for a specific team.</p>
 <p><strong>Example request</strong>:</p>
-<div class="highlight-http"><pre>PATCH /teams/1 HTTP/1.1
+<div class="highlight-http"><pre>PATCH /teams/1/configs/MongoDB HTTP/1.1
 Host: example.com
 Accept: application/json, text/javascript
 Content-Type: application/json
@@ -267,8 +268,8 @@ Content-Type: application/json
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
-<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
+<li><em>team_id</em>: The ID of the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID of the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
@@ -314,8 +315,8 @@ See the reason in the exception for more information.</li>
 <dl class="docutils">
 <dt><strong>URL Parameters</strong>:</dt>
 <dd><ul class="first last simple">
-<li><em>team_id</em>: The ID for the team you are requesting the config for.</li>
-<li><em>machine_id</em>: The ID for the machine you are requesting the config for.</li>
+<li><em>team_id</em>: The ID of the team you are requesting the config for.</li>
+<li><em>machine_id</em>: The ID of the machine you are requesting the config for.</li>
 </ul>
 </dd>
 <dt><strong>Required JSON Parameters</strong>:</dt>
@@ -357,8 +358,8 @@ Parameters are not allowed on this interface.</li>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../index.html">Cheshire Cat</a><ul>
-      <li>Previous: <a href="teams.html" title="previous chapter">Team Routes</a></li>
-      <li>Next: <a href="../../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
+      <li>Previous: <a href="current_team.html" title="previous chapter">Current Team Routes</a></li>
+      <li>Next: <a href="current_team_configs.html" title="next chapter">Team Routes</a></li>
   </ul></li>
   </ul></li>
 </ul>

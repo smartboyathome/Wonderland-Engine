@@ -224,7 +224,7 @@ Modify Specific Config for Current Team
 
    **URL Parameters**:
       * *machine_id*: The ID of the machine you are requesting to modify the
-      config for.
+        config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -273,7 +273,7 @@ Delete Specific Config for Team
 
    **URL Parameters**:
       * *machine_id*: The ID for the machine you are requesting to delete the
-      config for.
+        config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
