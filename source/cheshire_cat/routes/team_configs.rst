@@ -119,7 +119,8 @@ Create Config for a Team
         for.
 
    **Required JSON Parameters**:
-      * *machine_id*: This is the name of the team.
+      * *machine_id*: This is the name of the machine the config is being
+        created for.
 
    **Optional JSON Parameters**:
      *This allows any parameters to be entered except for those that are*
@@ -129,8 +130,8 @@ Create Config for a Team
       * *team_id*
 
    **Exceptions**:
-     * *Exists*: A team with the specified ID already exists. You must specify
-       a different ID for the team.
+     * *Exists*: A config for a machine with the specified ID already exists.
+       You should modify the config instead of trying to recreate it.
      * *IllegalParameter*: Either a parameter submitted in the request is not
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
@@ -169,14 +170,14 @@ Get Specific Config for a Team
    **Allowed Roles**: Administrator, Organizer
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *team_id*: The ID of the team you are requesting the config for.
+      * *machine_id*: The ID of the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
 
    **Optional JSON Parameters**:
-     *No optional parameters are allowed for this interface.*
+      *No optional parameters are allowed for this interface.*
 
    **Forbidden JSON Parameters**:
       *No JSON parameters are forbidden for this interface.*
@@ -198,7 +199,7 @@ Modify Specific Config for Team
 
    .. sourcecode:: http
 
-      PATCH /teams/1 HTTP/1.1
+      PATCH /teams/1/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
       Content-Type: application/json
@@ -219,8 +220,8 @@ Modify Specific Config for Team
    **Allowed Roles**: Administrator
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *team_id*: The ID of the team you are requesting the config for.
+      * *machine_id*: The ID of the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -266,8 +267,8 @@ Delete Specific Config for Team
    **Allowed Roles**: Administrator
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *team_id*: The ID of the team you are requesting the config for.
+      * *machine_id*: The ID of the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*

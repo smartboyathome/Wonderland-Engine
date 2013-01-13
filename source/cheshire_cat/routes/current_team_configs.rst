@@ -17,7 +17,8 @@ Get All Configs for Current Team
 
 .. http:get:: /current_team/configs
 
-   Gets all machine configs for a specific team.
+   Gets all machine configs for the team that the currently logged in user
+   belongs to.
 
    **Example request**:
 
@@ -26,6 +27,7 @@ Get All Configs for Current Team
       GET /current_team/configs HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
+      Cookie: userid=team1
 
    **Example response**:
 
@@ -59,11 +61,10 @@ Get All Configs for Current Team
 
    **Requires Authentication**: Yes
 
-   **Allowed Roles**: Administrator, Organizer
+   **Allowed Roles**: Team
 
    **URL Parameters**:
-      * *team_id*: The ID of the team which you want to get the machine config
-        for.
+      *There are no URL parameters for this interface.*
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -85,8 +86,8 @@ Create Config for Current Team
 
 .. http:post:: /current_team/configs
 
-   Creates a new machine config for the team to use in the current scoring
-   session.
+   Creates a new machine config for the team which the currently logged in user
+   belongs to use in the current scoring session.
 
    **Example request**:
 
@@ -95,6 +96,7 @@ Create Config for Current Team
       POST /current_team/configs HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
+      Cookie: userid=team1
       Content-Type: application/json
       {
          "machine_id": "MongoDB",
@@ -108,18 +110,17 @@ Create Config for Current Team
    .. sourcecode:: http
 
       HTTP/1.1 201 Created
-      Location: http://example.com/teams/3/configs/MongoDB
+      Location: http://example.com/current_team/configs/MongoDB
 
    **Requires Authentication**: Yes
 
-   **Allowed Roles**: Administrator
+   **Allowed Roles**: Team
 
    **URL Parameters**:
-      * *team_id*: The ID of the team which you want to get the machine config
-        for.
+      *There are no URL parameters for this interface.*
 
    **Required JSON Parameters**:
-      * *machine_id*: This is the name of the team.
+      * *machine_id*: The ID of the machine you are creating a config for.
 
    **Optional JSON Parameters**:
      *This allows any parameters to be entered except for those that are*
@@ -129,8 +130,8 @@ Create Config for Current Team
       * *team_id*
 
    **Exceptions**:
-     * *Exists*: A team with the specified ID already exists. You must specify
-       a different ID for the team.
+     * *Exists*: A config for a machine with the specified ID already exists.
+       You should modify the config instead of trying to recreate it.
      * *IllegalParameter*: Either a parameter submitted in the request is not
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
@@ -142,7 +143,8 @@ Get Specific Config for Current Team
 
 .. http:get:: /current_team/configs/(machine_id)
 
-   Gets a specific machine's config for a specific team.
+   Gets a specific machine's config for the team that the currently logged in
+   user belongs to.
 
    **Example request**:
 
@@ -151,6 +153,7 @@ Get Specific Config for Current Team
       GET /current_team/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
+      Cookie: userid=team1
 
    **Example response**:
 
@@ -166,23 +169,22 @@ Get Specific Config for Current Team
 
    **Requires Authentication**: Yes
 
-   **Allowed Roles**: Administrator, Organizer
+   **Allowed Roles**: Team
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *machine_id*: The ID of the machine you are requesting the config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
 
    **Optional JSON Parameters**:
-     *No optional parameters are allowed for this interface.*
+      *No optional parameters are allowed for this interface.*
 
    **Forbidden JSON Parameters**:
       *No JSON parameters are forbidden for this interface.*
 
    **Exceptions**:
-      * *IllegalParameter*: You submitted parameters with your GET request.
+      * *IllegalParameter*: You submitted JSON parameters with your GET request.
         Parameters are not allowed on this interface.
 
 .. _cheshire-team_configs-routes-modify:
@@ -192,15 +194,17 @@ Modify Specific Config for Current Team
 
 .. http:patch:: /current_team/configs/(machine_id)
 
-   Modifies a specific machine's config for a specific team.
+   Modifies a specific machine's config for the team that the currently logged in
+   user belongs to.
 
    **Example request**:
 
    .. sourcecode:: http
 
-      PATCH /current_team HTTP/1.1
+      PATCH /current_team/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
+      Cookie: userid=team1
       Content-Type: application/json
       {
          "username": "team1a",
@@ -216,11 +220,11 @@ Modify Specific Config for Current Team
 
    **Requires Authentication**: Yes
 
-   **Allowed Roles**: Administrator
+   **Allowed Roles**: Team
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *machine_id*: The ID of the machine you are requesting to modify the
+      config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
@@ -245,7 +249,8 @@ Delete Specific Config for Team
 
 .. http:delete:: /current_team/configs/(machine_id)
 
-   Deletes a specific machine's config for a specific team.
+   Deletes a specific machine's config for the team that the currently logged in
+   user belongs to.
 
    **Example request**:
 
@@ -254,6 +259,7 @@ Delete Specific Config for Team
       DELETE /current_team/configs/MongoDB HTTP/1.1
       Host: example.com
       Accept: application/json, text/javascript
+      Cookie: userid=team1
 
    **Example response**:
 
@@ -263,11 +269,11 @@ Delete Specific Config for Team
 
    **Requires Authentication**: Yes
 
-   **Allowed Roles**: Administrator
+   **Allowed Roles**: Team
 
    **URL Parameters**:
-      * *team_id*: The ID for the team you are requesting the config for.
-      * *machine_id*: The ID for the machine you are requesting the config for.
+      * *machine_id*: The ID for the machine you are requesting to delete the
+      config for.
 
    **Required JSON Parameters**:
       *No JSON parameters are required for this interface.*
