@@ -30,6 +30,9 @@ GNU Affero Public License.
 :doc:`Introduction <introduction/index>`
    Introduction to the Wonderland Engine, including the high-level design.
 
+Getting Started
+   How to set up and run the Wonderland Engine
+
 :doc:`Doorknob <doorknob/index>`
    The Database Wrapper
 
