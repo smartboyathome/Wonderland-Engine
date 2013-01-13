@@ -10,7 +10,7 @@ checking done on these fields in order to tell whether they are needed or not
 by the checks, for that I suggest reading the documentation on the checks
 themselves.
 
-.. _cheshire-team_configs-routes-all:
+.. _cheshire-current_team_configs-routes-all:
 
 Get All Configs for Current Team
 --------------------------------
@@ -79,7 +79,7 @@ Get All Configs for Current Team
       * *IllegalParameter*: You submitted parameters with your GET request.
         Parameters are not allowed on this interface.
 
-.. _cheshire-team_configs-routes-create:
+.. _cheshire-current_team_configs-routes-create:
 
 Create Config for Current Team
 ------------------------------
@@ -136,7 +136,7 @@ Create Config for Current Team
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
 
-.. _cheshire-team_configs-routes-specific:
+.. _cheshire-current_team_configs-routes-specific:
 
 Get Specific Config for Current Team
 ------------------------------------
@@ -187,7 +187,7 @@ Get Specific Config for Current Team
       * *IllegalParameter*: You submitted JSON parameters with your GET request.
         Parameters are not allowed on this interface.
 
-.. _cheshire-team_configs-routes-modify:
+.. _cheshire-current_team_configs-routes-modify:
 
 Modify Specific Config for Current Team
 ---------------------------------------
@@ -242,7 +242,7 @@ Modify Specific Config for Current Team
        allowed on this interface, or a parameter is missing from the request.
        See the reason in the exception for more information.
 
-.. _cheshire-team_configs-routes-delete:
+.. _cheshire-current_team_configs-routes-delete:
 
 Delete Specific Config for Team
 -------------------------------

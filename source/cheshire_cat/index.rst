@@ -23,6 +23,7 @@ are to be used by looking in Cheshire Cat's tests.
    routes/teams
    routes/current_team
    routes/team_configs
+   routes/current_team_configs
 
 Routes Overview
 ---------------
@@ -59,17 +60,17 @@ Routes Overview
 
 * :ref:`Remove team config for machine <cheshire-team_configs-routes-delete>`
 
-Current Team Configuration
+:doc:`Current Team Configuration <routes/current_team_configs>`
 
-* Get all configs for current team
+* :ref:`Get all configs for current team <cheshire-current_team_configs-routes-all>`
 
-* Create config for current team's machine
+* :ref:`Create config for current team's machine <cheshire-current_team_configs-routes-create>`
 
-* Get specific config for current team's machine
+* :ref:`Get specific config for current team's machine <cheshire-current_team_configs-routes-specific>`
 
-* Modify config for current team's machine
+* :ref:`Modify config for current team's machine <cheshire-current_team_configs-routes-modify>`
 
-* Remove config for current team's machine
+* :ref:`Remove config for current team's machine <cheshire-current_team_configs-routes-delete>`
 
 Team Checks
 
