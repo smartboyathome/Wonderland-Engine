@@ -1,0 +1,393 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Team Routes &mdash; Wonderland Engine 0.9.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
+    <link rel="up" title="Cheshire Cat" href="../index.html" />
+    <link rel="next" title="White Rabbit" href="../../white_rabbit/index.html" />
+    <link rel="prev" title="Team Routes" href="team_configs.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="../../white_rabbit/index.html" title="White Rabbit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="team_configs.html" title="Team Routes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Cheshire Cat</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="team-routes">
+<h1>Team Routes<a class="headerlink" href="#team-routes" title="Permalink to this headline">¶</a></h1>
+<p>These routes relate to retrieving and manipulating a team&#8217;s configuration for
+their machines. These can hold any relevant data pertaining to the machines
+that you would like teams to be able to edit. This data is meant to be used by
+checks in order to facilitate checking whether a service is up, such as
+authentication information for getting access to that service. There is no
+checking done on these fields in order to tell whether they are needed or not
+by the checks, for that I suggest reading the documentation on the checks
+themselves.</p>
+<div class="section" id="get-all-configs-for-current-team">
+<span id="cheshire-current-team-configs-routes-all"></span><h2>Get All Configs for Current Team<a class="headerlink" href="#get-all-configs-for-current-team" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--current_team-configs">
+<tt class="descname">GET </tt><tt class="descname">/current_team/configs</tt><a class="headerlink" href="#get--current_team-configs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all machine configs for the team that the currently logged in user
+belongs to.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/current_team/configs</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=team1</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+[
+   {
+      'team_id': '1',
+      'machine_id': 'MongoDB',
+      'username': 'team1',
+      'password': 'team1mongo',
+      'port': '27017'
+   },
+   {
+      'team_id': '1',
+      'machine_id': 'Redis',
+      'username': 'team1',
+      'password': 'team1redis',
+      'port': 6379
+   },
+   {
+      'team_id': '1',
+      'machine_id': 'Apache',
+      'username': 'team1',
+      'password': 'team1apache',
+      'port': 80
+   }
+]</pre>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><em>There are no URL parameters for this interface.</em></dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional JSON parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted parameters with your GET request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="create-config-for-current-team">
+<span id="cheshire-current-team-configs-routes-create"></span><h2>Create Config for Current Team<a class="headerlink" href="#create-config-for-current-team" title="Permalink to this headline">¶</a></h2>
+<dl class="post">
+<dt id="post--current_team-configs">
+<tt class="descname">POST </tt><tt class="descname">/current_team/configs</tt><a class="headerlink" href="#post--current_team-configs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new machine config for the team which the currently logged in user
+belongs to use in the current scoring session.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><pre>POST /current_team/configs HTTP/1.1
+Host: example.com
+Accept: application/json, text/javascript
+Cookie: userid=team1
+Content-Type: application/json
+{
+   "machine_id": "MongoDB",
+   "username": "team1",
+   "password": "team1mongo",
+   "port": "27017"
+}</pre>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
+<span class="na">Location</span><span class="o">:</span> <span class="l">http://example.com/current_team/configs/MongoDB</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><em>There are no URL parameters for this interface.</em></dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are creating a config for.</li>
+</ul>
+</dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>team_id</em></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>Exists</em>: A config for a machine with the specified ID already exists.
+You should modify the config instead of trying to recreate it.</li>
+<li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
+allowed on this interface, or a parameter is missing from the request.
+See the reason in the exception for more information.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-specific-config-for-current-team">
+<span id="cheshire-current-team-configs-routes-specific"></span><h2>Get Specific Config for Current Team<a class="headerlink" href="#get-specific-config-for-current-team" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--current_team-configs-(machine_id)">
+<tt class="descname">GET </tt><tt class="descname">/current_team/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#get--current_team-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a specific machine&#8217;s config for the team that the currently logged in
+user belongs to.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/current_team/configs/MongoDB</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=team1</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+{
+   "username": "team1",
+   "password": "team1mongo",
+   "port": "27017"
+}</pre>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are requesting the config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted JSON parameters with your GET request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="modify-specific-config-for-current-team">
+<span id="cheshire-current-team-configs-routes-modify"></span><h2>Modify Specific Config for Current Team<a class="headerlink" href="#modify-specific-config-for-current-team" title="Permalink to this headline">¶</a></h2>
+<dl class="patch">
+<dt id="patch--current_team-configs-(machine_id)">
+<tt class="descname">PATCH </tt><tt class="descname">/current_team/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#patch--current_team-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies a specific machine&#8217;s config for the team that the currently logged in
+user belongs to.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><pre>PATCH /current_team/configs/MongoDB HTTP/1.1
+Host: example.com
+Accept: application/json, text/javascript
+Cookie: userid=team1
+Content-Type: application/json
+{
+   "username": "team1a",
+   "password": "team1amongo",
+   "port": "27018"
+}</pre>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are requesting to modify the
+config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>team_id</em></li>
+<li><em>machine_id</em></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
+allowed on this interface, or a parameter is missing from the request.
+See the reason in the exception for more information.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="delete-specific-config-for-team">
+<span id="cheshire-current-team-configs-routes-delete"></span><h2>Delete Specific Config for Team<a class="headerlink" href="#delete-specific-config-for-team" title="Permalink to this headline">¶</a></h2>
+<dl class="delete">
+<dt id="delete--current_team-configs-(machine_id)">
+<tt class="descname">DELETE </tt><tt class="descname">/current_team/configs/</tt><big>(</big><em>machine_id</em><big>)</big><a class="headerlink" href="#delete--current_team-configs-(machine_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a specific machine&#8217;s config for the team that the currently logged in
+user belongs to.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/current_team/configs/MongoDB</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=team1</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Team</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID for the machine you are requesting to delete the
+config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted parameters with your DELETE request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Team Routes</a><ul>
+<li><a class="reference internal" href="#get-all-configs-for-current-team">Get All Configs for Current Team</a></li>
+<li><a class="reference internal" href="#create-config-for-current-team">Create Config for Current Team</a></li>
+<li><a class="reference internal" href="#get-specific-config-for-current-team">Get Specific Config for Current Team</a></li>
+<li><a class="reference internal" href="#modify-specific-config-for-current-team">Modify Specific Config for Current Team</a></li>
+<li><a class="reference internal" href="#delete-specific-config-for-team">Delete Specific Config for Team</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Cheshire Cat</a><ul>
+      <li>Previous: <a href="team_configs.html" title="previous chapter">Team Routes</a></li>
+      <li>Next: <a href="../../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/cheshire_cat/routes/current_team_configs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2012, Alexander Abbott.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
