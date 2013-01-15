@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 '''
     Copyright (c) 2012 Alexander Abbott
 
@@ -17,6 +19,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
+
 import argparse
 from WhiteRabbit.master import Master
 

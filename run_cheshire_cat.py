@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 """
     Copyright (c) 2012 Alexander Abbott
 
