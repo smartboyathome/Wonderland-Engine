@@ -24,7 +24,8 @@ import os, redis
 from . import app
 from Doorknob.Exceptions import BaseDBException
 from Doorknob.MongoDBWrapper import MongoDBWrapper
-from .utils import load_plugins, create_error_response
+from WonderlandUtils import load_plugins
+from CheshireCat.utils import create_error_response
 
 @app.before_request
 def setup_database():

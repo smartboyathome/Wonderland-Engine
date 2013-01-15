@@ -23,12 +23,26 @@ from parcon import alphanum_word, Regex, ZeroOrMore, flatten, Optional
 from Doorknob.MongoDBWrapper import MongoDBWrapper
 from WhiteRabbit.check_types import Check
 from WhiteRabbit.checker_process import CheckerProcess
-from CheshireCat.utils import load_plugins
+from WonderlandUtils import load_plugins, get_root_dir, get_first_file_that_exists, FileNotFound
+
+default_config_dirs = [
+    os.path.join(get_root_dir(), "etc", "wonderland-engine")
+]
 
 class Master(object):
-    def __init__(self, _config_file=os.path.join(os.getcwd(), 'settings.cfg')):
-        configspec = ConfigObj(os.path.join(os.getcwd(), 'configspec.cfg'), list_values=False)
-        self.config = ConfigObj(_config_file, configspec=configspec)['CORE']
+    def __init__(self, _config_dir=None, _config_filename='settings.cfg', _configspec_filename='configspec.cfg'):
+        if _config_dir is not None:
+            default_config_dirs.insert(0, _config_dir)
+
+        configspec_path = get_first_file_that_exists(default_config_dirs, _configspec_filename)
+        config_path = get_first_file_that_exists(default_config_dirs, _config_filename)
+        if configspec_path is None:
+            raise FileNotFound('configspec', default_config_dirs, _configspec_filename)
+        if config_path is None:
+            raise FileNotFound('config', default_config_dirs, _config_filename)
+        configspec = ConfigObj(configspec_path, list_values=False)
+        self.config = ConfigObj(config_path, configspec=configspec)['CORE']
+
         self.db = MongoDBWrapper(self.config['DATABASE']['HOST'], int(self.config['DATABASE']['PORT']),
             self.config['DATABASE']['DB_NAME'])
         self.checkers = {}

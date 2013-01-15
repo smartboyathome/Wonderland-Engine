@@ -1,15 +1,10 @@
-import os, sys
+import os
+from WonderlandUtils import get_root_dir
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-
-def get_root_dir():
-    if hasattr(sys, 'real_prefix'):
-        return sys.prefix
-    else:
-        return os.path.split(sys.prefix)[0]
 
 setup(
     name='wonderland-engine',
@@ -17,6 +12,7 @@ setup(
     packages=['WhiteRabbit', 'WhiteRabbit.checks', 'Doorknob', 'CheshireCat',
               'CheshireCat.blueprints', 'CheshireCat.blueprints.checks',
               'CheshireCat.blueprints.teams'],
+    py_modules=['WonderlandUtils'],
     scripts=['run_cheshire_cat.py', 'run_white_rabbit.py'],
 
     install_requires=[

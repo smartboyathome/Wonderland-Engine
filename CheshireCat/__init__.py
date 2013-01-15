@@ -24,7 +24,8 @@ from configobj import ConfigObj
 from flask_login import LoginManager
 import os
 from validate import Validator
-from CheshireCat.utils import hash_password, get_root_dir, get_first_file_that_exists
+from CheshireCat.utils import hash_password
+from WonderlandUtils import get_root_dir, get_first_file_that_exists, FileNotFound
 from Doorknob.MongoDBWrapper import MongoDBWrapper
 
 __all__ = ['app', 'create_app', 'run_app']
@@ -48,7 +49,10 @@ def create_app(_config_dir=None, _config_filename='settings.cfg', _configspec_fi
     configspec_path = get_first_file_that_exists(default_config_dirs, _configspec_filename)
     config_path = get_first_file_that_exists(default_config_dirs, _config_filename)
 
-    print configspec_path, config_path
+    if configspec_path is None:
+        raise FileNotFound('configspec', default_config_dirs, _configspec_filename)
+    if config_path is None:
+        raise FileNotFound('config', default_config_dirs, _config_filename)
 
     # Load configuration file
     configspec = ConfigObj(configspec_path, list_values=False)

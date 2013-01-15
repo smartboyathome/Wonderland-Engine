@@ -29,19 +29,6 @@ from flask.globals import g
 from flask_login import current_user
 from numbers import Real
 
-def get_root_dir():
-    if hasattr(sys, 'real_prefix'):
-        return sys.prefix
-    else:
-        return os.path.split(sys.prefix)[0]
-
-def get_first_file_that_exists(dir_list, filename):
-    for d in dir_list:
-        f = os.path.join(d, filename)
-        if os.path.exists(f):
-            return f
-    return None
-
 def hash_password(password):
     from CheshireCat import app
     if app.config['SERVER']['PASSWORD_HASH'] == 'bcrypt':
@@ -93,23 +80,6 @@ def convert_datetime_to_timestamp(dt):
 
 def convert_timestamp_to_datetime(ts):
     return datetime.utcfromtimestamp(ts)
-
-def load_plugins(path):
-    dir_list = os.listdir(path)
-    mods = {}
-    for fname in dir_list:
-        try:
-            if os.path.isdir(os.path.join(path, fname)) and os.path.exists(os.path.join(path, fname, '__init__.py')):
-                f, filename, descr = imp.find_module(fname, [path])
-                mods[fname] = imp.load_module(fname, f, filename, descr)
-            elif os.path.isfile(os.path.join(path, fname)):
-                name, ext = os.path.splitext(fname)
-                if ext == '.py' and not name == '__init__':
-                    f, filename, descr = imp.find_module(name, [path])
-                    mods[name] = imp.load_module(name, f, filename, descr)
-        except Exception:
-            continue
-    return mods
 
 def requires_roles(*roles):
     def wrapper(f):
