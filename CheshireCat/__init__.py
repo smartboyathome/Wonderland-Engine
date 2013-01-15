@@ -24,7 +24,7 @@ from configobj import ConfigObj
 from flask_login import LoginManager
 import os
 from validate import Validator
-from CheshireCat.utils import hash_password
+from CheshireCat.utils import hash_password, get_root_dir, get_first_file_that_exists
 from Doorknob.MongoDBWrapper import MongoDBWrapper
 
 __all__ = ['app', 'create_app', 'run_app']
@@ -33,14 +33,26 @@ __all__ = ['app', 'create_app', 'run_app']
 app = None
 login_manager = None
 
-def create_app(_config_file=os.path.join(os.getcwd(), 'settings.cfg')):
+default_config_dirs = [
+    os.path.join(get_root_dir(), "etc", "wonderland-engine")
+]
+
+def create_app(_config_dir=None, _config_filename='settings.cfg', _configspec_filename='configspec.cfg'):
     # Create Flask app
     global app
     app = Flask("CheshireCat")
 
+    if _config_dir is not None:
+        default_config_dirs.insert(0, _config_dir)
+
+    configspec_path = get_first_file_that_exists(default_config_dirs, _configspec_filename)
+    config_path = get_first_file_that_exists(default_config_dirs, _config_filename)
+
+    print configspec_path, config_path
+
     # Load configuration file
-    configspec = ConfigObj(os.path.join(os.getcwd(), 'configspec.cfg'), list_values=False)
-    config = ConfigObj(_config_file, configspec=configspec)
+    configspec = ConfigObj(configspec_path, list_values=False)
+    config = ConfigObj(config_path, configspec=configspec)
     test = config.validate(Validator(), copy=True)
     for key in config['CORE']:
         app.config[key] = config['CORE'][key]
@@ -58,7 +70,8 @@ def create_app(_config_file=os.path.join(os.getcwd(), 'settings.cfg')):
     login_manager.init_app(app)
 
     # Initialize our database
-    db = MongoDBWrapper(config['HOST'], int(config['PORT']), config['DB_NAME'])
+    dbconfig = config['CORE']['DATABASE']
+    db = MongoDBWrapper(dbconfig['HOST'], int(dbconfig['PORT']), dbconfig['DB_NAME'])
     db.init_db()
     if len(db.get_all_users_with_role('administrator')) == 0:
         db.create_user('admin', hash_password('admin'), 'admin@example.com', 'administrator')

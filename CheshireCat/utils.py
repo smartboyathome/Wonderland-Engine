@@ -22,12 +22,25 @@ from collections import defaultdict
 from datetime import datetime
 from functools import wraps
 import hashlib
-import json, imp, os
+import json, imp, os, sys
 import bcrypt
 from flask import Response, request
 from flask.globals import g
 from flask_login import current_user
 from numbers import Real
+
+def get_root_dir():
+    if hasattr(sys, 'real_prefix'):
+        return sys.prefix
+    else:
+        return os.path.split(sys.prefix)[0]
+
+def get_first_file_that_exists(dir_list, filename):
+    for d in dir_list:
+        f = os.path.join(d, filename)
+        if os.path.exists(f):
+            return f
+    return None
 
 def hash_password(password):
     from CheshireCat import app
