@@ -23,6 +23,7 @@ GNU Affero Public License.
    :hidden:
 
    introduction/index
+   introduction/getting_started
    doorknob/index
    cheshire_cat/index
    white_rabbit/index
@@ -30,7 +31,7 @@ GNU Affero Public License.
 :doc:`Introduction <introduction/index>`
    Introduction to the Wonderland Engine, including the high-level design.
 
-Getting Started
+:doc:`Getting Started <introduction/getting_started>`
    How to set up and run the Wonderland Engine
 
 :doc:`Doorknob <doorknob/index>`
