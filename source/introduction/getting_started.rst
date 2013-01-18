@@ -146,7 +146,9 @@ but you should not ever need to modify this. It is there for checking to make
 sure that you formatted your settings.cfg correctly so that all parts of the
 Wonderland Engine can make use of it.
 
-With that out of the way, here is the default configuration file::
+With that out of the way, here is the default configuration file:
+
+.. code-block:: ini
 
    [CORE]
    DEBUG = False

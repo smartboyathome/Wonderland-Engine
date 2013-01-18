@@ -202,30 +202,30 @@ but you should not ever need to modify this. It is there for checking to make
 sure that you formatted your settings.cfg correctly so that all parts of the
 Wonderland Engine can make use of it.</p>
 <p>With that out of the way, here is the default configuration file:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="go">[CORE]</span>
-<span class="go">DEBUG = False</span>
-<span class="go">SECRET_KEY = &#39;eL7nqsY9x0P7WhsOfnMi&#39;</span>
-<span class="go">HTTPS_ONLY = True</span>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[CORE]</span>
+<span class="na">DEBUG</span> <span class="o">=</span> <span class="s">False</span>
+<span class="na">SECRET_KEY</span> <span class="o">=</span> <span class="s">&#39;eL7nqsY9x0P7WhsOfnMi&#39;</span>
+<span class="na">HTTPS_ONLY</span> <span class="o">=</span> <span class="s">True</span>
 
-<span class="go">    [[SERVER]]</span>
-<span class="go">    HOST = &#39;localhost&#39;</span>
-<span class="go">    PORT = 5000</span>
-<span class="go">    PASSWORD_HASH = &#39;bcrypt&#39;</span>
-<span class="go">    DEBUG_OUTPUT = True</span>
+    <span class="k">[[SERVER]]</span>
+    <span class="na">HOST</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
+<span class="s">    PORT = 5000</span>
+<span class="s">    PASSWORD_HASH = &#39;bcrypt&#39;</span>
+<span class="s">    DEBUG_OUTPUT = True</span>
 
-<span class="go">    [[DAEMON]]</span>
-<span class="go">    CHECK_DELAY = 60 #seconds</span>
+    <span class="k">[[DAEMON]]</span>
+    <span class="na">CHECK_DELAY</span> <span class="o">=</span> <span class="s">60 #seconds</span>
 
-<span class="go">    [[DATABASE]]</span>
-<span class="go">    HOST = &#39;localhost&#39;</span>
-<span class="go">    PORT = 27017</span>
-<span class="go">    DB_NAME = &#39;cheshire_engine&#39;</span>
+    <span class="k">[[DATABASE]]</span>
+    <span class="na">HOST</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
+<span class="s">    PORT = 27017</span>
+<span class="s">    DB_NAME = &#39;cheshire_engine&#39;</span>
 
-<span class="go">    [[REDIS]]</span>
-<span class="go">    HOST = &#39;localhost&#39;</span>
-<span class="go">    PORT = 6379</span>
-<span class="go">    PASSWORD = &#39;&#39;</span>
-<span class="go">    DAEMON_CHANNEL = &#39;scoring-daemon&#39;</span>
+    <span class="k">[[REDIS]]</span>
+    <span class="na">HOST</span> <span class="o">=</span> <span class="s">&#39;localhost&#39;</span>
+<span class="s">    PORT = 6379</span>
+<span class="s">    PASSWORD = &#39;&#39;</span>
+<span class="s">    DAEMON_CHANNEL = &#39;scoring-daemon&#39;</span>
 </pre></div>
 </div>
 <p>What does each section mean? What about each property? We&#8217;ll step through them
