@@ -18,10 +18,9 @@
     along with Cheshire.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from CheshireCat import create_app, run_app
-from tests import *
-import nose, os
+import nose, os, sys
 
 if __name__ == '__main__':
-    os.chdir(os.path.join(os.getcwd(), 'DoorknobTests'))
+    sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
+    os.chdir(os.path.join(os.path.dirname(__file__), 'DoorknobTests'))
     nose.main()

@@ -22,8 +22,10 @@ from copy import deepcopy
 from datetime import datetime
 import json
 import unittest
+from CheshireCat import create_app
+from tests import DBTestCaseMixin, config_path
+create_app(config_path)
 from CheshireCat import app
-from tests import DBTestCaseMixin
 
 class FlaskTestCase(unittest.TestCase, DBTestCaseMixin):
     def setUp(self):

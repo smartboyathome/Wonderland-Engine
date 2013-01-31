@@ -20,10 +20,10 @@
 
 from copy import deepcopy
 import pymongo, os
-from CheshireCat import create_app
 
-config_path = os.path.join(os.getcwd(), 'testing.cfg')
-create_app(config_path)
+__all__=['config_path', 'DBTestCaseMixin', 'show_difference_between_dicts']
+
+config_path = os.path.join(os.path.dirname(__file__), 'testing.cfg')
 
 from tests.db_data import generate_db_data
 
