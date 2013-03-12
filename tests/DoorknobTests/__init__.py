@@ -26,7 +26,6 @@ from .. import DBTestCaseMixin, config_path
 
 class DBTestCase(unittest.TestCase, DBTestCaseMixin):
     def setUp(self):
-        print config_path
         config = ConfigObj(config_path)['CORE']
         db_host = config['DATABASE']['HOST']
         db_port = config['DATABASE']['PORT']

@@ -19,6 +19,7 @@
 '''
 
 from copy import deepcopy
+from datetime import datetime
 from Doorknob.Exceptions import Exists, DoesNotExist
 from tests.DoorknobTests import DBTestCase
 from .. import show_difference_between_dicts
@@ -55,7 +56,8 @@ class TestMongoDBManualChecks(DBTestCase):
         assert wrapper_result == expected_result
 
     def test_create_manual_check(self):
-        self.db_wrapper.create_manual_check('MobileSecurityOptions', 'The teams had to write up information on mobile security.', 'The team performed well on this task.', '114', '6', 5)
+        timestamp = datetime.now()
+        self.db_wrapper.create_manual_check('MobileSecurityOptions', 'The teams had to write up information on mobile security.', 'The team performed well on this task.', '114', '6', 5, timestamp)
         wrapper_result = list(self.db.completed_checks.find({'id': 'MobileSecurityOptions', 'type': 'manual', 'team_id': '6'}, {'_id': 0, 'id': 0, 'type': 0, 'team_id': 0}))
         expected_result = [{
             'description': 'The teams had to write up information on mobile security.',
