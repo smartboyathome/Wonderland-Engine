@@ -1,4 +1,4 @@
-Team Routes
+Team Config Routes
 ===========
 
 These routes relate to retrieving and manipulating a team's configuration for

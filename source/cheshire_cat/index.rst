@@ -24,6 +24,7 @@ are to be used by looking in Cheshire Cat's tests.
    routes/current_team
    routes/team_configs
    routes/current_team_configs
+   routes/team_checks
 
 Routes Overview
 ---------------
@@ -72,9 +73,11 @@ Routes Overview
 
 * :ref:`Remove config for current team's machine <cheshire-current_team_configs-routes-delete>`
 
-Team Checks
+:doc:`Team Checks <routes/team_checks>`
 
-* Get all completed checks for specific team
+* :ref:`Get all completed checks for all teams <cheshire-team_checks-routes-all>`
+
+* :ref:`Get all completed checks for specific team <cheshire-team_checks-routes-specific>`
 
 Team Service Checks
 

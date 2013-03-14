@@ -1,0 +1,175 @@
+Team Check Routes
+===========
+
+These routes relate to retrieving all the completed checks (regardless of type)
+for either all teams or a specific team. These checks will have slightly
+different information, which are defined in each of their own pages. For each
+type, see Service, Attacker, Inject, and Manual checks.
+
+.. _cheshire-team_checks-routes-all:
+
+Get All Checks for Team
+--------------------------------
+
+.. http:get:: /teams/checks
+
+   Gets all checks for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /teams/checks HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+      [
+          {
+              'id': 'MongoDBUp',
+              'description': 'Checks whether MongoDB is up.',
+              'type': 'service',
+              'timestamp': datetime.now() - timedelta(hours=5),
+              'team_id': '1',
+              'score': 0
+          },
+          {
+              'id': 'RemovedFiles',
+              'description': 'Checks whether each team removed certain files.',
+              'type': 'inject',
+              'inject_number': 5,
+              'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
+              'timestamp': datetime.now() - timedelta(hours=5),
+              'team_id': '2',
+              'score': 0
+          },
+          {
+              'id': 'MySecurityHole',
+              'description': 'Checks whether my security hole is still there.',
+              'machine': 'Redis',
+              'type': 'attacker',
+              'timestamp': datetime.now() - timedelta(hours=1, minutes=52),
+              'team_id': '3',
+              'score': -5
+          },
+          {
+              'id': 'BoardPresentation',
+              'description': 'The teams present to a board on what they did.',
+              'comments': 'This team did great! They definitely deserve full points!',
+              'type': 'manual',
+              'inject_number': '107',
+              'timestamp': datetime.now() - timedelta(hours=4),
+              'team_id': '6',
+              'score': 10
+          }
+      ]
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator
+
+   **URL Parameters**:
+      *There are no URL parameters for this interface.*
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+      *No optional JSON parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
+
+   **Exceptions**:
+      * *IllegalParameter*: You submitted parameters with your GET request.
+        Parameters are not allowed on this interface.
+
+.. _cheshire-team_checks-routes-specific:
+
+Get All Checks for Specific Team
+------------------------------------
+
+.. http:get:: /teams/(team_id)/checks
+
+   Gets all checks for a specific team.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /teams/1/checks/ HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+      [
+          {
+              'id': 'MongoDBUp',
+              'description': 'Checks whether MongoDB is up.',
+              'type': 'service',
+              'timestamp': datetime.now() - timedelta(hours=5),
+              'team_id': '1',
+              'score': 0
+          },
+          {
+              'id': 'RemovedFiles',
+              'description': 'Checks whether each team removed certain files.',
+              'type': 'inject',
+              'inject_number': 5,
+              'time_to_check': datetime.now() - timedelta(hours=5, minutes=5),
+              'timestamp': datetime.now() - timedelta(hours=5),
+              'team_id': '2',
+              'score': 0
+          },
+          {
+              'id': 'MySecurityHole',
+              'description': 'Checks whether my security hole is still there.',
+              'machine': 'Redis',
+              'type': 'attacker',
+              'timestamp': datetime.now() - timedelta(hours=1, minutes=52),
+              'team_id': '3',
+              'score': -5
+          },
+          {
+              'id': 'BoardPresentation',
+              'description': 'The teams present to a board on what they did.',
+              'comments': 'This team did great! They definitely deserve full points!',
+              'type': 'manual',
+              'inject_number': '107',
+              'timestamp': datetime.now() - timedelta(hours=4),
+              'team_id': '6',
+              'score': 10
+          }
+      ]
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator
+
+   **URL Parameters**:
+      * *machine_id*: The ID of the machine you are requesting the config for.
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+      *No optional parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
+
+   **Exceptions**:
+      * *IllegalParameter*: You submitted JSON parameters with your GET request.
+        Parameters are not allowed on this interface.

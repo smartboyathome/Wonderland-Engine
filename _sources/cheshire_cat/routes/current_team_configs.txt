@@ -1,5 +1,5 @@
-Team Routes
-===========
+Current Team Config Routes
+==========================
 
 These routes relate to retrieving and manipulating a team's configuration for
 their machines. These can hold any relevant data pertaining to the machines
