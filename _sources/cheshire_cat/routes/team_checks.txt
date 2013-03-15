@@ -4,8 +4,7 @@ Completed Team Check Routes
 These routes relate to retrieving all the completed checks (regardless of type)
 for either all teams or a specific team. These checks will have slightly
 different information, which are defined in each of their own pages. For each
-type, see the :doc:`Service <service_checks>`, Attacker, Inject, and Manual
-Check interfaces.
+type, see :doc:`Service <service_checks>`, Attacker, Inject, and Manual checks.
 
 .. _cheshire-team_checks-routes-all:
 

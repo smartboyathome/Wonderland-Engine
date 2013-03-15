@@ -27,7 +27,7 @@
     <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
     <link rel="up" title="Cheshire Cat" href="../index.html" />
     <link rel="next" title="White Rabbit" href="../../white_rabbit/index.html" />
-    <link rel="prev" title="Team Check Routes" href="team_checks.html" />
+    <link rel="prev" title="Completed Team Check Routes" href="team_checks.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
@@ -50,7 +50,7 @@
           <a href="../../white_rabbit/index.html" title="White Rabbit"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="team_checks.html" title="Team Check Routes"
+          <a href="team_checks.html" title="Completed Team Check Routes"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Cheshire Cat</a> &raquo;</li> 
@@ -65,8 +65,9 @@
   <div class="section" id="service-check-routes">
 <h1>Service Check Routes<a class="headerlink" href="#service-check-routes" title="Permalink to this headline">¶</a></h1>
 <p>These routes relate to retrieving and modifying all the active service checks
-for all teams. These are active checks, not completed checks. For
-those, see the team check interface.</p>
+for all teams. Service checks are designed for checking if services such as a
+web server, database, or email server remain up. These are active checks, not
+completed checks. For those, see the <a class="reference internal" href="team_checks.html"><em>Team Check</em></a> interface.</p>
 <div class="section" id="get-all-service-checks-for-all-teams">
 <span id="cheshire-service-checks-routes-all"></span><h2>Get All Service Checks for All Teams<a class="headerlink" href="#get-all-service-checks-for-all-teams" title="Permalink to this headline">¶</a></h2>
 <dl class="get">
@@ -280,8 +281,7 @@ See the reason in the exception for more information.</li>
 <dl class="delete">
 <dt id="delete--checks-services-(check_id)">
 <tt class="descname">DELETE </tt><tt class="descname">/checks/services/</tt><big>(</big><em>check_id</em><big>)</big><a class="headerlink" href="#delete--checks-services-(check_id)" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a specific machine&#8217;s config for the team that the currently logged in
-user belongs to.</p>
+<dd><p>Deletes a specific service check that is active for all teams.</p>
 <p><strong>Example request</strong>:</p>
 <div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/checks/services/SomeServiceUp</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
@@ -341,7 +341,7 @@ Parameters are not allowed on this interface.</li>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../index.html">Cheshire Cat</a><ul>
-      <li>Previous: <a href="team_checks.html" title="previous chapter">Team Check Routes</a></li>
+      <li>Previous: <a href="team_checks.html" title="previous chapter">Completed Team Check Routes</a></li>
       <li>Next: <a href="../../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
   </ul></li>
   </ul></li>

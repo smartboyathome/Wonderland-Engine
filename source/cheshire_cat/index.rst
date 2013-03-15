@@ -96,7 +96,13 @@ Team Inject Checks
 
 * Get all completed inject checks for specific team
 
+* Create inject check for specific team
+
 * Get specific completed inject check for specific team
+
+* Modify specific attacker check for inject team
+
+* Remove specific inject check for specific team
 
 Team Attacker Checks
 
