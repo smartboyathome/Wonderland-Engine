@@ -25,6 +25,7 @@ are to be used by looking in Cheshire Cat's tests.
    routes/team_configs
    routes/current_team_configs
    routes/team_checks
+   routes/service_checks
 
 Routes Overview
 ---------------
@@ -73,17 +74,23 @@ Routes Overview
 
 * :ref:`Remove config for current team's machine <cheshire-current_team_configs-routes-delete>`
 
-:doc:`Team Checks <routes/team_checks>`
+:doc:`Completed Team Checks <routes/team_checks>`
 
 * :ref:`Get all completed checks for all teams <cheshire-team_checks-routes-all>`
 
 * :ref:`Get all completed checks for specific team <cheshire-team_checks-routes-specific>`
 
-Team Service Checks
+:doc:`Service Checks <routes/service_checks>`
 
-* Get all completed service checks for specific team
+* :ref:`Get all completed service checks for specific team <cheshire-service_checks-routes-all>`
 
-* Get specific completed service check for specific team
+* :ref:`Create service check for specific team <cheshire-service_checks-routes-create>`
+
+* :ref:`Get specific completed service check for specific team <cheshire-service_checks-routes-specific>`
+
+* :ref:`Modify specific service check for specific team <cheshire-service_checks-routes-modify>`
+
+* :ref:`Remove specific service check for specific team <cheshire-service_checks-routes-delete>`
 
 Team Inject Checks
 

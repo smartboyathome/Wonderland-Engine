@@ -1,5 +1,5 @@
-Team Check Routes
-===========
+Completed Team Check Routes
+===========================
 
 These routes relate to retrieving all the completed checks (regardless of type)
 for either all teams or a specific team. These checks will have slightly
@@ -8,8 +8,8 @@ type, see Service, Attacker, Inject, and Manual checks.
 
 .. _cheshire-team_checks-routes-all:
 
-Get All Checks for Team
---------------------------------
+Get All Completed Checks for Team
+---------------------------------
 
 .. http:get:: /teams/checks
 
@@ -92,8 +92,8 @@ Get All Checks for Team
 
 .. _cheshire-team_checks-routes-specific:
 
-Get All Checks for Specific Team
-------------------------------------
+Get All Completed Checks for Specific Team
+------------------------------------------
 
 .. http:get:: /teams/(team_id)/checks
 

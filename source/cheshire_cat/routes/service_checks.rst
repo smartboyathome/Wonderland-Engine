@@ -1,0 +1,272 @@
+Service Check Routes
+====================
+
+These routes relate to retrieving and modifying all the active service checks
+for all teams. These are active checks, not completed checks. For
+those, see the team check interface.
+
+.. _cheshire-service_checks-routes-all:
+
+Get All Service Checks for All Teams
+------------------------------------
+
+.. http:get:: /checks/services
+
+   Gets all the active service checks for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /checks/services HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+      {
+          'id': 'MongoDBUp',
+          'description': 'Checks whether MongoDB is up.',
+          'machine': 'MongoDB',
+          'type': 'service',
+          'class_name': 'SampleServiceCheck'
+      },
+      {
+          'id': 'EmailUp',
+          'description': 'Checks whether email is up.',
+          'machine': 'MongoDB',
+          'type': 'service',
+          'class_name': 'SampleServiceCheck'
+      }
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator, Organizer
+
+   **URL Parameters**:
+      *There are no URL parameters for this interface.*
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+      *No optional JSON parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
+
+   **Exceptions**:
+      * *IllegalParameter*: You submitted parameters with your GET request.
+        Parameters are not allowed on this interface.
+
+.. _cheshire-service_checks-routes-create:
+
+Create Service Check for All Teams
+----------------------------------
+
+.. http:post:: /checks/services
+
+   Creates and activates a service check for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      POST /checks/services HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+      Content-Type: application/json
+      {
+          "id": "SomeServiceUp",
+          "description": "Checking if SomeService is up",
+          "machine": "Apache",
+          "class_name": "SampleServiceCheck"
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 201 Created
+      Location: http://example.com/checks/services/SomeServiceUp
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator
+
+   **URL Parameters**:
+      *There are no URL parameters for this interface.*
+
+   **Required JSON Parameters**:
+      * *machine_id*: The ID of the machine you are creating a config for.
+
+   **Optional JSON Parameters**:
+     *This allows any parameters to be entered except for those that are*
+     *forbidden below.*
+
+   **Forbidden JSON Parameters**:
+      * *team_id*
+
+   **Exceptions**:
+     * *Exists*: A config for a machine with the specified ID already exists.
+       You should modify the config instead of trying to recreate it.
+     * *IllegalParameter*: Either a parameter submitted in the request is not
+       allowed on this interface, or a parameter is missing from the request.
+       See the reason in the exception for more information.
+
+.. _cheshire-service_checks-routes-specific:
+
+Get Specific Service Check for All Teams
+----------------------------------------
+
+.. http:get:: /checks/services/(check_id)
+
+   Gets a specific service check that is active for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /checks/services/SomeServiceUp HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+      [
+          {
+              "description": "Checking if SomeService is up",
+              "machine": "Apache",
+              "class_name": "SampleServiceCheck"
+          }
+      ]
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator, Organizer
+
+   **URL Parameters**:
+      * *machine_id*: The ID of the machine you are requesting the config for.
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+      *No optional parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
+
+   **Exceptions**:
+      * *IllegalParameter*: You submitted JSON parameters with your GET request.
+        Parameters are not allowed on this interface.
+
+.. _cheshire-service_checks-routes-modify:
+
+Modify Specific Service Check for All Teams
+-------------------------------------------
+
+.. http:patch:: /checks/services/(check_id)
+
+   Modifies a specific service check that is active for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      PATCH /checks/services/SomeServiceUp HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+      Content-Type: application/json
+      {
+          'description': 'Checks whether THE some service service is really running.',
+          'machine': 'Apache',
+          'class_name': 'SampleServiceCheck'
+      }
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 204 No Content
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator
+
+   **URL Parameters**:
+      * *machine_id*: The ID of the machine you are requesting to modify the
+        config for.
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+      *This allows any parameters to be entered except for those that are*
+      *forbidden below.*
+
+   **Forbidden JSON Parameters**:
+      * *team_id*
+      * *machine_id*
+
+   **Exceptions**:
+     * *IllegalParameter*: Either a parameter submitted in the request is not
+       allowed on this interface, or a parameter is missing from the request.
+       See the reason in the exception for more information.
+
+.. _cheshire-service_checks-routes-delete:
+
+Delete Specific Service Check for All Teams
+-------------------------------------------
+
+.. http:delete:: /checks/services/(check_id)
+
+   Deletes a specific service check that is active for all teams.
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      DELETE /checks/services/SomeServiceUp HTTP/1.1
+      Host: example.com
+      Accept: application/json, text/javascript
+      Cookie: userid=admin
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 204 No Content
+
+   **Requires Authentication**: Yes
+
+   **Allowed Roles**: Administrator
+
+   **URL Parameters**:
+      * *machine_id*: The ID for the machine you are requesting to delete the
+        config for.
+
+   **Required JSON Parameters**:
+      *No JSON parameters are required for this interface.*
+
+   **Optional JSON Parameters**:
+     *No optional parameters are allowed for this interface.*
+
+   **Forbidden JSON Parameters**:
+      *No JSON parameters are forbidden for this interface.*
+
+   **Exceptions**:
+      * *IllegalParameter*: You submitted parameters with your DELETE request.
+        Parameters are not allowed on this interface.
