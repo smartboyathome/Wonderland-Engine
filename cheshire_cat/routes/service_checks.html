@@ -1,0 +1,377 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Service Check Routes &mdash; Wonderland Engine 0.9.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Wonderland Engine 0.9.0 documentation" href="../../index.html" />
+    <link rel="up" title="Cheshire Cat" href="../index.html" />
+    <link rel="next" title="White Rabbit" href="../../white_rabbit/index.html" />
+    <link rel="prev" title="Team Check Routes" href="team_checks.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="../../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../http-routingtable.html" title="HTTP Routing Table"
+             >routing table</a> |</li>
+        <li class="right" >
+          <a href="../../white_rabbit/index.html" title="White Rabbit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="team_checks.html" title="Team Check Routes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Wonderland Engine 0.9.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Cheshire Cat</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="service-check-routes">
+<h1>Service Check Routes<a class="headerlink" href="#service-check-routes" title="Permalink to this headline">¶</a></h1>
+<p>These routes relate to retrieving and modifying all the active service checks
+for all teams. These are active checks, not completed checks. For
+those, see the team check interface.</p>
+<div class="section" id="get-all-service-checks-for-all-teams">
+<span id="cheshire-service-checks-routes-all"></span><h2>Get All Service Checks for All Teams<a class="headerlink" href="#get-all-service-checks-for-all-teams" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--checks-services">
+<tt class="descname">GET </tt><tt class="descname">/checks/services</tt><a class="headerlink" href="#get--checks-services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all the active service checks for all teams.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/checks/services</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=admin</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+{
+    'id': 'MongoDBUp',
+    'description': 'Checks whether MongoDB is up.',
+    'machine': 'MongoDB',
+    'type': 'service',
+    'class_name': 'SampleServiceCheck'
+},
+{
+    'id': 'EmailUp',
+    'description': 'Checks whether email is up.',
+    'machine': 'MongoDB',
+    'type': 'service',
+    'class_name': 'SampleServiceCheck'
+}</pre>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Administrator, Organizer</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><em>There are no URL parameters for this interface.</em></dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional JSON parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted parameters with your GET request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="create-service-check-for-all-teams">
+<span id="cheshire-service-checks-routes-create"></span><h2>Create Service Check for All Teams<a class="headerlink" href="#create-service-check-for-all-teams" title="Permalink to this headline">¶</a></h2>
+<dl class="post">
+<dt id="post--checks-services">
+<tt class="descname">POST </tt><tt class="descname">/checks/services</tt><a class="headerlink" href="#post--checks-services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and activates a service check for all teams.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><pre>POST /checks/services HTTP/1.1
+Host: example.com
+Accept: application/json, text/javascript
+Cookie: userid=admin
+Content-Type: application/json
+{
+    "id": "SomeServiceUp",
+    "description": "Checking if SomeService is up",
+    "machine": "Apache",
+    "class_name": "SampleServiceCheck"
+}</pre>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">Created</span>
+<span class="na">Location</span><span class="o">:</span> <span class="l">http://example.com/checks/services/SomeServiceUp</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Administrator</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><em>There are no URL parameters for this interface.</em></dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are creating a config for.</li>
+</ul>
+</dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>team_id</em></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>Exists</em>: A config for a machine with the specified ID already exists.
+You should modify the config instead of trying to recreate it.</li>
+<li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
+allowed on this interface, or a parameter is missing from the request.
+See the reason in the exception for more information.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-specific-service-check-for-all-teams">
+<span id="cheshire-service-checks-routes-specific"></span><h2>Get Specific Service Check for All Teams<a class="headerlink" href="#get-specific-service-check-for-all-teams" title="Permalink to this headline">¶</a></h2>
+<dl class="get">
+<dt id="get--checks-services-(check_id)">
+<tt class="descname">GET </tt><tt class="descname">/checks/services/</tt><big>(</big><em>check_id</em><big>)</big><a class="headerlink" href="#get--checks-services-(check_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a specific service check that is active for all teams.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/checks/services/SomeServiceUp</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=admin</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><pre>HTTP/1.1 200 OK
+Content-Type: application/json
+[
+    {
+        "description": "Checking if SomeService is up",
+        "machine": "Apache",
+        "class_name": "SampleServiceCheck"
+    }
+]</pre>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Administrator, Organizer</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are requesting the config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted JSON parameters with your GET request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="modify-specific-service-check-for-all-teams">
+<span id="cheshire-service-checks-routes-modify"></span><h2>Modify Specific Service Check for All Teams<a class="headerlink" href="#modify-specific-service-check-for-all-teams" title="Permalink to this headline">¶</a></h2>
+<dl class="patch">
+<dt id="patch--checks-services-(check_id)">
+<tt class="descname">PATCH </tt><tt class="descname">/checks/services/</tt><big>(</big><em>check_id</em><big>)</big><a class="headerlink" href="#patch--checks-services-(check_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies a specific service check that is active for all teams.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><pre>PATCH /checks/services/SomeServiceUp HTTP/1.1
+Host: example.com
+Accept: application/json, text/javascript
+Cookie: userid=admin
+Content-Type: application/json
+{
+    'description': 'Checks whether THE some service service is really running.',
+    'machine': 'Apache',
+    'class_name': 'SampleServiceCheck'
+}</pre>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Administrator</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID of the machine you are requesting to modify the
+config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>This allows any parameters to be entered except for those that are</em>
+<em>forbidden below.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>team_id</em></li>
+<li><em>machine_id</em></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: Either a parameter submitted in the request is not
+allowed on this interface, or a parameter is missing from the request.
+See the reason in the exception for more information.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="delete-specific-service-check-for-all-teams">
+<span id="cheshire-service-checks-routes-delete"></span><h2>Delete Specific Service Check for All Teams<a class="headerlink" href="#delete-specific-service-check-for-all-teams" title="Permalink to this headline">¶</a></h2>
+<dl class="delete">
+<dt id="delete--checks-services-(check_id)">
+<tt class="descname">DELETE </tt><tt class="descname">/checks/services/</tt><big>(</big><em>check_id</em><big>)</big><a class="headerlink" href="#delete--checks-services-(check_id)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a specific machine&#8217;s config for the team that the currently logged in
+user belongs to.</p>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/checks/services/SomeServiceUp</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">example.com</span>
+<span class="na">Accept</span><span class="o">:</span> <span class="l">application/json, text/javascript</span>
+<span class="na">Cookie</span><span class="o">:</span> <span class="l">userid=admin</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</pre></div>
+</div>
+<p><strong>Requires Authentication</strong>: Yes</p>
+<p><strong>Allowed Roles</strong>: Administrator</p>
+<dl class="docutils">
+<dt><strong>URL Parameters</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>machine_id</em>: The ID for the machine you are requesting to delete the
+config for.</li>
+</ul>
+</dd>
+<dt><strong>Required JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are required for this interface.</em></dd>
+<dt><strong>Optional JSON Parameters</strong>:</dt>
+<dd><em>No optional parameters are allowed for this interface.</em></dd>
+<dt><strong>Forbidden JSON Parameters</strong>:</dt>
+<dd><em>No JSON parameters are forbidden for this interface.</em></dd>
+<dt><strong>Exceptions</strong>:</dt>
+<dd><ul class="first last simple">
+<li><em>IllegalParameter</em>: You submitted parameters with your DELETE request.
+Parameters are not allowed on this interface.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Service Check Routes</a><ul>
+<li><a class="reference internal" href="#get-all-service-checks-for-all-teams">Get All Service Checks for All Teams</a></li>
+<li><a class="reference internal" href="#create-service-check-for-all-teams">Create Service Check for All Teams</a></li>
+<li><a class="reference internal" href="#get-specific-service-check-for-all-teams">Get Specific Service Check for All Teams</a></li>
+<li><a class="reference internal" href="#modify-specific-service-check-for-all-teams">Modify Specific Service Check for All Teams</a></li>
+<li><a class="reference internal" href="#delete-specific-service-check-for-all-teams">Delete Specific Service Check for All Teams</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Cheshire Cat</a><ul>
+      <li>Previous: <a href="team_checks.html" title="previous chapter">Team Check Routes</a></li>
+      <li>Next: <a href="../../white_rabbit/index.html" title="next chapter">White Rabbit</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/cheshire_cat/routes/service_checks.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2012, Alexander Abbott.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
