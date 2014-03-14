@@ -9,3 +9,5 @@ unautomated procedures. As an added bonus, this engine supports public and
 private IPs, as well as IPv6 in the future.
 
 Documentation: http://smartboyathome.github.com/Wonderland-Engine/
+
+Mailing List: https://groups.google.com/forum/#!forum/wonderland-engine-users
